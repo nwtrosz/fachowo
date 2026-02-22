@@ -1,0 +1,140 @@
+import { useState } from 'react';
+import { ChevronLeft } from 'lucide-react';
+import { useLocation } from 'wouter';
+import Navigation from './Navigation';
+import { SEOHead } from './SEOHead';
+
+interface ServicePageProps {
+  title: string;
+  subtitle: string;
+  description: string;
+  images: string[];
+  benefits: string[];
+}
+
+/**
+ * Service Page Component
+ * Fachowo.eu - Reusable service page template
+ * 
+ * Design: Bold Structural Modernism
+ * - Professional layout with hero image
+ * - Description and benefits sections
+ * - Image gallery
+ * - Contact CTA
+ */
+
+export function ServicePage({
+  title,
+  subtitle,
+  description,
+  images,
+  benefits,
+}: ServicePageProps) {
+  const [, navigate] = useLocation();
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SEOHead title={title} description={subtitle} />
+      <Navigation />
+      {/* Header */}
+      <div className="bg-primary text-white py-8">
+        <div className="container mx-auto px-4">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity cursor-pointer"
+          >
+            <ChevronLeft size={20} />
+            Wróć
+          </button>
+          <h1 className="font-display text-4xl font-bold">{title}</h1>
+          <p className="text-white/90 mt-2">{subtitle}</p>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-12">
+        {/* Hero Image */}
+        <div className="mb-12">
+          <div className="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
+            <img
+              src={images[selectedImage]}
+              alt={title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Image Thumbnails */}
+          {images.length > 1 && (
+            <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
+              {images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImage(idx)}
+                  className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                    selectedImage === idx
+                      ? 'border-accent'
+                      : 'border-border hover:border-accent/50'
+                  }`}
+                >
+                  <img src={img} alt={`${title} ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Description Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+          <div className="lg:col-span-2">
+            <h2 className="font-display text-3xl font-bold mb-4 text-primary">O usłudze</h2>
+            <p className="text-foreground/80 leading-relaxed mb-6">{description}</p>
+
+            {/* Benefits */}
+            {benefits.length > 0 && (
+              <div className="mt-8">
+                <h3 className="font-display text-2xl font-bold mb-4 text-primary">Korzyści</h3>
+                <ul className="space-y-3">
+                  {benefits.map((benefit, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent flex items-center justify-center mt-1">
+                        <span className="text-white text-sm font-bold">✓</span>
+                      </div>
+                      <span className="text-foreground/80">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar CTA */}
+          <div className="lg:col-span-1">
+            <div className="bg-secondary/5 border border-border rounded-lg p-6 sticky top-20">
+              <h3 className="font-display text-xl font-bold mb-4 text-primary">Zainteresowany?</h3>
+              <p className="text-foreground/80 mb-6">
+                Skontaktuj się z nami, aby uzyskać bezpłatną wycenę i konsultację.
+              </p>
+              <button
+                onClick={() => navigate('/kontakt')}
+                className="w-full px-6 py-3 bg-accent text-white font-medium rounded hover:bg-accent/90 transition-colors cursor-pointer"
+              >
+                Zapytaj o darmową wycenę wstępną
+              </button>
+              <div className="mt-6 pt-6 border-t border-border">
+                <p className="text-sm text-foreground/60 mb-2">
+                  <strong>Telefon:</strong>
+                </p>
+                <p className="text-foreground/80 font-medium">+48 12 345 67 89</p>
+                <p className="text-sm text-foreground/60 mt-4 mb-2">
+                  <strong>Email:</strong>
+                </p>
+                <p className="text-foreground/80 font-medium break-all">info@fachowo.eu</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

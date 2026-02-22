@@ -1,0 +1,89 @@
+import { ArrowRight } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+
+/**
+ * Hero Section Component
+ * Fachowo.eu - Construction, Renovations & Flooring
+ * 
+ * Design: Bold Structural Modernism
+ * - Full-width hero with background image
+ * - Diagonal section break (clip-path)
+ * - Large Oswald headings
+ * - Amber accent button
+ * - Parallax scroll effect
+ */
+
+interface HeroProps {
+  backgroundImage: string;
+}
+
+export default function Hero({ backgroundImage }: HeroProps) {
+  const [, navigate] = useLocation();
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+
+  return (
+    <section
+      ref={ref}
+      className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-primary"
+      aria-label="Hero section - Professional construction and renovation services"
+    >
+      {/* Parallax Background Image */}
+      <motion.div 
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url('${backgroundImage}')`,
+          y,
+          scale: 1.1 // Slightly larger to avoid white edges during parallax
+        }}
+      />
+
+      {/* Dark overlay for text contrast */}
+      <div className="absolute inset-0 bg-black/40 z-10" />
+
+      {/* Diagonal clip-path divider at bottom */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-24 bg-white z-20"
+        style={{
+          clipPath: 'polygon(0 30%, 100% 0, 100% 100%, 0 100%)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-20 container mx-auto px-4 text-center text-white max-w-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <span className="font-label text-accent text-sm tracking-widest">
+            Witaj w Fachowo.eu
+          </span>
+
+          <h1 className="font-display text-5xl md:text-7xl font-bold mt-4 mb-6 leading-tight" itemProp="headline">
+            Usługi Budowlane i Transportowe
+          </h1>
+
+          <p className="text-lg md:text-xl mb-8 text-white/90 font-light">
+            Szybkie i niezawodne usługi remontowe, transportowe i sprzątające dla Twojego domu i biura.
+          </p>
+
+          <button 
+            onClick={() => navigate('/kontakt')}
+            className="inline-flex items-center gap-2 px-8 py-3 bg-accent text-primary font-bold rounded hover:bg-accent/90 transition-all hover:gap-3 cursor-pointer"
+          >
+            Poproś o wycenę
+            <ArrowRight size={20} />
+          </button>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

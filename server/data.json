@@ -1,0 +1,82 @@
+{
+  "leads": [
+    {
+      "id": 1771792511195,
+      "name": "Test CLI",
+      "email": "fachowo.eu@gmail.com",
+      "phone": "123",
+      "message": "Test z curl",
+      "ip": "::1",
+      "country": "",
+      "city": "",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; pl-PL) WindowsPowerShell/5.1.19041.6456",
+      "created_at": "2026-02-22T20:35:11.195Z"
+    },
+    {
+      "id": 1771792714553,
+      "name": "Test 2",
+      "email": "fachowo.eu@gmail.com",
+      "phone": "123",
+      "message": "Test 2",
+      "ip": "::1",
+      "country": "",
+      "city": "",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; pl-PL) WindowsPowerShell/5.1.19041.6456",
+      "created_at": "2026-02-22T20:38:34.553Z"
+    },
+    {
+      "id": 1771793080975,
+      "name": "Kajetan",
+      "email": "kajetanwasilewskirugby@gmail.com",
+      "phone": "1231231321231",
+      "message": "asdasd",
+      "ip": "::ffff:127.0.0.1",
+      "country": "",
+      "city": "",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 OPR/127.0.0.0",
+      "created_at": "2026-02-22T20:44:40.975Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "Remont Biura w Centrum",
+      "category": "Komercyjne",
+      "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800",
+      "description": "Nowoczesne wykończenie biura open space",
+      "created_at": "2026-02-22T20:32:15.004Z"
+    },
+    {
+      "id": 2,
+      "title": "Remont Mieszkania",
+      "category": "Mieszkaniowe",
+      "image": "https://images.unsplash.com/photo-1484154218962-a1c002085d2f?auto=format&fit=crop&w=800",
+      "description": "Kompleksowy remont mieszkania z nowoczesnym wykończeniem",
+      "created_at": "2026-02-22T20:32:15.007Z"
+    },
+    {
+      "id": 3,
+      "title": "Układanie Podłóg",
+      "category": "Podłogi",
+      "image": "https://images.unsplash.com/photo-1581858726768-fdff21ac91a1?auto=format&fit=crop&w=800",
+      "description": "Montaż i wykończenie podłóg drewnianych",
+      "created_at": "2026-02-22T20:32:15.007Z"
+    },
+    {
+      "id": 4,
+      "title": "Salon Fryzjerski",
+      "category": "Komercyjne",
+      "image": "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800",
+      "description": "Adaptacja lokalu pod ekskluzywny salon fryzjerski",
+      "created_at": "2026-02-22T20:32:15.007Z"
+    },
+    {
+      "id": 5,
+      "title": "Apartament w Kamienicy",
+      "category": "Mieszkaniowe",
+      "image": "https://images.unsplash.com/photo-1502005229766-939cb9342722?auto=format&fit=crop&w=800",
+      "description": "Renowacja zabytkowego apartamentu ze sztukaterią",
+      "created_at": "2026-02-22T20:32:15.007Z"
+    }
+  ]
+}
