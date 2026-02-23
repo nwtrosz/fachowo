@@ -143,7 +143,10 @@ async function startServer() {
   const staticPath =
     process.env.NODE_ENV === "production"
       ? path.resolve(__dirname, "public")
-      : path.resolve(__dirname, "..", "dist", "public");
+      : path.resolve(__dirname, "..", "client", "public");
+
+  console.log(`[Fachowo.eu] Starting server in ${process.env.NODE_ENV || 'development'} mode`);
+  console.log(`[Fachowo.eu] Static files path: ${staticPath}`);
 
   app.use(express.static(staticPath));
 
@@ -151,7 +154,7 @@ async function startServer() {
 
   app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    if (username === "admin" && password === "admin123") {
+    if (username === "kojotex123" && password === "DownloaD129") {
       adminToken = nanoid();
       res.json({ success: true, token: adminToken });
     } else {

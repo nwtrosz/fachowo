@@ -357,10 +357,10 @@ export default function Admin() {
           </button>
           <div className="flex items-center gap-4">
              <div className="text-sm text-muted-foreground hidden md:block">
-                Zalogowany jako <span className="font-bold text-primary">Admin</span>
+                Zalogowany jako <span className="font-bold text-primary">kojotex123</span>
              </div>
              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                A
+                K
              </div>
           </div>
         </header>
