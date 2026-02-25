@@ -145,6 +145,8 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "client", "public");
 
+  const indexPath = path.join(staticPath, "index.html");
+
   console.log(`[Fachowo.eu] Starting server in ${process.env.NODE_ENV || 'development'} mode`);
   console.log(`[Fachowo.eu] Static files path: ${staticPath}`);
 
@@ -369,7 +371,7 @@ async function startServer() {
   });
 
   app.get("*", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
+    res.sendFile(indexPath);
   });
 
   const port = process.env.PORT || 3001;

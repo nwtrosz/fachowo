@@ -463,8 +463,9 @@ export default function Admin() {
                                   <Button variant="ghost" size="sm" onClick={() => setActiveTab('messages')}>Zobacz</Button>
                                 </TableCell>
                               </TableRow>
-                            ))}
-                            {leads.length === 0 && (
+                            );
+                          })}
+                          {leads.length === 0 && (
                               <TableRow>
                                 <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                                   Brak wiadomości.
@@ -510,8 +511,9 @@ export default function Admin() {
                                 <TableCell>{lead.email}<br/><span className="text-xs text-muted-foreground">{lead.phone}</span></TableCell>
                                 <TableCell>{lead.message}</TableCell>
                               </TableRow>
-                            ))}
-                            {leads.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-8">Brak wiadomości</TableCell></TableRow>}
+                            );
+                          })}
+                          {leads.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-8">Brak wiadomości</TableCell></TableRow>}
                           </TableBody>
                         </Table>
                     </Card>
