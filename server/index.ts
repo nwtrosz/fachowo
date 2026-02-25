@@ -343,7 +343,7 @@ async function startServer() {
       res.status(200).json({ success: true, message: "Message received" });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ success: false, error: error.errors[0].message });
+        return res.status(400).json({ success: false, error: error.issues[0].message });
       }
       console.error("Error processing contact form:", error);
       res.status(500).json({ success: false, message: "Internal server error" });

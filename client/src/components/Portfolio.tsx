@@ -42,7 +42,7 @@ export default function Portfolio() {
   }, []);
 
   // Generate unique categories for filtering
-  const categories = ['Wszystkie', ...new Set(projects.map((p) => p.category))];
+  const categories = ['Wszystkie', ...Array.from(new Set(projects.map((p) => p.category)))];
 
   // Filter projects based on the active filter
   const filteredProjects = activeFilter === 'Wszystkie'

@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "concurrently \"vite --host\" \"tsx server/index.ts\"",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && copy server\\data.json dist\\data.json",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && node -e \"import fs from 'fs'; fs.copyFileSync('server/data.json', 'dist/data.json')\"",
     "start": "NODE_ENV=production node dist/index.js",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",

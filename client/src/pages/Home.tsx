@@ -9,7 +9,7 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import { SEOHead } from '@/components/SEOHead';
 import ScrollProgress from '@/components/ui/ScrollProgress';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 /**
  * Home Page
@@ -27,7 +27,7 @@ export default function Home() {
   const heroImage = '/assets/hero.webp';
   const teamImage = '/assets/team.webp';
 
-  const sectionVariants = {
+  const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
