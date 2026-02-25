@@ -56,7 +56,7 @@ sudo nginx -t && sudo systemctl restart nginx
 # 7. Uruchomienie aplikacji przez PM2
 echo "🎬 Uruchamianie aplikacji..."
 pm2 delete $APP_NAME 2>/dev/null
-pm2 start dist/index.js --name "$APP_NAME"
+NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
 
 echo "✅ GOTOWE! Twoja strona powinna być dostępna pod adresem IP serwera."
