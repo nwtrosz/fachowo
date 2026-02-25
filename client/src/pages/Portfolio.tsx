@@ -52,12 +52,12 @@ export default function PortfolioPage() {
             <p className="text-lg text-foreground/70 mb-10 max-w-2xl mx-auto">
               Skontaktuj się z nami, aby otrzymać bezpłatną wycenę i fachowe doradztwo techniczne.
             </p>
-            <a 
+            <Link 
               href="/kontakt"
-              className="inline-block px-10 py-4 bg-accent text-white font-bold rounded-lg hover:bg-accent/90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="inline-block px-10 py-4 bg-accent text-white font-bold rounded-lg hover:bg-accent/90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
             >
               Poproś o darmową wycenę
-            </a>
+            </Link>
           </div>
         </section>
       </main>

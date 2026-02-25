@@ -1,4 +1,5 @@
 import { Hammer, Wrench, Layers } from 'lucide-react';
+import { Link } from 'wouter';
 
 /**
  * Services Section Component
@@ -16,18 +17,21 @@ const services = [
     title: 'Usługi Budowlane',
     description: 'Od mieszkań mieszkaniowych po duże kompleksy komercyjne, realizujemy projekty budowlane na czas i w ramach budżetu.',
     altText: 'Ikona usług budowlanych - młotek',
+    href: '/usluga/kompleksowe-wykonczenie'
   },
   {
     icon: Wrench,
     title: 'Usługi Transportowe',
     description: 'Profesjonalny transport mebli, przeprowadzki i utylizacja odpadów. Kompleksowe rozwiązania transportowe.',
     altText: 'Ikona usług transportowych - klucz',
+    href: '/usluga/przeprowadzki-transport'
   },
   {
     icon: Layers,
     title: 'Wykończenia',
     description: 'Profesjonalne wykończenia wnętrz, malowanie, gładzenie ścian i wiele innych usług wykończeniowych.',
     altText: 'Ikona usług wykończeniowych - warstwy',
+    href: '/usluga/malowanie'
   },
 ];
 
@@ -66,13 +70,13 @@ export default function Services() {
                 </p>
 
                 <div className="mt-6 pt-6 border-t border-border">
-                  <a
-                    href="#"
-                    className="text-accent font-bold text-sm hover:text-primary transition-colors flex items-center gap-2 group/link"
+                  <Link
+                    href={service.href}
+                    className="text-accent font-bold text-sm hover:text-primary transition-colors flex items-center gap-2 group/link cursor-pointer"
                   >
                     Dowiedz się więcej
                     <span className="group-hover/link:translate-x-1 transition-transform">→</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             );

@@ -357,10 +357,10 @@ export default function Admin() {
           </button>
           <div className="flex items-center gap-4">
              <div className="text-sm text-muted-foreground hidden md:block">
-                Zalogowany jako <span className="font-bold text-primary">kojotex123</span>
+                Zalogowany jako <span className="font-bold text-primary">popek</span>
              </div>
              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                K
+                P
              </div>
           </div>
         </header>
@@ -398,7 +398,13 @@ export default function Admin() {
                         </CardHeader>
                         <CardContent>
                           <div className="text-3xl font-bold text-primary">
-                             {leads.filter(l => new Date(l.created_at).toDateString() === new Date().toDateString()).length}
+                             {leads.filter(l => {
+                               try {
+                                 return l.created_at && new Date(l.created_at).toDateString() === new Date().toDateString();
+                               } catch (e) {
+                                 return false;
+                               }
+                             }).length}
                           </div>
                           <p className="text-xs text-muted-foreground mt-1">Potencjalni klienci z dzisiaj</p>
                         </CardContent>
@@ -433,11 +439,19 @@ export default function Admin() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {leads.slice(0, 5).map((lead) => (
-                              <TableRow key={lead.id}>
-                                <TableCell className="font-medium text-gray-600">
-                                  {format(new Date(lead.created_at), "d MMM, HH:mm", { locale: pl })}
-                                </TableCell>
+                            {leads.slice(0, 5).map((lead) => {
+                              let formattedDate = "Brak daty";
+                              try {
+                                if (lead.created_at) {
+                                  formattedDate = format(new Date(lead.created_at), "d MMM, HH:mm", { locale: pl });
+                                }
+                              } catch (e) {}
+                              
+                              return (
+                                <TableRow key={lead.id}>
+                                  <TableCell className="font-medium text-gray-600">
+                                    {formattedDate}
+                                  </TableCell>
                                 <TableCell>
                                   <div className="font-semibold text-primary">{lead.name}</div>
                                   <div className="text-xs text-muted-foreground">{lead.email}</div>
@@ -481,9 +495,17 @@ export default function Admin() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {leads.map((lead) => (
-                              <TableRow key={lead.id}>
-                                <TableCell>{format(new Date(lead.created_at), "dd.MM.yyyy HH:mm", { locale: pl })}</TableCell>
+                            {leads.map((lead) => {
+                              let formattedDate = "Brak daty";
+                              try {
+                                if (lead.created_at) {
+                                  formattedDate = format(new Date(lead.created_at), "dd.MM.yyyy HH:mm", { locale: pl });
+                                }
+                              } catch (e) {}
+                              
+                              return (
+                                <TableRow key={lead.id}>
+                                  <TableCell>{formattedDate}</TableCell>
                                 <TableCell className="font-medium">{lead.name}</TableCell>
                                 <TableCell>{lead.email}<br/><span className="text-xs text-muted-foreground">{lead.phone}</span></TableCell>
                                 <TableCell>{lead.message}</TableCell>

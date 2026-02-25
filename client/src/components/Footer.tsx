@@ -1,4 +1,5 @@
 import { Facebook, Linkedin, Twitter } from 'lucide-react';
+import { Link } from 'wouter';
 
 /**
  * Footer Component
@@ -30,19 +31,19 @@ export default function Footer() {
             <h4 className="font-bold mb-4">Usługi</h4>
             <ul className="space-y-2 text-sm text-white/70">
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <Link href="/usluga/kompleksowe-wykonczenie" className="hover:text-accent transition-colors">
                   Usługi Budowlane
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <Link href="/usluga/przeprowadzki-transport" className="hover:text-accent transition-colors">
                   Usługi Transportowe
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <Link href="/usluga/malowanie" className="hover:text-accent transition-colors">
                   Wykończenia
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -52,19 +53,19 @@ export default function Footer() {
             <h4 className="font-bold mb-4">Firma</h4>
             <ul className="space-y-2 text-sm text-white/70">
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <Link href="/#about" className="hover:text-accent transition-colors">
                   O Nas
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/portfolio" className="hover:text-accent transition-colors">
+                <Link href="/portfolio" className="hover:text-accent transition-colors">
                   Portfolio
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <Link href="/kontakt" className="hover:text-accent transition-colors">
                   Kontakt
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

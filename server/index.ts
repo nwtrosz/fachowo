@@ -154,7 +154,7 @@ async function startServer() {
 
   app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    if (username === "kojotex123" && password === "DownloaD129") {
+    if (username === "popek" && password === "admin123") {
       adminToken = nanoid();
       res.json({ success: true, token: adminToken });
     } else {

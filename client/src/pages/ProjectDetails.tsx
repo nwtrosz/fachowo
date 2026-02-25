@@ -162,12 +162,12 @@ export default function ProjectDetails() {
                       </div>
                     </div>
                     
-                    <a 
+                    <Link 
                       href="/kontakt"
-                      className="block w-full py-4 bg-primary text-white text-center font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-xl"
+                      className="block w-full py-4 bg-primary text-white text-center font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-xl cursor-pointer"
                     >
                       Zapytaj o podobny projekt
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
