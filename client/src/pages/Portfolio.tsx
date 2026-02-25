@@ -2,6 +2,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import PortfolioComponent from '@/components/Portfolio';
 import { motion } from 'framer-motion';
+import { Link } from 'wouter';
 
 /**
  * Portfolio Page

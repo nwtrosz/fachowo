@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRoute, useLocation } from 'wouter';
+import { useRoute, useLocation, Link } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { SEOHead } from '@/components/SEOHead';
