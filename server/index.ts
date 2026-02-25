@@ -141,11 +141,11 @@ async function startServer() {
   app.use(requestIp.mw());
 
   const staticPath = process.env.NODE_ENV === "production"
-    ? path.resolve(__dirname, "public")
+    ? path.resolve("dist", "public")
     : path.resolve(__dirname, "..", "client", "public");
 
   const indexPath = process.env.NODE_ENV === "production"
-    ? path.resolve(__dirname, "public", "index.html")
+    ? path.join(staticPath, "index.html")
     : path.resolve(__dirname, "..", "client", "index.html");
 
   console.log(`[Fachowo.eu] NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
