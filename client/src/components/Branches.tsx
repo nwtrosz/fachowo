@@ -41,7 +41,7 @@ export default function Branches() {
         </div>
 
         {/* Branches Grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {branches.map((branch, index) => (
             <div
               key={index}
