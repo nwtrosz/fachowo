@@ -140,20 +140,22 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(requestIp.mw());
 
-  const staticPath =
-    process.env.NODE_ENV === "production"
-      ? path.resolve(__dirname, "public")
-      : path.resolve(__dirname, "..", "client", "public");
+  const staticPath = process.env.NODE_ENV === "production"
+    ? path.resolve(__dirname, "public")
+    : path.resolve(__dirname, "..", "client", "public");
 
-  // In production, Vite puts index.html in the root of the output folder (staticPath)
-  // In development, tsx runs from root or server folder, index.html is in client/index.html
-  const indexPath = process.env.NODE_ENV === "production" 
-    ? path.join(staticPath, "index.html")
+  const indexPath = process.env.NODE_ENV === "production"
+    ? path.resolve(__dirname, "public", "index.html")
     : path.resolve(__dirname, "..", "client", "index.html");
 
-  console.log(`[Fachowo.eu] Starting server in ${process.env.NODE_ENV || 'development'} mode`);
-  console.log(`[Fachowo.eu] Static files path: ${staticPath}`);
-  console.log(`[Fachowo.eu] Index file path: ${indexPath}`);
+  console.log(`[Fachowo.eu] NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`[Fachowo.eu] Static Path: ${staticPath}`);
+  console.log(`[Fachowo.eu] Index Path: ${indexPath}`);
+
+  // Sprawdź czy plik index.html istnieje
+  if (!fs.existsSync(indexPath)) {
+    console.error(`🔴 KRYTYCZNY BŁĄD: Nie znaleziono pliku index.html w lokalizacji: ${indexPath}`);
+  }
 
   app.use(express.static(staticPath));
 

@@ -27,6 +27,7 @@ fi
 
 # 4. Instalacja bibliotek projektu i budowanie
 echo "🛠 Budowanie projektu..."
+rm -rf dist
 pnpm install
 pnpm build
 
