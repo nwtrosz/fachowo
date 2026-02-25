@@ -145,10 +145,15 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "client", "public");
 
-  const indexPath = path.join(staticPath, "index.html");
+  // In production, Vite puts index.html in the root of the output folder (staticPath)
+  // In development, tsx runs from root or server folder, index.html is in client/index.html
+  const indexPath = process.env.NODE_ENV === "production" 
+    ? path.join(staticPath, "index.html")
+    : path.resolve(__dirname, "..", "client", "index.html");
 
   console.log(`[Fachowo.eu] Starting server in ${process.env.NODE_ENV || 'development'} mode`);
   console.log(`[Fachowo.eu] Static files path: ${staticPath}`);
+  console.log(`[Fachowo.eu] Index file path: ${indexPath}`);
 
   app.use(express.static(staticPath));
 
