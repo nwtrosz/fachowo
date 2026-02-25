@@ -57,6 +57,7 @@ sudo nginx -t && sudo systemctl restart nginx
 # 7. Uruchomienie aplikacji przez PM2
 echo "🎬 Uruchamianie aplikacji..."
 pm2 delete $APP_NAME 2>/dev/null
+sudo fuser -k $PORT/tcp 2>/dev/null
 NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
 
