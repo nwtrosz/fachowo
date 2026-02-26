@@ -193,8 +193,8 @@ export default function Admin() {
     const token = localStorage.getItem('adminToken');
     if (token) {
       setIsAuthenticated(true);
-      fetchData();
-      const interval = setInterval(fetchData, 30000); // Auto-refresh every 30s
+      fetchData(true); // Initial fetch, no sound
+      const interval = setInterval(() => fetchData(false), 10000); // Check every 10s
       return () => clearInterval(interval);
     } else {
       setLoading(false);
@@ -216,11 +216,15 @@ export default function Admin() {
   }, [editingProject]);
 
   const playNotificationSound = () => {
+    // Standard system notification sound
     const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
-    audio.play().catch(() => {});
+    audio.volume = 0.5;
+    audio.play().catch(() => {
+      console.log("Audio blocked by browser. Interaction required.");
+    });
   };
 
-  const fetchData = async () => {
+  const fetchData = async (isInitial = false) => {
     const token = localStorage.getItem('adminToken');
     if (!token) return;
 
@@ -239,15 +243,22 @@ export default function Admin() {
 
       if (leadsRes.ok) {
         const newLeads: Lead[] = await leadsRes.json();
+        
         setLeads(prevLeads => {
-          // Compare only active (non-archived) leads for notification
-          const prevActive = prevLeads.filter(l => !l.archived).length;
-          const newActive = newLeads.filter(l => !l.archived).length;
-          
-          if (prevLeads.length > 0 && newActive > prevActive) {
-            playNotificationSound();
-            toast.success("Nowa wiadomość od klienta!", { icon: "🔔" });
+          // If this is the very first fetch after login/mount, just set the baseline
+          if (isInitial || prevLeads.length === 0) {
+            return newLeads;
           }
+
+          // Check if any NEW non-archived leads arrived
+          const prevActiveCount = prevLeads.filter(l => !l.archived).length;
+          const newActiveCount = newLeads.filter(l => !l.archived).length;
+
+          if (newActiveCount > prevActiveCount) {
+            playNotificationSound();
+            toast.success("Nowa wiadomość od klienta!", { icon: "🔔", duration: 5000 });
+          }
+          
           return newLeads;
         });
       }
@@ -301,7 +312,10 @@ export default function Admin() {
         setIsAuthenticated(true);
         setLoggedInUser(data.user);
         setAuthError("");
-        fetchData();
+        fetchData(true);
+        // Start interval after login
+        const interval = setInterval(() => fetchData(false), 10000);
+        // Clean up on unmount would be ideal but simpler here for now
       } else {
         setAuthError(data.error || "Błąd logowania");
       }
