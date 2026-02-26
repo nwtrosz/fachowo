@@ -32,6 +32,7 @@ const projectSchema = z.object({
 
 // Admin Session
 let adminToken = "";
+let currentAdminUser = "";
 
 // Email configuration
 const EMAIL_USER = "fachowo.eu@gmail.com"; 
@@ -96,9 +97,19 @@ async function startServer() {
   // --- API ---
   app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    if (username === "popek" && password === "admin123") {
+    
+    // User definitions
+    const users = [
+      { username: "popek", password: "admin123", role: "user" },
+      { username: "admin", password: "admin123", role: "admin" }
+    ];
+
+    const foundUser = users.find(u => u.username === username && u.password === password);
+
+    if (foundUser) {
       adminToken = nanoid();
-      res.json({ success: true, token: adminToken });
+      currentAdminUser = foundUser.username;
+      res.json({ success: true, token: adminToken, user: foundUser.username });
     } else {
       res.status(401).json({ success: false, error: "Błędne dane" });
     }
@@ -138,6 +149,38 @@ async function startServer() {
   // Admin: Archive Lead
   app.post("/api/admin/leads/:id/archive", (req, res) => {
     try {
+      const id = Number(req.params.id);
+      const db = readDb();
+      const lead = db.leads.find(l => l.id === id);
+      if (lead) {
+        // @ts-ignore
+        lead.archived = !lead.archived;
+        writeDb(db);
+        res.json({ success: true, archived: lead.archived });
+      } else {
+        res.status(404).json({ error: "Lead not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Failed to archive lead" });
+    }
+  });
+
+  // Admin: Permanent Delete Lead (ONLY ADMIN USER)
+  app.delete("/api/admin/leads/:id", (req, res) => {
+    try {
+      if (currentAdminUser !== "admin") {
+        return res.status(403).json({ error: "Brak uprawnień do usuwania" });
+      }
+
+      const id = Number(req.params.id);
+      const db = readDb();
+      db.leads = db.leads.filter(l => l.id !== id);
+      writeDb(db);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Błąd podczas usuwania wiadomości" });
+    }
+  });
       const id = Number(req.params.id);
       const db = readDb();
       const lead = db.leads.find(l => l.id === id);

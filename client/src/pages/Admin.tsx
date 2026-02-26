@@ -159,6 +159,7 @@ export default function Admin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState("");
 
   // Data State
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -216,6 +217,7 @@ export default function Admin() {
       const data = await res.json();
       if (res.ok && data.success) {
         setIsAuthenticated(true);
+        setLoggedInUser(data.user);
         setAuthError("");
         fetchData();
       } else {
@@ -325,6 +327,24 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Failed to archive lead", error);
+    }
+  };
+
+  const handleDeleteLead = async (id: number) => {
+    if (!confirm("Czy na pewno chcesz TRWALE USUNĄĆ tę wiadomość z bazy? Tej operacji nie można cofnąć.")) return;
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/leads/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setLeads(leads.filter(l => l.id !== id));
+        if (selectedLeadHistory?.id === id) setSelectedLeadHistory(null);
+      } else {
+        alert("Błąd podczas usuwania. Tylko główny administrator ma te uprawnienia.");
+      }
+    } catch (error) {
+      console.error("Failed to delete lead", error);
     }
   };
 
@@ -644,10 +664,10 @@ export default function Admin() {
           </button>
           <div className="flex items-center gap-4">
              <div className="text-sm text-muted-foreground hidden md:block">
-                Zalogowany jako <span className="font-bold text-primary">popek</span>
+                Zalogowany jako <span className="font-bold text-primary uppercase">{loggedInUser}</span>
              </div>
-             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                P
+             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold uppercase">
+                {loggedInUser.charAt(0)}
              </div>
           </div>
         </header>
@@ -917,20 +937,35 @@ export default function Admin() {
                                                       </Badge>
                                                     </TableCell>
                                                     <TableCell className="max-w-xs truncate">{lead.message}</TableCell>
-                                                    <TableCell className="text-right">
-                                                      <Button 
-                                                        variant="ghost" 
-                                                        size="sm" 
-                                                        className="text-muted-foreground hover:text-primary"
-                                                        onClick={(e) => {
-                                                          e.stopPropagation();
-                                                          handleArchiveLead(lead.id);
-                                                        }}
-                                                      >
-                                                        {showArchived ? "Przywróć" : "Archiwizuj"}
-                                                      </Button>
-                                                    </TableCell>
-                                                  </TableRow>
+                                                                                        <TableCell className="text-right">
+                                                                                          <div className="flex justify-end gap-2">
+                                                                                            <Button 
+                                                                                              variant="ghost" 
+                                                                                              size="sm" 
+                                                                                              className="text-muted-foreground hover:text-primary"
+                                                                                              onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                handleArchiveLead(lead.id);
+                                                                                              }}
+                                                                                            >
+                                                                                              {showArchived ? "Przywróć" : "Archiwizuj"}
+                                                                                            </Button>
+                                                                                            
+                                                                                            {loggedInUser === 'admin' && (
+                                                                                              <Button 
+                                                                                                variant="ghost" 
+                                                                                                size="sm" 
+                                                                                                className="text-destructive hover:bg-destructive/10"
+                                                                                                onClick={(e) => {
+                                                                                                  e.stopPropagation();
+                                                                                                  handleDeleteLead(lead.id);
+                                                                                                }}
+                                                                                              >
+                                                                                                <Trash2 size={14} />
+                                                                                              </Button>
+                                                                                            )}
+                                                                                          </div>
+                                                                                        </TableCell>                                                  </TableRow>
                                                 );
                                               })}
                                             {leads.filter(l => !!l.archived === showArchived).length === 0 && (
