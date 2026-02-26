@@ -782,29 +782,9 @@ export default function Admin() {
                     </Card>
                   </div>
                 )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <Button variant="ghost" size="sm" onClick={() => setActiveTab('messages')}>Zobacz</Button>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                          {leads.length === 0 && (
-                              <TableRow>
-                                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                                  Brak wiadomości.
-                                </TableCell>
-                              </TableRow>
-                            )}
-                          </TableBody>
-                        </Table>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
 
-                                {/* Messages View */}
-                                {activeTab === 'messages' && (
+                {/* Messages View */}
+                {activeTab === 'messages' && (
                                   <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                       <h1 className="text-3xl font-bold text-gray-900">Wiadomości od Klientów</h1>
