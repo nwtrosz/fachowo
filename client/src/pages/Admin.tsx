@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
+import { motion } from "framer-motion";
 import { 
   Loader2, 
   LayoutDashboard, 
