@@ -4,42 +4,46 @@
 APP_NAME="fachowo-oryginal"
 PORT=3001
 
-echo "🚀 Rozpoczynam automatyczną konfigurację serwera dla: $APP_NAME"
+echo "🚀 ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA: $APP_NAME"
 
-# 1. Aktualizacja zależności systemowych (jeśli nie zostały zainstalowane)
+# 1. Aktualizacja zależności systemowych
 echo "📦 Sprawdzam pakiety systemowe..."
 sudo apt update
 sudo apt install -y nginx git curl
 
-# 2. Sprawdzenie pnpm
-if ! command -v pnpm &> /dev/null
-then
+# 2. Optymalizacja Nginx (Limity i Timeouty)
+echo "🛠 Optymalizuję Nginx (100MB, 5min timeout)..."
+sudo sed -i '/client_max_body_size/d' /etc/nginx/nginx.conf
+sudo sed -i '/proxy_read_timeout/d' /etc/nginx/nginx.conf
+sudo sed -i '/proxy_connect_timeout/d' /etc/nginx/nginx.conf
+sudo sed -i '/proxy_send_timeout/d' /etc/nginx/nginx.conf
+sudo sed -i 's/http {/http {\n    client_max_body_size 100M;\n    proxy_read_timeout 300;\n    proxy_connect_timeout 300;\n    proxy_send_timeout 300;/g' /etc/nginx/nginx.conf
+
+# 3. Sprawdzenie pnpm i pm2
+if ! command -v pnpm &> /dev/null; then
     echo "📥 Instalacja pnpm..."
     sudo npm install -g pnpm
 fi
-
-# 3. Sprawdzenie pm2
-if ! command -v pm2 &> /dev/null
-then
+if ! command -v pm2 &> /dev/null; then
     echo "📥 Instalacja pm2..."
     sudo npm install -g pm2
 fi
 
-# 4. Instalacja bibliotek projektu i budowanie
-echo "🛠 Budowanie projektu..."
-
-# Migracja danych przed czyszczeniem dist (zabezpieczenie)
+# 4. Przygotowanie folderów i uprawnień
+echo "📂 Przygotowuję strukturę danych..."
 mkdir -p storage/uploads
+sudo chown -R $USER:$USER storage
+sudo chmod -R 775 storage
+
+# 5. Instalacja bibliotek projektu i budowanie
+echo "🛠 Budowanie projektu..."
+# Migracja danych przed czyszczeniem dist (zabezpieczenie)
 if [ -f "dist/data.json" ]; then
-    echo "📦 Migracja bazy danych..."
-    mv dist/data.json storage/data.json
-elif [ -f "server/data.json" ]; then
-    echo "📦 Migracja bazy danych z serwera..."
+    mv dist/data.json storage/data.json 2>/dev/null
+elif [ -f "server/data.json" ] && [ ! -f "storage/data.json" ]; then
     cp server/data.json storage/data.json
 fi
-
 if [ -d "dist/public/uploads" ]; then
-    echo "🖼 Migracja zdjęć projektów..."
     cp -r dist/public/uploads/* storage/uploads/ 2>/dev/null
 fi
 
@@ -47,15 +51,13 @@ rm -rf dist
 pnpm install
 pnpm build
 
-# 5. Konfiguracja Nginx (Nadpisanie pliku default)
+# 6. Konfiguracja Reverse Proxy w Nginx
 echo "🌐 Konfiguracja Nginx na porcie $PORT..."
 sudo truncate -s 0 /etc/nginx/sites-available/default
 echo "server {
     listen 80 default_server;
     listen [::]:80 default_server;
-
     server_name _;
-
     location / {
         proxy_pass http://localhost:$PORT;
         proxy_http_version 1.1;
@@ -66,15 +68,16 @@ echo "server {
     }
 }" | sudo tee /etc/nginx/sites-available/default > /dev/null
 
-# 6. Restart Nginx
+# 7. Restart Nginx
 echo "🔄 Restartowanie Nginx..."
 sudo nginx -t && sudo systemctl restart nginx
 
-# 7. Uruchomienie aplikacji przez PM2
+# 8. Uruchomienie aplikacji przez PM2
 echo "🎬 Uruchamianie aplikacji..."
 pm2 delete $APP_NAME 2>/dev/null
 sudo fuser -k $PORT/tcp 2>/dev/null
 NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
 
-echo "✅ GOTOWE! Twoja strona powinna być dostępna pod adresem IP serwera."
+echo "✅ KONFIGURACJA ZAKOŃCZONA SUKCESEM!"
+echo "Twoja strona Fachowo.eu powinna być już dostępna i zoptymalizowana."
