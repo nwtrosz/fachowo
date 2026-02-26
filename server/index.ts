@@ -282,7 +282,9 @@ async function startServer() {
 
   app.delete("/api/admin/leads/:id", authMiddleware, (req: any, res) => {
     try {
-      if (req.user.username !== "admin") return res.status(403).end();
+      if (req.user.username !== "admin") {
+        return res.status(403).json({ error: "Brak uprawnień" });
+      }
       const db = readDb();
       db.leads = db.leads.filter(l => l.id !== Number(req.params.id));
       writeDb(db);

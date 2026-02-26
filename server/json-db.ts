@@ -45,11 +45,16 @@ export const readDb = (): DB => {
   }
 };
 
-// Write DB
+// Atomic & Asynchronous Write DB
 export const writeDb = (data: DB) => {
+  const tempPath = `${DB_PATH}.tmp`;
   try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+    // Write to a temporary file first
+    fs.writeFileSync(tempPath, JSON.stringify(data, null, 2));
+    // Rename it to the actual DB path (atomic operation in Linux/Unix)
+    fs.renameSync(tempPath, DB_PATH);
   } catch (e) {
     console.error("DB Write Error:", e);
+    if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
   }
 };
