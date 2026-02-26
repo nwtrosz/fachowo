@@ -194,6 +194,8 @@ export default function Admin() {
     if (token) {
       setIsAuthenticated(true);
       fetchData();
+      const interval = setInterval(fetchData, 30000); // Auto-refresh every 30s
+      return () => clearInterval(interval);
     } else {
       setLoading(false);
     }
@@ -213,11 +215,15 @@ export default function Admin() {
     }
   }, [editingProject]);
 
+  const playNotificationSound = () => {
+    const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
+    audio.play().catch(() => {});
+  };
+
   const fetchData = async () => {
     const token = localStorage.getItem('adminToken');
     if (!token) return;
 
-    setLoading(true);
     try {
       const headers = { 'Authorization': `Bearer ${token}` };
       const [leadsRes, statsRes, projectsRes] = await Promise.all([
@@ -231,7 +237,20 @@ export default function Admin() {
         return;
       }
 
-      if (leadsRes.ok) setLeads(await leadsRes.json());
+      if (leadsRes.ok) {
+        const newLeads: Lead[] = await leadsRes.json();
+        setLeads(prevLeads => {
+          // Compare only active (non-archived) leads for notification
+          const prevActive = prevLeads.filter(l => !l.archived).length;
+          const newActive = newLeads.filter(l => !l.archived).length;
+          
+          if (prevLeads.length > 0 && newActive > prevActive) {
+            playNotificationSound();
+            toast.success("Nowa wiadomość od klienta!", { icon: "🔔" });
+          }
+          return newLeads;
+        });
+      }
       if (statsRes.ok) setStats(await statsRes.json());
       if (projectsRes.ok) setProjects(await projectsRes.json());
       
@@ -240,6 +259,21 @@ export default function Admin() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Group leads into threads (Conversations)
+  const getThreadedLeads = () => {
+    const groups: { [key: string]: Lead } = {};
+    
+    // Sort by date ascending to process oldest first (so newest wins properties)
+    const sortedLeads = [...leads].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    
+    sortedLeads.forEach(lead => {
+      const key = (lead.email || lead.phone || lead.id).toString().toLowerCase();
+      groups[key] = lead; // Newest lead for this contact will be the representative
+    });
+
+    return Object.values(groups).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -384,68 +418,60 @@ export default function Admin() {
     } catch (error) { console.error("Failed to save order", error); }
   };
 
-    const handleSendReply = async (id: number) => {
-      if (!replyMessage.trim()) return;
-      setIsSendingReply(true);
-      const token = localStorage.getItem('adminToken');
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/leads/${id}/reply`, {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ message: replyMessage })
-        });
-        if (res.ok) {
-          const newReply: Reply = { id: Date.now(), message: replyMessage, created_at: new Date().toISOString() };
-          setLeads(leads.map(l => l.id === id ? { ...l, replies: [...(l.replies || []), newReply] } : l));
-          setReplyMessage("");
-          toast.success("Odpowiedź została wysłana e-mailem!");
-        } else {
-          toast.error("Błąd podczas wysyłania odpowiedzi.");
-        }
-      } catch (error) { 
-        console.error("Failed to reply", error);
-        toast.error("Błąd połączenia.");
-      }
-      finally { setIsSendingReply(false); }
-    };
-  
-    const handleProjectSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!editingProject && (!selectedFiles || selectedFiles.length === 0)) {
-          toast.error("Proszę wybrać co najmniej jedno zdjęcie.");
-          return;
-      }
-      setUploading(true);
-      setUploadProgress(0);
-      const formData = new FormData();
-      formData.append('title', newProject.title);
-      formData.append('category', newProject.category);
-      formData.append('description', newProject.description);
-      if (selectedFiles) { for (let i = 0; i < selectedFiles.length; i++) formData.append('images', selectedFiles[i]); }
-      const url = editingProject ? `${API_BASE}/api/admin/projects/${editingProject.id}` : `${API_BASE}/api/admin/projects`;
-      const token = localStorage.getItem('adminToken');
-      const xhr = new XMLHttpRequest();
-      
-      xhr.upload.addEventListener('progress', (e) => { if (e.lengthComputable) setUploadProgress(Math.round((e.loaded * 100) / e.total)); });
-      xhr.addEventListener('load', async () => {
-        setUploading(false);
-        if (xhr.status >= 200 && xhr.status < 300) {
-          setEditingProject(null);
-          setFormKey(prev => prev + 1);
-          setPortfolioView('list');
-          fetchData();
-          toast.success(editingProject ? "Zmiany zostały zapisane!" : "Nowy projekt został dodany do portfolio!");
-        } else { 
-          toast.error("Wystąpił błąd podczas zapisu projektu."); 
-        }
+  const handleSendReply = async (id: number) => {
+    if (!replyMessage.trim()) return;
+    setIsSendingReply(true);
+    const token = localStorage.getItem('adminToken');
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/leads/${id}/reply`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: replyMessage })
       });
-      xhr.open(editingProject ? 'PUT' : 'POST', url);
-      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-      xhr.send(formData);
-    };
+      if (res.ok) {
+        const newReply: Reply = { id: Date.now(), message: replyMessage, created_at: new Date().toISOString() };
+        setLeads(leads.map(l => l.id === id ? { ...l, replies: [...(l.replies || []), newReply] } : l));
+        setReplyMessage("");
+        toast.success("Odpowiedź została wysłana e-mailem!");
+      }
+    } catch (error) { console.error("Failed to reply", error); }
+    finally { setIsSendingReply(false); }
+  };
+
+  const handleProjectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProject && (!selectedFiles || selectedFiles.length === 0)) {
+        toast.error("Wybierz zdjęcia!");
+        return;
+    }
+    setUploading(true);
+    setUploadProgress(0);
+    const formData = new FormData();
+    formData.append('title', newProject.title);
+    formData.append('category', newProject.category);
+    formData.append('description', newProject.description);
+    if (selectedFiles) { for (let i = 0; i < selectedFiles.length; i++) formData.append('images', selectedFiles[i]); }
+    const url = editingProject ? `${API_BASE}/api/admin/projects/${editingProject.id}` : `${API_BASE}/api/admin/projects`;
+    const token = localStorage.getItem('adminToken');
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', (e) => { if (e.lengthComputable) setUploadProgress(Math.round((e.loaded * 100) / e.total)); });
+    xhr.addEventListener('load', async () => {
+      setUploading(false);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setEditingProject(null);
+        setFormKey(prev => prev + 1);
+        setPortfolioView('list');
+        fetchData();
+        toast.success("Zapisano!");
+      } else { alert("Błąd zapisu"); }
+    });
+    xhr.open(editingProject ? 'PUT' : 'POST', url);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.send(formData);
+  };
 
   if (!isAuthenticated) {
     return (
@@ -470,7 +496,6 @@ export default function Admin() {
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
-      {/* Sidebar Mobile Overlay */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.div 
@@ -529,23 +554,28 @@ export default function Admin() {
               <>
                 {activeTab === 'dashboard' && (
                   <div className="space-y-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Pulpit Zarządzania</h1>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Pulpit Zarządzania</h1>
+                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm w-fit">
+                        {format(new Date(), "EEEE, d MMMM yyyy", { locale: pl })}
+                      </div>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <Card className="border-l-4 border-l-primary"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Wszystkie Zapytania</CardHeader><CardContent><div className="text-3xl font-bold">{stats?.totalLeads || 0}</div></CardContent></Card>
                       <Card className="border-l-4 border-l-green-500"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Dzisiejsze Goście</CardHeader><CardContent><div className="text-3xl font-bold">{stats?.uniqueVisitors || 0}</div></CardContent></Card>
                       <Card className="border-l-4 border-l-accent"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Projekty</CardHeader><CardContent><div className="text-3xl font-bold">{projects.length}</div></CardContent></Card>
                     </div>
-                    <Card className="shadow-md overflow-hidden rounded-2xl">
-                      <CardHeader className="bg-white border-b flex flex-row items-center justify-between">
+                    <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
+                      <CardHeader className="border-b flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">Ostatnie Wiadomości</CardTitle>
                         <Button variant="ghost" size="sm" className="text-accent font-bold" onClick={() => setActiveTab('messages')}>WSZYSTKIE</Button>
                       </CardHeader>
                       <Table>
-                        <TableHeader><TableRow className="bg-slate-50"><TableHead>Data</TableHead><TableHead>Klient</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
+                        <TableHeader><TableRow className="bg-slate-50/50"><TableHead>Data</TableHead><TableHead>Klient</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
                         <TableBody>
-                          {leads.filter(l => !l.archived).slice(0, 5).map(lead => (
+                          {getThreadedLeads().filter(l => !l.archived).slice(0, 5).map(lead => (
                             <TableRow key={lead.id} className="hover:bg-slate-50/50">
-                              <TableCell className="text-xs text-gray-400 font-bold uppercase">{format(new Date(lead.created_at), "d MMM", { locale: pl })}</TableCell>
+                              <TableCell className="text-[10px] text-gray-400 font-bold uppercase">{format(new Date(lead.created_at), "d MMM, HH:mm", { locale: pl })}</TableCell>
                               <TableCell><div className="font-bold text-primary">{lead.name}</div><div className="text-[10px] text-muted-foreground">{lead.email}</div></TableCell>
                               <TableCell className="text-right"><Button variant="outline" size="sm" onClick={() => { setSelectedLeadHistory(lead); setActiveTab('messages'); }}><MessageSquare size={14} /></Button></TableCell>
                             </TableRow>
@@ -559,7 +589,7 @@ export default function Admin() {
                 {activeTab === 'messages' && (
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <h1 className="text-2xl font-bold">Zarządzanie Wiadomościami</h1>
+                      <h1 className="text-2xl font-bold">Wiadomości</h1>
                       <div className="flex gap-1 bg-white p-1 rounded-xl border shadow-sm">
                         <Button variant={!showArchived ? "default" : "ghost"} size="sm" onClick={() => setShowArchived(false)} className="rounded-lg h-8">Aktywne</Button>
                         <Button variant={showArchived ? "default" : "ghost"} size="sm" onClick={() => setShowArchived(true)} className="rounded-lg h-8">Archiwum</Button>
@@ -567,81 +597,62 @@ export default function Admin() {
                     </div>
 
                     {selectedLeadHistory ? (
-                      <Card className="border-accent shadow-2xl rounded-3xl overflow-hidden">
-                        <CardHeader className="bg-slate-50/50 border-b flex flex-row items-center justify-between">
-                          <div><CardTitle>{selectedLeadHistory.name}</CardTitle><CardDescription>{selectedLeadHistory.email} | {selectedLeadHistory.phone}</CardDescription></div>
-                          <Button variant="outline" size="sm" onClick={() => setSelectedLeadHistory(null)}><X className="mr-2 h-4 w-4" /> Zamknij</Button>
+                      <Card className="border-accent shadow-2xl rounded-3xl overflow-hidden bg-white border-none">
+                        <CardHeader className="bg-slate-50/50 border-b flex flex-row items-center justify-between p-6">
+                          <div><CardTitle className="text-2xl font-bold text-primary">{selectedLeadHistory.name}</CardTitle><CardDescription className="font-medium">{selectedLeadHistory.email} | {selectedLeadHistory.phone}</CardDescription></div>
+                          <Button variant="outline" size="sm" onClick={() => setSelectedLeadHistory(null)} className="rounded-xl"><X className="mr-2 h-4 w-4" /> Zamknij</Button>
                         </CardHeader>
                         <CardContent className="p-6 space-y-8">
-                          <div className="space-y-4">
-                            {[...leads.filter(l => l.email === selectedLeadHistory.email || l.phone === selectedLeadHistory.phone).map(h => ({ ...h, type: 'inquiry' })), ...(leads.find(l => l.id === selectedLeadHistory.id)?.replies || []).map(r => ({ ...r, type: 'reply' }))].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map((item: any) => (
-                              <div key={`${item.type}-${item.id}`} className={cn("p-4 rounded-2xl border-l-4", item.type === 'inquiry' ? "bg-white border border-slate-100 border-l-accent shadow-sm" : "bg-primary/5 border border-primary/10 border-l-primary border-dashed ml-8")}>
-                                <div className="flex justify-between mb-2"><Badge variant={item.type === 'inquiry' ? "outline" : "default"} className="text-[9px] uppercase">{item.type === 'inquiry' ? "KLIENT" : "Ty"}</Badge><span className="text-[10px] text-muted-foreground">{format(new Date(item.created_at), "dd.MM HH:mm", { locale: pl })}</span></div>
-                                <p className="text-sm whitespace-pre-wrap">{item.message}</p>
+                          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            {[...leads.filter(l => (l.email && l.email === selectedLeadHistory.email) || (l.phone && l.phone === selectedLeadHistory.phone)).map(h => ({ ...h, type: 'inquiry' })), ...(leads.find(l => l.id === selectedLeadHistory.id)?.replies || []).map(r => ({ ...r, type: 'reply' }))].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map((item: any) => (
+                              <div key={`${item.type}-${item.id}`} className={cn("p-5 rounded-2xl border-l-4 shadow-sm", item.type === 'inquiry' ? "bg-white border border-slate-100 border-l-accent" : "bg-primary/5 border border-primary/10 border-l-primary border-dashed ml-8")}>
+                                <div className="flex justify-between mb-2">
+                                  <Badge variant={item.type === 'inquiry' ? "outline" : "default"} className="text-[9px] uppercase tracking-widest">{item.type === 'inquiry' ? "KLIENT" : "Ty"}</Badge>
+                                  <span className="text-[10px] font-bold text-muted-foreground uppercase">{format(new Date(item.created_at), "dd.MM HH:mm", { locale: pl })}</span>
+                                </div>
+                                <p className="text-sm leading-relaxed text-slate-700">{item.message}</p>
                               </div>
                             ))}
                           </div>
-                          <div className="pt-6 border-t"><Textarea placeholder="Treść Twojej odpowiedzi..." className="mb-4 min-h-[120px] rounded-2xl bg-slate-50" value={replyMessage} onChange={(e) => setReplyMessage(e.target.value)} />
-                            <div className="flex justify-end gap-2"><Button variant="ghost" onClick={() => setReplyMessage("")}>Wyczyść</Button><Button disabled={isSendingReply || !replyMessage.trim()} onClick={() => handleSendReply(selectedLeadHistory.id)} className="rounded-xl px-8 h-12 font-bold">{isSendingReply ? <Loader2 className="animate-spin" /> : "Wyślij E-mail"}</Button></div>
+                          <div className="pt-6 border-t border-slate-100">
+                            <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-4">Szybka odpowiedź</h4>
+                            <Textarea placeholder="Napisz wiadomość do klienta..." className="mb-4 min-h-[150px] rounded-2xl bg-slate-50 border-none shadow-inner focus-visible:ring-accent p-4" value={replyMessage} onChange={(e) => setReplyMessage(e.target.value)} />
+                            <div className="flex justify-end gap-2">
+                              <Button variant="ghost" onClick={() => setReplyMessage("")}>Wyczyść</Button>
+                              <Button disabled={isSendingReply || !replyMessage.trim()} onClick={() => handleSendReply(selectedLeadHistory.id)} className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-primary/20">
+                                {isSendingReply ? <Loader2 className="animate-spin mr-2" /> : <MessageSquare size={18} className="mr-2" />}
+                                Wyślij Odpowiedź
+                              </Button>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
                     ) : (
-                      <Card className="rounded-2xl overflow-hidden shadow-sm">
-                        <Table>
-                          <TableHeader>
-                            <TableRow className="bg-slate-50">
-                              <TableHead className="w-[80px]">Data</TableHead>
-                              <TableHead>Klient</TableHead>
-                              <TableHead>Kontakt</TableHead>
-                              <TableHead>Filia</TableHead>
-                              <TableHead className="hidden lg:table-cell">Lokalizacja</TableHead>
-                              <TableHead className="text-right">Akcja</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {leads.filter(l => !!l.archived === showArchived).map(lead => (
-                              <TableRow key={lead.id} className="cursor-pointer hover:bg-slate-50/50" onClick={() => setSelectedLeadHistory(lead)}>
-                                <TableCell className="text-[10px] font-bold text-gray-400 uppercase">
-                                  {format(new Date(lead.created_at), "dd.MM", { locale: pl })}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="font-bold text-sm text-primary">{lead.name}</div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="text-xs font-medium text-slate-600">{lead.email}</div>
-                                  <div className="text-[10px] text-muted-foreground">{lead.phone || 'Brak tel.'}</div>
-                                </TableCell>
-                                <TableCell>
-                                  <Badge variant="outline" className={cn(
-                                    "text-[9px] font-bold uppercase",
-                                    lead.branch === 'Poznań' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-emerald-200 text-emerald-700 bg-emerald-50'
-                                  )}>
-                                    {lead.branch || 'Brak'}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="hidden lg:table-cell">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[10px] font-bold text-slate-500">📍 {lead.city || 'Nieznane'}</span>
-                                  </div>
-                                  <div className="text-[8px] text-muted-foreground font-mono">{lead.ip}</div>
-                                </TableCell>
-                                <TableCell className="text-right" onClick={e => e.stopPropagation()}>
-                                  <div className="flex justify-end gap-1">
-                                    <Button variant="ghost" size="icon" onClick={() => handleArchiveLead(lead.id)} title={showArchived ? "Przywróć" : "Archiwizuj"}>
-                                      <Briefcase size={14} className={cn(showArchived ? "text-primary" : "text-slate-400")} />
-                                    </Button>
-                                    {loggedInUser === 'admin' && (
-                                      <Button variant="ghost" size="icon" onClick={() => handleDeleteLead(lead.id)} className="text-destructive hover:bg-destructive/10">
-                                        <Trash2 size={14} />
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <Card className="rounded-2xl overflow-hidden shadow-sm bg-white border-none">
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="w-[100px]">Ostatnia Akcja</TableHead><TableHead>Klient</TableHead><TableHead>Filia</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
+                            <TableBody>
+                              {getThreadedLeads().filter(l => !!l.archived === showArchived).map(lead => (
+                                <TableRow key={lead.id} className="cursor-pointer hover:bg-slate-50/50 group" onClick={() => setSelectedLeadHistory(lead)}>
+                                  <TableCell className="text-[10px] font-bold text-gray-400 uppercase">{format(new Date(lead.created_at), "dd.MM HH:mm", { locale: pl })}</TableCell>
+                                  <TableCell>
+                                    <div className="font-bold text-sm text-primary">{lead.name}</div>
+                                    <div className="text-[10px] text-muted-foreground">{lead.email}</div>
+                                    {lead.city && <div className="text-[9px] text-accent font-bold uppercase mt-1">📍 {lead.city}</div>}
+                                  </TableCell>
+                                  <TableCell><Badge variant="outline" className="text-[9px] font-bold uppercase">{lead.branch || 'Brak'}</Badge></TableCell>
+                                  <TableCell className="text-right" onClick={e => e.stopPropagation()}>
+                                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <Button variant="ghost" size="icon" onClick={() => handleArchiveLead(lead.id)} title={showArchived ? "Przywróć" : "Archiwizuj"}><Briefcase size={14} className={cn(showArchived ? "text-primary" : "text-slate-400")} /></Button>
+                                      {loggedInUser === 'admin' && <Button variant="ghost" size="icon" onClick={() => handleDeleteLead(lead.id)} className="text-destructive hover:bg-destructive/10"><Trash2 size={14} /></Button>}
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
                       </Card>
                     )}
                   </div>
@@ -665,24 +676,24 @@ export default function Admin() {
                     {portfolioView === 'list' ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {projects.filter(p => !!p.archived === showArchivedProjects).map(p => (
-                          <Card key={p.id} className="overflow-hidden rounded-2xl shadow-sm border-none group hover:shadow-xl transition-all">
+                          <Card key={p.id} className="overflow-hidden rounded-2xl shadow-sm border-none group hover:shadow-xl transition-all bg-white">
                             <div className="relative h-40 bg-slate-100">
                               <img src={p.image} className="w-full h-full object-cover" />
-                              <Badge className="absolute top-2 left-2 bg-white/95 text-primary shadow-sm">{p.category}</Badge>
+                              <Badge className="absolute top-2 left-2 bg-white/95 text-primary shadow-sm uppercase text-[9px] font-bold tracking-widest">{p.category}</Badge>
                             </div>
-                            <CardHeader className="p-4 pb-2"><CardTitle className="text-base truncate">{p.title}</CardTitle></CardHeader>
+                            <CardHeader className="p-4 pb-2"><CardTitle className="text-base truncate font-bold text-primary">{p.title}</CardTitle></CardHeader>
                             <CardContent className="p-4 pt-0 space-y-4">
-                              <p className="text-xs text-muted-foreground line-clamp-2 h-8 italic">"{p.description}"</p>
+                              <p className="text-xs text-muted-foreground line-clamp-2 h-8 italic font-light leading-relaxed">"{p.description}"</p>
                               <div className="flex gap-2">
                                 {!showArchivedProjects ? (
                                   <>
-                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg" onClick={() => { setEditingProject(p); setPortfolioView('edit'); }}><Edit size={14} className="mr-2" /> Edytuj</Button>
+                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg border-slate-100" onClick={() => { setEditingProject(p); setPortfolioView('edit'); }}><Edit size={14} className="mr-2" /> Edytuj</Button>
                                     <Button variant="ghost" size="icon" onClick={() => handleArchiveProject(p.id)} className="hover:text-amber-600"><Briefcase size={14} /></Button>
                                   </>
                                 ) : (
                                   <>
-                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg text-emerald-600" onClick={() => handleRestoreProject(p.id)}><Plus size={14} className="mr-2" /> Przywróć</Button>
-                                    <Button variant={ (deleteClickCount[p.id] || 0) === 0 ? "ghost" : "destructive" } size="sm" className="flex-1 rounded-lg" onClick={() => handlePermanentDeleteProject(p.id)}><Trash2 size={14} className="mr-2" /> {(deleteClickCount[p.id] || 0) === 0 ? "Usuń" : `Confirm (${deleteClickCount[p.id]}/2)`}</Button>
+                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg text-emerald-600 border-emerald-50" onClick={() => handleRestoreProject(p.id)}><Plus size={14} className="mr-2" /> Przywróć</Button>
+                                    <Button variant={ (deleteClickCount[p.id] || 0) === 0 ? "ghost" : "destructive" } size="sm" className="flex-1 rounded-lg" onClick={() => handlePermanentDeleteProject(p.id)}><Trash2 size={14} className="mr-2" /> {(deleteClickCount[p.id] || 0) === 0 ? "Usuń" : `Potwierdź (${deleteClickCount[p.id]}/2)`}</Button>
                                   </>
                                 )}
                               </div>
@@ -691,38 +702,41 @@ export default function Admin() {
                         ))}
                       </div>
                     ) : (
-                      <Card className="max-w-2xl mx-auto rounded-3xl shadow-2xl border-none">
-                        <CardHeader><CardTitle>{portfolioView === 'add' ? "Nowa realizacja" : "Edycja projektu"}</CardTitle></CardHeader>
-                        <CardContent>
+                      <Card className="max-w-2xl mx-auto rounded-3xl shadow-2xl border-none bg-white">
+                        <CardHeader className="p-8 pb-0"><CardTitle className="text-2xl font-bold text-primary">{portfolioView === 'add' ? "Nowa realizacja" : "Edycja projektu"}</CardTitle></CardHeader>
+                        <CardContent className="p-8">
                           <form key={formKey} onSubmit={handleProjectSubmit} className="space-y-6">
                             <div className="space-y-4">
-                              <Input placeholder="Tytuł projektu" required value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-none shadow-inner" />
-                              <select className="w-full h-12 rounded-xl bg-slate-50 border-none shadow-inner px-4 text-sm" value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})}>
-                                <option value="Komercyjne">Komercyjne</option><option value="Mieszkaniowe">Mieszkaniowe</option><option value="Podłogi">Podłogi</option><option value="Inne">Inne</option>
-                              </select>
-                              <Textarea placeholder="Opis realizacji..." required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="min-h-[120px] rounded-2xl bg-slate-50 border-none shadow-inner p-4" />
-                              
+                              <div className="space-y-2"><label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Tytuł projektu</label><Input placeholder="np. Remont apartamentu" required value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-none shadow-inner" /></div>
+                              <div className="space-y-2"><label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Kategoria</label><select className="w-full h-12 rounded-xl bg-slate-50 border-none shadow-inner px-4 text-sm font-medium" value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})}><option value="Komercyjne">Komercyjne</option><option value="Mieszkaniowe">Mieszkaniowe</option><option value="Podłogi">Podłogi</option><option value="Inne">Inne</option></select></div>
+                              <div className="space-y-2"><label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Opis prac</label><Textarea placeholder="Opisz szczegóły realizacji..." required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="min-h-[120px] rounded-2xl bg-slate-50 border-none shadow-inner p-4 text-base" /></div>
                               <div className="space-y-3">
                                 {portfolioView === 'edit' && editingProject?.images && (
-                                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                                    <SortableContext items={editingProject.images} strategy={horizontalListSortingStrategy}>
-                                      <div className="grid grid-cols-4 gap-2 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                                        {editingProject.images.map((img, idx) => (
-                                          <SortableImage key={img} id={img} img={img} onDelete={() => handleDeleteImage(editingProject.id, img)} isThumbnail={idx === 0} />
-                                        ))}
-                                      </div>
-                                    </SortableContext>
-                                  </DndContext>
+                                  <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Kolejność zdjęć (przeciągnij)</label>
+                                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                                      <SortableContext items={editingProject.images} strategy={horizontalListSortingStrategy}>
+                                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                          {editingProject.images.map((img, idx) => (
+                                            <SortableImage key={img} id={img} img={img} onDelete={() => handleDeleteImage(editingProject.id, img)} isThumbnail={idx === 0} />
+                                          ))}
+                                        </div>
+                                      </SortableContext>
+                                    </DndContext>
+                                  </div>
                                 )}
-                                <div className="relative border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:bg-slate-50 transition-all">
-                                  <input type="file" accept="image/*" multiple className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setSelectedFiles(e.target.files)} required={portfolioView === 'add'} />
-                                  <Upload className="mx-auto h-10 w-10 text-slate-300 mb-2" />
-                                  <p className="text-sm font-bold text-slate-500">{selectedFiles ? `Wybrano plików: ${selectedFiles.length}` : "Dodaj nowe zdjęcia"}</p>
+                                <div className="relative group border-2 border-dashed border-slate-200 rounded-3xl p-10 text-center hover:bg-slate-50 hover:border-accent transition-all cursor-pointer">
+                                  <input type="file" accept="image/*" multiple className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={e => setSelectedFiles(e.target.files)} required={portfolioView === 'add'} />
+                                  <div className="flex flex-col items-center gap-2">
+                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-accent/10 group-hover:text-accent transition-colors"><Upload size={24} /></div>
+                                    <p className="text-sm font-bold text-primary">{selectedFiles ? `Wybrano plików: ${selectedFiles.length}` : "Dodaj zdjęcia do galerii"}</p>
+                                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Maks. 50 zdjęć na raz</p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                            <div className="space-y-4">
-                              <Button type="submit" className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20" disabled={uploading}>{uploading ? <Loader2 className="animate-spin" /> : "ZAPISZ PROJEKT"}</Button>
+                            <div className="space-y-4 pt-4">
+                              <Button type="submit" className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-[0.98]" disabled={uploading}>{uploading ? <div className="flex items-center gap-3"><Loader2 className="animate-spin" /> <span>WYŚLIJ: {uploadProgress}%</span></div> : "ZAPISZ I PUBLIKUJ"}</Button>
                               {uploading && <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><motion.div className="bg-accent h-full" initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} /></div>}
                             </div>
                           </form>
