@@ -90,6 +90,7 @@ export default function Admin() {
   const [replyMessage, setReplyMessage] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [formKey, setFormKey] = useState(0);
 
   // Form State
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -267,6 +268,10 @@ export default function Admin() {
       
       if (xhr.status >= 200 && xhr.status < 300) {
         setEditingProject(null);
+        setNewProject({ title: '', category: 'Komercyjne', description: '' });
+        setSelectedFiles(null);
+        setFormKey(prev => prev + 1);
+        
         const projectsRes = await fetch(`${API_BASE}/api/projects`);
         if (projectsRes.ok) setProjects(await projectsRes.json());
         alert(editingProject ? "Projekt zaktualizowany!" : "Projekt dodany!");
@@ -740,7 +745,7 @@ export default function Admin() {
                               </CardDescription>
                            </CardHeader>
                            <CardContent>
-                              <form onSubmit={handleProjectSubmit} className="space-y-4">
+                              <form key={formKey} onSubmit={handleProjectSubmit} className="space-y-4">
                                  <div className="space-y-2">
                                     <label className="text-sm font-medium">Tytuł</label>
                                     <Input 
