@@ -41,8 +41,8 @@ export function SEOHead({ title, description }: SEOHeadProps) {
     updateMeta('og:description', fullDesc, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:url', window.location.href, true);
-    // Use absolute URL for the image
-    const absoluteImageUrl = window.location.origin + '/assets/hero.webp';
+    // Use absolute URL for the image (JPG for compatibility)
+    const absoluteImageUrl = window.location.origin + '/projects/apartment.jpg';
     updateMeta('og:image', absoluteImageUrl, true);
 
     // Twitter
