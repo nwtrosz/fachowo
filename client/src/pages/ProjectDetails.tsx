@@ -69,7 +69,7 @@ export default function ProjectDetails() {
       <SEOHead title={project.title} description={project.description} />
       <Navigation />
 
-      <main className="flex-1 pt-24">
+      <main className="flex-1 pt-20 md:pt-24">
         {/* Lightbox Overlay */}
         <AnimatePresence>
           {isLightboxOpen && selectedImage && (
@@ -77,14 +77,14 @@ export default function ProjectDetails() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-10"
+              className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4"
               onClick={() => setIsLightboxOpen(false)}
             >
               <button 
-                className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+                className="absolute top-4 right-4 md:top-6 md:right-6 text-white/70 hover:text-white transition-colors"
                 onClick={() => setIsLightboxOpen(false)}
               >
-                <X size={40} />
+                <X size={32} className="md:w-10 md:h-10" />
               </button>
               
               <motion.img 
@@ -93,10 +93,10 @@ export default function ProjectDetails() {
                 exit={{ scale: 0.9, opacity: 0 }}
                 src={selectedImage}
                 alt={project.title}
-                className="max-w-full max-h-full object-contain rounded shadow-2xl"
+                className="max-w-full max-h-[85vh] object-contain rounded shadow-2xl"
               />
               
-              <div className="absolute bottom-10 left-0 right-0 text-center text-white/50 text-sm font-light uppercase tracking-[0.3em]">
+              <div className="absolute bottom-6 md:bottom-10 left-0 right-0 text-center text-white/50 text-[10px] md:text-sm font-bold uppercase tracking-[0.3em] px-4">
                 {project.title}
               </div>
             </motion.div>
@@ -104,33 +104,43 @@ export default function ProjectDetails() {
         </AnimatePresence>
 
         {/* Project Header */}
-        <section className="bg-primary text-white py-12 md:py-20">
+        <section className="bg-primary text-white py-12 md:py-24">
           <div className="container mx-auto px-4">
             <button
               onClick={() => window.history.back()}
-              className="flex items-center gap-2 text-accent hover:text-accent/80 transition-colors mb-8 cursor-pointer group"
+              className="flex items-center gap-2 text-accent hover:text-accent/80 transition-colors mb-8 font-bold uppercase tracking-widest text-xs"
             >
-              <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-              Powrót do Portfolio
+              <ChevronLeft size={16} />
+              Powrót do realizacji
             </button>
             
-            <div className="grid md:grid-cols-3 gap-8 items-end">
-              <div className="md:col-span-2">
-                <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold uppercase tracking-wider rounded mb-4">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+              <div className="max-w-3xl space-y-4">
+                <span className="inline-block px-3 py-1 bg-accent text-white text-[10px] font-bold uppercase tracking-widest rounded-lg">
                   {project.category}
                 </span>
-                <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 italic">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold leading-[0.9] tracking-tighter italic">
                   {project.title}
                 </h1>
               </div>
-              <div className="flex flex-wrap gap-6 text-sm text-white/60 border-t border-white/10 pt-6 md:border-0 md:pt-0">
-                <div className="flex items-center gap-2">
-                  <Calendar size={18} className="text-accent" />
-                  <span>{format(new Date(project.created_at), 'MMMM yyyy', { locale: pl })}</span>
+              <div className="flex flex-wrap gap-6 pt-6 lg:pt-0 border-t border-white/10 lg:border-none">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                    <Calendar size={18} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase text-white/40 tracking-widest leading-none mb-1">Data</p>
+                    <p className="font-medium text-sm">{format(new Date(project.created_at), 'MMMM yyyy', { locale: pl })}</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Tag size={18} className="text-accent" />
-                  <span>{project.category}</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                    <Tag size={18} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase text-white/40 tracking-widest leading-none mb-1">Kategoria</p>
+                    <p className="font-medium text-sm">{project.category}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -138,21 +148,21 @@ export default function ProjectDetails() {
         </section>
 
         {/* Gallery & Description */}
-        <section className="py-16 md:py-24">
+        <section className="py-12 md:py-24 bg-slate-50/50">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-5 gap-12">
+            <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
               {/* Gallery Side */}
-              <div className="lg:col-span-3 space-y-6">
+              <div className="lg:col-span-7 space-y-6 md:space-y-8">
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-gray-100 group cursor-zoom-in"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-white border border-border group cursor-zoom-in"
                   onClick={() => setIsLightboxOpen(true)}
                 >
                   <img
                     src={selectedImage || project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
@@ -162,14 +172,17 @@ export default function ProjectDetails() {
                 </motion.div>
 
                 {gallery.length > 1 && (
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-4">
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 md:gap-4">
                     {gallery.map((img, idx) => (
                       <button
                         key={idx}
                         onClick={() => setSelectedImage(img)}
-                        className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                          selectedImage === img ? 'border-accent scale-105 shadow-md' : 'border-transparent hover:border-accent/50 opacity-70 hover:opacity-100'
-                        }`}
+                        className={cn(
+                          "relative aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer",
+                          selectedImage === img 
+                            ? "border-accent shadow-xl scale-105" 
+                            : "border-transparent opacity-60 hover:opacity-100 hover:border-accent/30 shadow-sm"
+                        )}
                       >
                         <img src={img} alt={`Widok ${idx + 1}`} className="w-full h-full object-cover" />
                       </button>
@@ -179,34 +192,36 @@ export default function ProjectDetails() {
               </div>
 
               {/* Description Side */}
-              <div className="lg:col-span-2">
-                <div className="bg-white p-8 md:p-10 rounded-xl shadow-lg border border-border sticky top-32">
-                  <h2 className="font-display text-3xl font-bold text-primary mb-6 relative">
+              <div className="lg:col-span-5">
+                <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl shadow-primary/5 border border-border lg:sticky lg:top-32 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl -mr-16 -mt-16" />
+                  
+                  <h2 className="font-display text-3xl font-bold text-primary mb-8 flex items-center gap-3 italic">
+                    <span className="w-10 h-1 bg-accent rounded-full" />
                     O realizacji
-                    <span className="absolute -bottom-2 left-0 w-12 h-1 bg-accent"></span>
                   </h2>
-                  <div className="prose prose-slate max-w-none text-foreground/80 leading-relaxed italic">
+                  <div className="prose prose-slate max-w-none text-foreground/70 leading-relaxed font-light text-lg">
                     {project.description.split('\n').map((para, i) => (
-                      <p key={i} className="mb-4">{para}</p>
+                      <p key={i} className="mb-6">{para}</p>
                     ))}
                   </div>
 
-                  <div className="mt-10 pt-8 border-t border-border space-y-6">
-                    <div className="flex items-center gap-4 text-primary">
-                      <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
-                        <ImageIcon size={24} className="text-accent" />
+                  <div className="mt-12 pt-10 border-t border-slate-100 space-y-8">
+                    <div className="flex items-center gap-5">
+                      <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
+                        <ImageIcon size={28} />
                       </div>
                       <div>
-                        <p className="text-xs font-bold uppercase text-foreground/40">Zdjęcia</p>
-                        <p className="font-bold">{gallery.length} fotografii w galerii</p>
+                        <p className="text-[10px] font-bold uppercase text-foreground/30 tracking-widest mb-1 text-left">Dokumentacja</p>
+                        <p className="font-bold text-primary">{gallery.length} fotografii w galerii</p>
                       </div>
                     </div>
                     
                     <Link 
                       href="/kontakt"
-                      className="block w-full py-4 bg-primary text-white text-center font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-xl cursor-pointer"
+                      className="block w-full py-5 bg-primary text-white text-center font-bold rounded-2xl hover:bg-accent transition-all shadow-xl shadow-primary/10 active:scale-[0.98] text-lg uppercase tracking-widest cursor-pointer"
                     >
-                      Zapytaj o podobny projekt
+                      Zapytaj o wycenę
                     </Link>
                   </div>
                 </div>
