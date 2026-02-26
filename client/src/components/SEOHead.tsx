@@ -14,15 +14,41 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description }: SEOHeadProps) {
   useEffect(() => {
-    const fullTitle = title ? `${title} | Fachowo.eu` : 'Fachowo.eu - Usługi Budowlane i Transportowe';
+    const defaultTitle = 'Fachowo.eu - Usługi Budowlane i Transportowe';
+    const defaultDesc = 'Profesjonalne usługi budowlane, remontowe i transportowe w Poznaniu i Warszawie. Darmowa wycena w 24h.';
+    
+    const fullTitle = title ? `${title} | Fachowo.eu` : defaultTitle;
+    const fullDesc = description || defaultDesc;
+
     document.title = fullTitle;
 
-    if (description) {
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) {
-        metaDesc.setAttribute('content', description);
+    const updateMeta = (name: string, content: string, property = false) => {
+      const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+      let el = document.querySelector(selector);
+      if (!el) {
+        el = document.createElement('meta');
+        if (property) el.setAttribute('property', name);
+        else el.setAttribute('name', name);
+        document.head.appendChild(el);
       }
-    }
+      el.setAttribute('content', content);
+    };
+
+    updateMeta('description', fullDesc);
+    
+    // Open Graph
+    updateMeta('og:title', fullTitle, true);
+    updateMeta('og:description', fullDesc, true);
+    updateMeta('og:type', 'website', true);
+    updateMeta('og:url', window.location.href, true);
+    updateMeta('og:image', '/assets/hero.webp', true);
+
+    // Twitter
+    updateMeta('twitter:card', 'summary_large_image');
+    updateMeta('twitter:title', fullTitle);
+    updateMeta('twitter:description', fullDesc);
+    updateMeta('twitter:image', '/assets/hero.webp');
+
   }, [title, description]);
 
   const organizationSchema = {
