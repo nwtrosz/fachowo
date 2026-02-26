@@ -98,6 +98,7 @@ async function startServer() {
 
   app.use(express.static(staticPath));
   app.use("/uploads", express.static(process.env.NODE_ENV === "production" ? path.resolve(__dirname, "..", "storage", "uploads") : path.resolve(__dirname, "..", "client", "public", "uploads")));
+  app.use("/projects", express.static(path.join(staticPath, "projects")));
 
   // --- API ---
   app.post("/api/login", (req, res) => {
