@@ -290,16 +290,20 @@ async function startServer() {
       const leadToDelete = db.leads.find(l => l.id === id);
       
       if (leadToDelete) {
-        // Remove all inquiries from this contact (matching email or phone)
-        db.leads = db.leads.filter(l => 
-          (l.email !== leadToDelete.email || !l.email) && 
-          (l.phone !== leadToDelete.phone || !l.phone) &&
-          l.id !== id
-        );
+        const { email, phone } = leadToDelete;
+        // Delete all leads that match this contact's unique identifiers
+        db.leads = db.leads.filter(l => {
+          const isTargetLead = l.id === id;
+          const matchesEmail = email && l.email === email;
+          const matchesPhone = phone && l.phone === phone;
+          return !(isTargetLead || matchesEmail || matchesPhone);
+        });
         writeDb(db);
       }
       res.json({ success: true });
-    } catch (e) { res.status(500).end(); }
+    } catch (error) {
+      res.status(500).json({ error: "Błąd podczas usuwania" });
+    }
   });
 
   app.post("/api/admin/leads/:id/reply", authMiddleware, async (req, res) => {
@@ -341,10 +345,27 @@ async function startServer() {
         });
       }
 
+      // Get last 10 recent unique visitors with details
+      const recentVisitors = (db.visitors || [])
+        .slice(-20) // Take some recent raw logs
+        .reverse()
+        .filter((v, index, self) => index === self.findIndex((t) => t.ip === v.ip)) // Unique by IP
+        .slice(0, 10) // Take top 10
+        .map(v => {
+          const geo = geoip.lookup(v.ip);
+          return {
+            ip: v.ip,
+            city: geo?.city || "Nieznane",
+            country: geo?.country || "",
+            last_visit: v.date
+          };
+        });
+
       res.json({ 
           totalLeads: db.leads.length,
           uniqueVisitors: (db.visitors || []).filter(v => v.date === today).length,
-          history
+          history,
+          recentVisitors
       });
     } catch (e) { res.status(500).end(); }
   });

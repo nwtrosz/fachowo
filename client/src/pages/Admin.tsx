@@ -154,6 +154,7 @@ interface Stats {
   totalLeads: number;
   uniqueVisitors: number;
   history?: { date: string, leads: number, visitors: number }[];
+  recentVisitors?: { ip: string, city: string, country: string, last_visit: string }[];
 }
 
 interface Project {
@@ -718,27 +719,78 @@ export default function Admin() {
                       </div>
                     </div>
 
-                    <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
-                      <CardHeader className="border-b flex flex-row items-center justify-between">
-                        <CardTitle className="text-lg">Ostatnie Wiadomości</CardTitle>
-                        <Button variant="ghost" size="sm" className="text-accent font-bold" onClick={() => setActiveTab('messages')}>WSZYSTKIE</Button>
-                      </CardHeader>
-                      <Table>
-                        <TableHeader><TableRow className="bg-slate-50/50"><TableHead>Data</TableHead><TableHead>Klient</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
-                        <TableBody>
-                          {getThreadedLeads().filter(l => !l.archived).slice(0, 5).map(lead => (
-                            <TableRow key={lead.id} className="hover:bg-slate-50/50">
-                              <TableCell className="text-[10px] text-gray-400 font-bold uppercase">
-                                {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
-                                <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>
-                              </TableCell>
-                              <TableCell><div className="font-bold text-primary">{lead.name}</div><div className="text-[10px] text-muted-foreground">{lead.email}</div></TableCell>
-                              <TableCell className="text-right"><Button variant="outline" size="sm" onClick={() => { setSelectedLeadHistory(lead); setActiveTab('messages'); }}><MessageSquare size={14} /></Button></TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </Card>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Recent Messages Preview */}
+                      <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
+                        <CardHeader className="border-b flex flex-row items-center justify-between">
+                          <CardTitle className="text-lg font-bold text-primary">Ostatnie Wiadomości</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-accent font-bold text-xs" onClick={() => setActiveTab('messages')}>WSZYSTKIE</Button>
+                        </CardHeader>
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="text-[10px] uppercase font-bold tracking-wider">Data</TableHead><TableHead className="text-[10px] uppercase font-bold tracking-wider">Klient</TableHead><TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Akcja</TableHead></TableRow></TableHeader>
+                            <TableBody>
+                              {getThreadedLeads().filter(l => !l.archived).slice(0, 5).map(lead => (
+                                <TableRow key={lead.id} className="hover:bg-slate-50/50 group">
+                                  <TableCell className="text-[10px] text-gray-400 font-bold uppercase">
+                                    {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
+                                    <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>
+                                  </TableCell>
+                                  <TableCell>
+                                    <div className="font-bold text-primary text-sm">{lead.name}</div>
+                                    <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{lead.email}</div>
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={() => { setSelectedLeadHistory(lead); setActiveTab('messages'); }}>
+                                      <MessageSquare size={14} />
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </Card>
+
+                      {/* Recent Visitors Preview */}
+                      <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
+                        <CardHeader className="border-b">
+                          <CardTitle className="text-lg font-bold text-primary">Ostatnie Odwiedziny</CardTitle>
+                          <CardDescription className="text-xs">Podgląd unikalnych gości w czasie rzeczywistym</CardDescription>
+                        </CardHeader>
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="text-[10px] uppercase font-bold tracking-wider">Lokalizacja</TableHead><TableHead className="text-[10px] uppercase font-bold tracking-wider">Adres IP</TableHead><TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Ostatnio</TableHead></TableRow></TableHeader>
+                            <TableBody>
+                              {(stats?.recentVisitors || []).slice(0, 5).map((visitor, idx) => (
+                                <TableRow key={idx} className="hover:bg-slate-50/50 transition-colors">
+                                  <TableCell>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm">📍</span>
+                                      <div>
+                                        <div className="font-bold text-primary text-sm">{visitor.city}</div>
+                                        <div className="text-[10px] text-muted-foreground uppercase font-medium">{visitor.country}</div>
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                  <TableCell>
+                                    <code className="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono">{visitor.ip}</code>
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <div className="text-[10px] font-bold text-gray-400 uppercase">{visitor.last_visit}</div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                              {(stats?.recentVisitors?.length || 0) === 0 && (
+                                <TableRow>
+                                  <TableCell colSpan={3} className="text-center py-12 text-muted-foreground italic text-sm">Brak danych o gościach</TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </Card>
+                    </div>
                   </div>
                 )}
 
