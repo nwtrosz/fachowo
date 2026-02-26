@@ -424,16 +424,24 @@ export default function Admin() {
   };
 
   const handleDeleteLead = async (id: number) => {
-    if (!confirm("TRWAŁE USUNIĘCIE?")) return;
+    if (!confirm("TRWAŁE USUNIĘCIE CAŁEJ ROZMOWY?")) return;
     const token = localStorage.getItem('adminToken');
     try {
+      const leadToDelete = leads.find(l => l.id === id);
       const res = await fetch(`${API_BASE}/api/admin/leads/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        setLeads(leads.filter(l => l.id !== id));
+        if (leadToDelete) {
+          setLeads(leads.filter(l => 
+            (l.email !== leadToDelete.email || !l.email) && 
+            (l.phone !== leadToDelete.phone || !l.phone) &&
+            l.id !== id
+          ));
+        }
         if (selectedLeadHistory?.id === id) setSelectedLeadHistory(null);
+        toast.success("Konwersacja usunięta.");
       }
     } catch (error) { console.error("Failed to delete lead", error); }
   };

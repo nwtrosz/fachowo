@@ -285,9 +285,19 @@ async function startServer() {
       if (req.user.username !== "admin") {
         return res.status(403).json({ error: "Brak uprawnień" });
       }
+      const id = Number(req.params.id);
       const db = readDb();
-      db.leads = db.leads.filter(l => l.id !== Number(req.params.id));
-      writeDb(db);
+      const leadToDelete = db.leads.find(l => l.id === id);
+      
+      if (leadToDelete) {
+        // Remove all inquiries from this contact (matching email or phone)
+        db.leads = db.leads.filter(l => 
+          (l.email !== leadToDelete.email || !l.email) && 
+          (l.phone !== leadToDelete.phone || !l.phone) &&
+          l.id !== id
+        );
+        writeDb(db);
+      }
       res.json({ success: true });
     } catch (e) { res.status(500).end(); }
   });
