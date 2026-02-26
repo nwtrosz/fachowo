@@ -678,13 +678,13 @@ export default function Admin() {
                           <div className="text-3xl font-bold text-primary">
                              {leads.filter(l => {
                                try {
-                                 return l.created_at && new Date(l.created_at).toDateString() === new Date().toDateString();
+                                 return !l.archived && l.created_at && new Date(l.created_at).toDateString() === new Date().toDateString();
                                } catch (e) {
                                  return false;
                                }
                              }).length}
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">Potencjalni klienci z dzisiaj</p>
+                          <p className="text-xs text-muted-foreground mt-1">Aktywne zapytania z dzisiaj</p>
                         </CardContent>
                       </Card>
 
@@ -717,8 +717,11 @@ export default function Admin() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {leads.slice(0, 5).map((lead) => {
-                              let formattedDate = "Brak daty";
+                            {leads
+                              .filter(l => !l.archived)
+                              .slice(0, 5)
+                              .map((lead) => {
+                                let formattedDate = "Brak daty";
                               try {
                                 if (lead.created_at) {
                                   formattedDate = format(new Date(lead.created_at), "d MMM, HH:mm", { locale: pl });
