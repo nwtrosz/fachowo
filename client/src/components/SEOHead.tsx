@@ -17,8 +17,8 @@ export function SEOHead({ title, description, image }: SEOHeadProps) {
   useEffect(() => {
     const defaultTitle = 'Fachowo.eu - Usługi Budowlane i Transportowe';
     const defaultDesc = 'Profesjonalne usługi budowlane, remontowe i transportowe w Poznaniu i Warszawie. Darmowa wycena w 24h.';
-    // Fallback image using existing apartment.jpg
-    const defaultImage = '/projects/apartment.jpg';
+    // Fallback image using the converted hero.jpg
+    const defaultImage = '/assets/hero.jpg';
     
     const fullTitle = title ? `${title} | Fachowo.eu` : defaultTitle;
     const fullDesc = description || defaultDesc;
