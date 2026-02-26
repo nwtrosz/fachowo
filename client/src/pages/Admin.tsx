@@ -28,7 +28,8 @@ import {
   Trash2,
   Image as ImageIcon,
   Upload,
-  Edit
+  Edit,
+  ArrowLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
