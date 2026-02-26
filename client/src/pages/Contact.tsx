@@ -27,7 +27,7 @@ export default function Contact() {
     name: '',
     email: '',
     phone: '',
-    service: '',
+    branch: 'Poznań',
     message: '',
   });
 
@@ -42,7 +42,7 @@ export default function Contact() {
     e.preventDefault();
     const result = await submit(formData);
     if (result.success) {
-      setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', branch: 'Poznań', message: '' });
     } else {
       alert(result.error);
     }
@@ -192,17 +192,18 @@ export default function Contact() {
                       <div className="grid md:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-bold text-primary mb-2">
-                            Email *
+                            Wybierz Filię *
                           </label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                          <select
+                            name="branch"
+                            value={formData.branch}
                             onChange={handleChange}
                             required
                             className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-background"
-                            placeholder="jan@example.com"
-                          />
+                          >
+                            <option value="Poznań">Poznań</option>
+                            <option value="Warszawa">Warszawa</option>
+                          </select>
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-primary mb-2">

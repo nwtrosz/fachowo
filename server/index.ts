@@ -96,6 +96,31 @@ async function startServer() {
     res.json([...readDb().projects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
   });
 
+  // Admin: Get Leads
+  app.get("/api/admin/leads", (_req, res) => {
+    try {
+      const db = readDb();
+      res.json([...db.leads].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+      res.status(500).json({ error: "Failed to fetch leads" });
+    }
+  });
+
+  // Admin: Get Stats
+  app.get("/api/admin/stats", (_req, res) => {
+    try {
+      const db = readDb();
+      res.json({ 
+          totalLeads: db.leads.length,
+          uniqueVisitors: 0
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      res.status(500).json({ error: "Failed to fetch stats" });
+    }
+  });
+
   app.post("/api/admin/projects", upload.array("images", 50), (req, res) => {
     try {
       const validated = projectSchema.parse(req.body);
