@@ -17,10 +17,10 @@ const __dirname = path.dirname(__filename);
 
 // Schemas
 const contactSchema = z.object({
-  name: z.string().min(2, "Imię jest za krótkie"),
+  name: z.string().min(1, "Imię jest wymagane"),
   email: z.string().email("Niepoprawny format email"),
-  phone: z.string().optional(),
-  message: z.string().min(10, "Wiadomość musi mieć min. 10 znaków"),
+  phone: z.string().optional().or(z.literal('')),
+  message: z.string().min(1, "Wiadomość jest wymagana"),
 });
 
 const projectSchema = z.object({
@@ -142,7 +142,11 @@ async function startServer() {
       
       res.json({ success: true });
     } catch (e) { 
-      console.error("[Contact] VALIDATION OR DB ERROR:", e);
+      if (e instanceof z.ZodError) {
+        console.log("[Contact] Validation error:", e.errors[0].message);
+        return res.status(400).json({ success: false, error: e.errors[0].message });
+      }
+      console.error("[Contact] DB ERROR:", e);
       res.status(400).json({ success: false, error: "Błąd przetwarzania danych." }); 
     }
   });
