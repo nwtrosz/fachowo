@@ -91,6 +91,7 @@ export default function Admin() {
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formKey, setFormKey] = useState(0);
+  const [portfolioView, setPortfolioView] = useState<'list' | 'add' | 'edit'>('list');
 
   // Form State
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -271,6 +272,7 @@ export default function Admin() {
         setNewProject({ title: '', category: 'Komercyjne', description: '' });
         setSelectedFiles(null);
         setFormKey(prev => prev + 1);
+        setPortfolioView('list');
         
         const projectsRes = await fetch(`${API_BASE}/api/projects`);
         if (projectsRes.ok) setProjects(await projectsRes.json());
@@ -732,140 +734,56 @@ export default function Admin() {
                 {activeTab === 'portfolio' && (
                   <div className="space-y-8">
                      <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-bold text-gray-900">Menedżer Portfolio</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                          {portfolioView === 'list' && "Menedżer Portfolio"}
+                          {portfolioView === 'add' && "Dodaj Nowy Projekt"}
+                          {portfolioView === 'edit' && `Edytuj Projekt: ${editingProject?.title}`}
+                        </h1>
+                        {portfolioView === 'list' ? (
+                          <Button onClick={() => setPortfolioView('add')}>
+                            <Plus className="mr-2 h-4 w-4" /> Dodaj Projekt
+                          </Button>
+                        ) : (
+                          <Button variant="outline" onClick={() => { setPortfolioView('list'); setEditingProject(null); }}>
+                            <ArrowLeft className="mr-2 h-4 w-4" /> Wróć do listy
+                          </Button>
+                        )}
                      </div>
 
-                     <div className="grid lg:grid-cols-3 gap-8">
-                        {/* Add/Edit Project Form */}
-                        <Card className="lg:col-span-1 h-fit sticky top-4">
-                           <CardHeader>
-                              <CardTitle>{editingProject ? "Edytuj Projekt" : "Dodaj Nowy Projekt"}</CardTitle>
-                              <CardDescription>
-                                {editingProject ? "Zmień dane lub dodaj nowe zdjęcia." : "Wypełnij formularz, aby dodać realizację."}
-                              </CardDescription>
-                           </CardHeader>
-                           <CardContent>
-                              <form key={formKey} onSubmit={handleProjectSubmit} className="space-y-4">
-                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Tytuł</label>
-                                    <Input 
-                                       placeholder="np. Remont Łazienki" 
-                                       required
-                                       value={newProject.title}
-                                       onChange={(e) => setNewProject({...newProject, title: e.target.value})}
-                                    />
-                                 </div>
-                                 
-                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Kategoria</label>
-                                    <select 
-                                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                       value={newProject.category}
-                                       onChange={(e) => setNewProject({...newProject, category: e.target.value})}
-                                    >
-                                       <option value="Komercyjne">Komercyjne</option>
-                                       <option value="Mieszkaniowe">Mieszkaniowe</option>
-                                       <option value="Podłogi">Podłogi</option>
-                                       <option value="Inne">Inne</option>
-                                    </select>
-                                 </div>
-
-                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Opis</label>
-                                    <Textarea 
-                                       placeholder="Krótki opis realizacji..." 
-                                       required
-                                       value={newProject.description}
-                                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
-                                    />
-                                 </div>
-
-                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">
-                                       {editingProject ? "Dodaj nowe zdjęcia (opcjonalnie)" : "Zdjęcia"}
-                                    </label>
-                                    <div className="border-2 border-dashed border-border rounded-md p-4 text-center hover:bg-secondary/10 transition-colors cursor-pointer relative">
-                                       <input 
-                                          type="file" 
-                                          accept="image/*"
-                                          multiple
-                                          className="absolute inset-0 opacity-0 cursor-pointer"
-                                          onChange={(e) => setSelectedFiles(e.target.files)}
-                                          // required if not editing
-                                          required={!editingProject}
-                                       />
-                                       <div className="flex flex-col items-center gap-2">
-                                          <Upload className="w-8 h-8 text-muted-foreground" />
-                                          <span className="text-sm text-muted-foreground">
-                                             {selectedFiles && selectedFiles.length > 0 
-                                                ? `Wybrano plików: ${selectedFiles.length}` 
-                                                : "Kliknij, aby wybrać zdjęcia (wiele)"}
-                                          </span>
-                                       </div>
-                                    </div>
-                                    {editingProject && editingProject.images && (
-                                       <div className="mt-2 text-xs text-muted-foreground">
-                                          Obecnie: {editingProject.images.length} zdjęć w galerii.
-                                       </div>
-                                    )}
-                                 </div>
-
-                                 <div className="flex gap-2">
-                                    <div className="flex-1 space-y-2">
-                                       <Button type="submit" className="w-full" disabled={uploading}>
-                                          {uploading ? <Loader2 className="animate-spin mr-2" /> : (editingProject ? <Edit className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />)}
-                                          {editingProject ? "Zapisz Zmiany" : "Dodaj Projekt"}
-                                       </Button>
-                                       
-                                       {uploading && (
-                                          <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                                             <div 
-                                                className="bg-accent h-2.5 rounded-full transition-all duration-300" 
-                                                style={{ width: `${uploadProgress}%` }}
-                                             ></div>
-                                             <p className="text-[10px] text-center mt-1 text-muted-foreground">Wysyłanie: {uploadProgress}%</p>
-                                          </div>
-                                       )}
-                                    </div>
-                                    {editingProject && (
-                                       <Button type="button" variant="outline" onClick={() => setEditingProject(null)}>
-                                          Anuluj
-                                       </Button>
-                                    )}
-                                 </div>
-                              </form>
-                           </CardContent>
-                        </Card>
-
-                        {/* Projects List */}
-                        <div className="lg:col-span-2 space-y-4">
-                           <h2 className="text-xl font-semibold">Twoje Projekty ({projects.length})</h2>
-                           <div className="grid sm:grid-cols-2 gap-4">
+                     {portfolioView === 'list' ? (
+                        <div className="space-y-4">
+                           <h2 className="text-xl font-semibold text-muted-foreground">Twoje Realizacje ({projects.length})</h2>
+                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                               {projects.map((project) => (
-                                 <div key={project.id} className="bg-white border rounded-lg overflow-hidden flex flex-col group hover:shadow-md transition-shadow">
-                                    <div className="relative h-40 bg-gray-100">
+                                 <div key={project.id} className="bg-white border rounded-xl overflow-hidden flex flex-col group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                    <div className="relative h-48 bg-gray-100">
                                        <img 
                                           src={project.image} 
                                           alt={project.title} 
                                           className="w-full h-full object-cover"
                                        />
-                                       <div className="absolute top-2 right-2 flex gap-1">
-                                          <Badge variant="secondary" className="bg-white/90 text-primary hover:bg-white">{project.category}</Badge>
+                                       <div className="absolute top-3 right-3 flex gap-1">
+                                          <Badge variant="secondary" className="bg-white/95 text-primary shadow-sm">{project.category}</Badge>
                                           {project.images && project.images.length > 1 && (
-                                             <Badge variant="secondary" className="bg-white/90 text-primary">+{project.images.length - 1}</Badge>
+                                             <Badge variant="secondary" className="bg-white/95 text-primary shadow-sm">+{project.images.length - 1} zdjęć</Badge>
                                           )}
                                        </div>
                                     </div>
-                                    <div className="p-4 flex-1 flex flex-col">
-                                       <h3 className="font-bold text-primary mb-1">{project.title}</h3>
-                                       <p className="text-sm text-muted-foreground flex-1 mb-4 line-clamp-2">{project.description}</p>
+                                    <div className="p-5 flex-1 flex flex-col">
+                                       <h3 className="font-bold text-xl text-primary mb-2">{project.title}</h3>
+                                       <p className="text-sm text-muted-foreground flex-1 mb-6 line-clamp-3 italic leading-relaxed">
+                                          {project.description}
+                                       </p>
                                        
-                                       <div className="flex gap-2 mt-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                       <div className="flex gap-3 mt-auto">
                                           <Button 
-                                             variant="secondary" 
+                                             variant="outline" 
                                              size="sm" 
-                                             className="flex-1"
-                                             onClick={() => setEditingProject(project)}
+                                             className="flex-1 border-primary/20 hover:bg-primary hover:text-white"
+                                             onClick={() => {
+                                               setEditingProject(project);
+                                               setPortfolioView('edit');
+                                             }}
                                           >
                                              <Edit className="w-4 h-4 mr-2" />
                                              Edytuj
@@ -873,7 +791,7 @@ export default function Admin() {
                                           <Button 
                                              variant="destructive" 
                                              size="sm" 
-                                             className="flex-1"
+                                             className="flex-1 opacity-80 hover:opacity-100"
                                              onClick={() => handleDeleteProject(project.id)}
                                           >
                                              <Trash2 className="w-4 h-4 mr-2" />
@@ -884,13 +802,134 @@ export default function Admin() {
                                  </div>
                               ))}
                               {projects.length === 0 && (
-                                 <div className="col-span-2 text-center py-12 border-2 border-dashed rounded-lg text-muted-foreground">
-                                    Brak projektów. Dodaj pierwszy używając formularza.
+                                 <div className="col-span-full text-center py-20 border-2 border-dashed rounded-2xl text-muted-foreground bg-white">
+                                    <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                       <Briefcase className="w-8 h-8 opacity-20" />
+                                    </div>
+                                    <p className="text-lg font-medium">Brak projektów w portfolio.</p>
+                                    <Button variant="link" onClick={() => setPortfolioView('add')} className="text-accent">Dodaj swoją pierwszą realizację</Button>
                                  </div>
                               )}
                            </div>
                         </div>
-                     </div>
+                     ) : (
+                        /* Add/Edit Full Page Form */
+                        <Card className="max-w-3xl mx-auto shadow-2xl border-t-4 border-t-accent">
+                           <CardHeader className="pb-8">
+                              <CardTitle className="text-2xl font-bold">
+                                 {portfolioView === 'add' ? "Szczegóły nowej realizacji" : "Edycja istniejącej realizacji"}
+                              </CardTitle>
+                              <CardDescription>
+                                {portfolioView === 'add' ? "Wypełnij formularz, aby zaprezentować swoją pracę na stronie." : "Zaktualizuj dane projektu i zdjęcia."}
+                              </CardDescription>
+                           </CardHeader>
+                           <CardContent>
+                              <form key={formKey} onSubmit={handleProjectSubmit} className="space-y-6">
+                                 <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                       <label className="text-sm font-bold text-primary">Tytuł Realizacji</label>
+                                       <Input 
+                                          placeholder="np. Kompleksowy remont biura" 
+                                          required
+                                          className="h-12"
+                                          value={newProject.title}
+                                          onChange={(e) => setNewProject({...newProject, title: e.target.value})}
+                                       />
+                                    </div>
+                                    
+                                    <div className="space-y-2">
+                                       <label className="text-sm font-bold text-primary">Kategoria</label>
+                                       <select 
+                                          className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                          value={newProject.category}
+                                          onChange={(e) => setNewProject({...newProject, category: e.target.value})}
+                                       >
+                                          <option value="Komercyjne">Komercyjne</option>
+                                          <option value="Mieszkaniowe">Mieszkaniowe</option>
+                                          <option value="Podłogi">Podłogi</option>
+                                          <option value="Inne">Inne</option>
+                                       </select>
+                                    </div>
+                                 </div>
+
+                                 <div className="space-y-2">
+                                    <label className="text-sm font-bold text-primary">Opis prac i zakres realizacji</label>
+                                    <Textarea 
+                                       placeholder="Opisz co dokładnie zostało wykonane..." 
+                                       required
+                                       className="min-h-[150px] resize-none"
+                                       value={newProject.description}
+                                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
+                                    />
+                                 </div>
+
+                                 <div className="space-y-2">
+                                    <label className="text-sm font-bold text-primary">
+                                       {portfolioView === 'edit' ? "Dodaj nowe zdjęcia (opcjonalnie - zastąpią obecne)" : "Zdjęcia projektu"}
+                                    </label>
+                                    <div className="group relative border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center hover:bg-accent/5 hover:border-accent transition-all cursor-pointer">
+                                       <input 
+                                          type="file" 
+                                          accept="image/*"
+                                          multiple
+                                          className="absolute inset-0 opacity-0 cursor-pointer"
+                                          onChange={(e) => setSelectedFiles(e.target.files)}
+                                          required={portfolioView === 'add'}
+                                       />
+                                       <div className="flex flex-col items-center gap-3">
+                                          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
+                                             <ImageIcon size={32} />
+                                          </div>
+                                          <div>
+                                             <p className="font-bold text-primary">
+                                                {selectedFiles && selectedFiles.length > 0 
+                                                   ? `Wybrano plików: ${selectedFiles.length}` 
+                                                   : "Kliknij lub przeciągnij zdjęcia tutaj"}
+                                             </p>
+                                             <p className="text-xs text-muted-foreground mt-1">Możesz wybrać wiele zdjęć na raz (zalecane JPG/PNG)</p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    {portfolioView === 'edit' && editingProject?.images && (
+                                       <div className="mt-2 flex items-center gap-2 text-xs font-medium text-emerald-600 bg-emerald-50 w-fit px-3 py-1 rounded-full border border-emerald-100">
+                                          <CheckCircle size={14} />
+                                          Obecnie w galerii: {editingProject.images.length} zdjęć.
+                                       </div>
+                                    )}
+                                 </div>
+
+                                 <div className="flex flex-col gap-4 pt-4">
+                                    <div className="flex-1 space-y-2">
+                                       <Button type="submit" className="w-full h-14 text-lg font-bold shadow-lg shadow-primary/10" disabled={uploading}>
+                                          {uploading ? <Loader2 className="animate-spin mr-2" /> : (portfolioView === 'edit' ? <Edit className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />)}
+                                          {portfolioView === 'edit' ? "Zapisz Zmiany w Projekcie" : "Opublikuj Projekt w Portfolio"}
+                                       </Button>
+                                       
+                                       {uploading && (
+                                          <div className="w-full space-y-2 mt-4">
+                                             <div className="flex justify-between text-xs font-bold text-primary uppercase tracking-widest">
+                                                <span>Przesyłanie danych...</span>
+                                                <span>{uploadProgress}%</span>
+                                             </div>
+                                             <div className="w-full bg-secondary h-3 rounded-full overflow-hidden">
+                                                <motion.div 
+                                                   className="bg-accent h-full" 
+                                                   initial={{ width: 0 }}
+                                                   animate={{ width: `${uploadProgress}%` }}
+                                                   transition={{ type: "spring", bounce: 0, duration: 0.5 }}
+                                                />
+                                             </div>
+                                          </div>
+                                       )}
+                                    </div>
+                                    <Button type="button" variant="ghost" className="h-12" onClick={() => { setPortfolioView('list'); setEditingProject(null); }} disabled={uploading}>
+                                       Anuluj i wróć
+                                    </Button>
+                                 </div>
+                              </form>
+                           </CardContent>
+                        </Card>
+                     )}
                   </div>
                 )}
               </>
