@@ -7,6 +7,7 @@ import { ChevronLeft, Calendar, Tag, Image as ImageIcon, Loader2, X, Maximize2 }
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 interface Project {
   id: number;
