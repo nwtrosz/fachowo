@@ -41,13 +41,15 @@ export function SEOHead({ title, description }: SEOHeadProps) {
     updateMeta('og:description', fullDesc, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:url', window.location.href, true);
-    updateMeta('og:image', '/assets/hero.webp', true);
+    // Use absolute URL for the image
+    const absoluteImageUrl = window.location.origin + '/assets/hero.webp';
+    updateMeta('og:image', absoluteImageUrl, true);
 
     // Twitter
     updateMeta('twitter:card', 'summary_large_image');
     updateMeta('twitter:title', fullTitle);
     updateMeta('twitter:description', fullDesc);
-    updateMeta('twitter:image', '/assets/hero.webp');
+    updateMeta('twitter:image', absoluteImageUrl);
 
   }, [title, description]);
 
