@@ -30,15 +30,14 @@ const projectSchema = z.object({
   description: z.string().min(5, "Opis jest za krótki"),
 });
 
-// Admin Session
-let adminToken = "";
-let currentAdminUser = "";
+// Admin Session Management (Safe, non-global)
+const activeSessions = new Map<string, { username: string, role: string }>();
 
 // Email configuration
 const EMAIL_USER = "fachowo.eu@gmail.com"; 
 const EMAIL_PASS = "xxcw tyjh rbtr eflj"; 
 
-// Multer Setup
+// Multer Setup with Security Validation
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     let uploadPath = path.resolve(__dirname, "..", "storage", "uploads");
@@ -52,7 +51,33 @@ const storage = multer.diskStorage({
     cb(null, `project-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`);
   },
 });
-const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } });
+
+const upload = multer({ 
+  storage, 
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Niedozwolony format pliku. Wybierz JPG, PNG lub WebP.'));
+    }
+  }
+});
+
+// Auth Middleware
+const authMiddleware = (req: any, res: any, next: any) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "Brak autoryzacji" });
+  
+  const token = authHeader.replace('Bearer ', '');
+  const session = activeSessions.get(token);
+  
+  if (!session) return res.status(401).json({ error: "Sesja wygasła" });
+  
+  req.user = session;
+  next();
+};
 
 function seedProjects() {
   const db = readDb();
@@ -109,9 +134,9 @@ async function startServer() {
     ];
     const foundUser = users.find(u => u.username === username && u.password === password);
     if (foundUser) {
-      adminToken = nanoid();
-      currentAdminUser = foundUser.username;
-      res.json({ success: true, token: adminToken, user: foundUser.username });
+      const token = nanoid();
+      activeSessions.set(token, { username: foundUser.username, role: foundUser.role });
+      res.json({ success: true, token, user: foundUser.username });
     } else {
       res.status(401).json({ success: false, error: "Błędne dane" });
     }
@@ -124,11 +149,11 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.get("/api/admin/projects", (_req, res) => {
+  app.get("/api/admin/projects", authMiddleware, (_req, res) => {
     try { res.json(readDb().projects.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())); } catch (e) { res.status(500).end(); }
   });
 
-  app.post("/api/admin/projects", upload.array("images", 50), (req, res) => {
+  app.post("/api/admin/projects", authMiddleware, upload.array("images", 50), (req, res) => {
     try {
       const validated = projectSchema.parse(req.body);
       const files = req.files as Express.Multer.File[];
@@ -141,7 +166,7 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.put("/api/admin/projects/:id", upload.array("images", 50), (req, res) => {
+  app.put("/api/admin/projects/:id", authMiddleware, upload.array("images", 50), (req, res) => {
     try {
       const id = Number(req.params.id);
       const validated = projectSchema.parse(req.body);
@@ -157,7 +182,7 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.post("/api/admin/projects/:id/images/delete", (req, res) => {
+  app.post("/api/admin/projects/:id/images/delete", authMiddleware, (req, res) => {
     try {
       const id = Number(req.params.id);
       const { imageUrl } = req.body;
@@ -166,12 +191,22 @@ async function startServer() {
       if (!p) return res.status(404).end();
       p.images = (p.images || []).filter(img => img !== imageUrl);
       if (p.image === imageUrl) p.image = p.images[0] || "";
+      
+      // Physically delete the image file from storage
+      try {
+        const fileName = path.basename(imageUrl);
+        const filePath = process.env.NODE_ENV === "production"
+          ? path.resolve(__dirname, "..", "storage", "uploads", fileName)
+          : path.resolve(__dirname, "..", "client", "public", "uploads", fileName);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      } catch (err) { console.error("Disk cleanup error:", err); }
+
       writeDb(db);
       res.json({ success: true, images: p.images });
     } catch (e) { res.status(500).end(); }
   });
 
-  app.post("/api/admin/projects/:id/images/reorder", (req, res) => {
+  app.post("/api/admin/projects/:id/images/reorder", authMiddleware, (req, res) => {
     try {
       const id = Number(req.params.id);
       const { imageUrls } = req.body;
@@ -185,7 +220,7 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.delete("/api/admin/projects/:id", (req, res) => {
+  app.delete("/api/admin/projects/:id", authMiddleware, (req, res) => {
     try {
       const db = readDb();
       const p = db.projects.find(proj => proj.id === Number(req.params.id));
@@ -194,16 +229,34 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.delete("/api/admin/projects/:id/permanent", (req, res) => {
+  app.delete("/api/admin/projects/:id/permanent", authMiddleware, (req, res) => {
     try {
+      const id = Number(req.params.id);
       const db = readDb();
-      db.projects = db.projects.filter(p => p.id !== Number(req.params.id));
-      writeDb(db);
+      const projectToDelete = db.projects.find(p => p.id === id);
+      
+      if (projectToDelete) {
+        // --- PHASE 2: DISK CLEANUP ---
+        // Delete all images associated with this project from disk
+        const images = projectToDelete.images || [projectToDelete.image];
+        images.forEach(imgUrl => {
+          try {
+            const fileName = path.basename(imgUrl);
+            const filePath = process.env.NODE_ENV === "production"
+              ? path.resolve(__dirname, "..", "storage", "uploads", fileName)
+              : path.resolve(__dirname, "..", "client", "public", "uploads", fileName);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+          } catch (err) { console.error("File deletion error:", err); }
+        });
+
+        db.projects = db.projects.filter(p => p.id !== id);
+        writeDb(db);
+      }
       res.json({ success: true });
     } catch (e) { res.status(500).end(); }
   });
 
-  app.post("/api/admin/projects/:id/restore", (req, res) => {
+  app.post("/api/admin/projects/:id/restore", authMiddleware, (req, res) => {
     try {
       const db = readDb();
       const p = db.projects.find(proj => proj.id === Number(req.params.id));
@@ -212,11 +265,11 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.get("/api/admin/leads", (_req, res) => {
+  app.get("/api/admin/leads", authMiddleware, (_req, res) => {
     try { res.json([...readDb().leads].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())); } catch (e) { res.status(500).end(); }
   });
 
-  app.post("/api/admin/leads/:id/archive", (req, res) => {
+  app.post("/api/admin/leads/:id/archive", authMiddleware, (req, res) => {
     try {
       const db = readDb();
       const l = db.leads.find(lead => lead.id === Number(req.params.id));
@@ -225,9 +278,9 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.delete("/api/admin/leads/:id", (req, res) => {
+  app.delete("/api/admin/leads/:id", authMiddleware, (req: any, res) => {
     try {
-      if (currentAdminUser !== "admin") return res.status(403).end();
+      if (req.user.username !== "admin") return res.status(403).end();
       const db = readDb();
       db.leads = db.leads.filter(l => l.id !== Number(req.params.id));
       writeDb(db);
@@ -235,7 +288,7 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.post("/api/admin/leads/:id/reply", async (req, res) => {
+  app.post("/api/admin/leads/:id/reply", authMiddleware, async (req, res) => {
     try {
       const { message } = req.body;
       const db = readDb();
@@ -252,7 +305,7 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
-  app.get("/api/admin/stats", (_req, res) => {
+  app.get("/api/admin/stats", authMiddleware, (_req, res) => {
     try {
       const db = readDb();
       const today = new Date().toISOString().split('T')[0];
