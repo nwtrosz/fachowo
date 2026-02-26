@@ -38,7 +38,7 @@ export function ServicePage({
       <SEOHead title={title} description={subtitle} />
       <Navigation />
       {/* Header */}
-      <div className="bg-primary text-white py-8">
+      <div className="bg-primary text-white pt-24 pb-8">
         <div className="container mx-auto px-4">
           <button
             onClick={() => navigate('/')}
