@@ -589,17 +589,53 @@ export default function Admin() {
                     ) : (
                       <Card className="rounded-2xl overflow-hidden shadow-sm">
                         <Table>
-                          <TableHeader><TableRow className="bg-slate-50"><TableHead>Data</TableHead><TableHead>Klient</TableHead><TableHead>Filia</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
+                          <TableHeader>
+                            <TableRow className="bg-slate-50">
+                              <TableHead className="w-[80px]">Data</TableHead>
+                              <TableHead>Klient</TableHead>
+                              <TableHead>Kontakt</TableHead>
+                              <TableHead>Filia</TableHead>
+                              <TableHead className="hidden lg:table-cell">Lokalizacja</TableHead>
+                              <TableHead className="text-right">Akcja</TableHead>
+                            </TableRow>
+                          </TableHeader>
                           <TableBody>
                             {leads.filter(l => !!l.archived === showArchived).map(lead => (
                               <TableRow key={lead.id} className="cursor-pointer hover:bg-slate-50/50" onClick={() => setSelectedLeadHistory(lead)}>
-                                <TableCell className="text-[10px] font-bold text-gray-400 uppercase">{format(new Date(lead.created_at), "dd.MM", { locale: pl })}</TableCell>
-                                <TableCell><div className="font-bold text-sm">{lead.name}</div>{lead.city && <div className="text-[9px] text-accent font-bold uppercase">📍 {lead.city}</div>}</TableCell>
-                                <TableCell><Badge variant="outline" className="text-[10px]">{lead.branch || 'Brak'}</Badge></TableCell>
+                                <TableCell className="text-[10px] font-bold text-gray-400 uppercase">
+                                  {format(new Date(lead.created_at), "dd.MM", { locale: pl })}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="font-bold text-sm text-primary">{lead.name}</div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="text-xs font-medium text-slate-600">{lead.email}</div>
+                                  <div className="text-[10px] text-muted-foreground">{lead.phone || 'Brak tel.'}</div>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className={cn(
+                                    "text-[9px] font-bold uppercase",
+                                    lead.branch === 'Poznań' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-emerald-200 text-emerald-700 bg-emerald-50'
+                                  )}>
+                                    {lead.branch || 'Brak'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="hidden lg:table-cell">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[10px] font-bold text-slate-500">📍 {lead.city || 'Nieznane'}</span>
+                                  </div>
+                                  <div className="text-[8px] text-muted-foreground font-mono">{lead.ip}</div>
+                                </TableCell>
                                 <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                                   <div className="flex justify-end gap-1">
-                                    <Button variant="ghost" size="icon" onClick={() => handleArchiveLead(lead.id)} title={showArchived ? "Przywróć" : "Archiwizuj"}><Briefcase size={14} className="text-slate-400" /></Button>
-                                    {loggedInUser === 'admin' && <Button variant="ghost" size="icon" onClick={() => handleDeleteLead(lead.id)} className="text-destructive hover:bg-destructive/10"><Trash2 size={14} /></Button>}
+                                    <Button variant="ghost" size="icon" onClick={() => handleArchiveLead(lead.id)} title={showArchived ? "Przywróć" : "Archiwizuj"}>
+                                      <Briefcase size={14} className={cn(showArchived ? "text-primary" : "text-slate-400")} />
+                                    </Button>
+                                    {loggedInUser === 'admin' && (
+                                      <Button variant="ghost" size="icon" onClick={() => handleDeleteLead(lead.id)} className="text-destructive hover:bg-destructive/10">
+                                        <Trash2 size={14} />
+                                      </Button>
+                                    )}
                                   </div>
                                 </TableCell>
                               </TableRow>
