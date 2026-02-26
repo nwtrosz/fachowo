@@ -179,6 +179,32 @@ export default function Admin() {
     } catch (error) { console.error("Failed to restore", error); }
   };
 
+  const handleDeleteImage = async (projectId: number, imageUrl: string) => {
+    if (!confirm("Czy na pewno chcesz usunąć to zdjęcie?")) return;
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/projects/${projectId}/images/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl })
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Update local projects state
+        setProjects(projects.map(p => 
+          p.id === projectId ? { ...p, images: data.images, image: data.images[0] || "" } : p
+        ));
+        // Also update editingProject if active
+        if (editingProject && editingProject.id === projectId) {
+          setEditingProject({ ...editingProject, images: data.images, image: data.images[0] || "" });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete image", error);
+    }
+  };
+
   const handlePermanentDeleteProject = async (id: number) => {
     const currentCount = deleteClickCount[id] || 0;
     
@@ -955,8 +981,29 @@ export default function Admin() {
 
                                  <div className="space-y-2">
                                     <label className="text-sm font-bold text-primary">
-                                       {portfolioView === 'edit' ? "Dodaj nowe zdjęcia (opcjonalnie - zastąpią obecne)" : "Zdjęcia projektu"}
+                                       {portfolioView === 'edit' ? "Dodaj nowe zdjęcia (dopiszą się do galerii)" : "Zdjęcia projektu"}
                                     </label>
+                                    
+                                    {portfolioView === 'edit' && editingProject?.images && editingProject.images.length > 0 && (
+                                       <div className="space-y-3 mb-4">
+                                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest">Obecna Galeria ({editingProject.images.length})</p>
+                                          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 bg-secondary/5 p-3 rounded-xl border border-dashed">
+                                             {editingProject.images.map((img, idx) => (
+                                                <div key={idx} className="relative aspect-square group">
+                                                   <img src={img} className="w-full h-full object-cover rounded-lg border border-white shadow-sm" alt="" />
+                                                   <button 
+                                                      type="button"
+                                                      onClick={() => handleDeleteImage(editingProject.id, img)}
+                                                      className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:scale-110"
+                                                   >
+                                                      <X size={12} strokeWidth={3} />
+                                                   </button>
+                                                </div>
+                                             ))}
+                                          </div>
+                                       </div>
+                                    )}
+
                                     <div className="group relative border-2 border-dashed border-primary/20 rounded-2xl p-10 text-center hover:bg-accent/5 hover:border-accent transition-all cursor-pointer">
                                        <input 
                                           type="file" 

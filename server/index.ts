@@ -260,25 +260,65 @@ async function startServer() {
       if (index === -1) return res.status(404).json({ error: "Projekt nie istnieje" });
 
       const currentProject = db.projects[index];
-      let imageUrls = currentProject.images || [currentProject.image];
+      let imageUrls = [...(currentProject.images || [currentProject.image])];
 
-      // If new files uploaded, we can either replace or append. 
-      // For simplicity, let's replace if new ones are provided.
+      // Append new files instead of replacing
       if (files && files.length > 0) {
-        imageUrls = files.map(f => `/uploads/${f.filename}`);
+        const newImages = files.map(f => `/uploads/${f.filename}`);
+        imageUrls = [...imageUrls, ...newImages];
       }
 
       db.projects[index] = {
         ...currentProject,
         ...validated,
-        image: imageUrls[0],
+        image: imageUrls[0] || "", // First image is the thumbnail
         images: imageUrls
       };
 
       writeDb(db);
-      res.json({ success: true });
+      res.json({ success: true, project: db.projects[index] });
     } catch (e) {
       res.status(500).json({ error: "Błąd podczas aktualizacji projektu" });
+    }
+  });
+
+  // Admin: Delete Individual Image from Project
+  app.post("/api/admin/projects/:id/images/delete", (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { imageUrl } = req.body;
+      
+      if (!imageUrl) return res.status(400).json({ error: "Image URL required" });
+
+      const db = readDb();
+      const project = db.projects.find(p => p.id === id);
+      
+      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
+
+      // Filter out the image
+      const initialImages = project.images || [project.image];
+      project.images = initialImages.filter(img => img !== imageUrl);
+      
+      // Update main thumbnail if needed
+      if (project.image === imageUrl) {
+        project.image = project.images[0] || "";
+      }
+
+      // Try to delete physical file
+      try {
+        const fileName = path.basename(imageUrl);
+        const filePath = path.resolve(__dirname, "..", "storage", "uploads", fileName);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      } catch (fileErr) {
+        console.error("Failed to delete physical file:", fileErr);
+      }
+
+      writeDb(db);
+      res.json({ success: true, images: project.images });
+    } catch (e) {
+      res.status(500).json({ error: "Błąd podczas usuwania zdjęcia" });
     }
   });
 
