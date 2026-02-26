@@ -263,17 +263,28 @@ export default function Admin() {
 
   // Group leads into threads (Conversations)
   const getThreadedLeads = () => {
-    const groups: { [key: string]: Lead } = {};
+    const groups: { [key: string]: Lead & { lastActivity: string } } = {};
     
-    // Sort by date ascending to process oldest first (so newest wins properties)
-    const sortedLeads = [...leads].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-    
-    sortedLeads.forEach(lead => {
+    leads.forEach(lead => {
       const key = (lead.email || lead.phone || lead.id).toString().toLowerCase();
-      groups[key] = lead; // Newest lead for this contact will be the representative
+      
+      // Find the absolute latest message in this thread (either lead or one of its replies)
+      let latestTime = lead.created_at;
+      if (lead.replies && lead.replies.length > 0) {
+        const newestReply = [...lead.replies].sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        if (new Date(newestReply.created_at) > new Date(latestTime)) {
+          latestTime = newestReply.created_at;
+        }
+      }
+
+      if (!groups[key] || new Date(latestTime) > new Date(groups[key].lastActivity)) {
+        groups[key] = { ...lead, lastActivity: latestTime };
+      }
     });
 
-    return Object.values(groups).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return Object.values(groups).sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -575,7 +586,10 @@ export default function Admin() {
                         <TableBody>
                           {getThreadedLeads().filter(l => !l.archived).slice(0, 5).map(lead => (
                             <TableRow key={lead.id} className="hover:bg-slate-50/50">
-                              <TableCell className="text-[10px] text-gray-400 font-bold uppercase">{format(new Date(lead.created_at), "d MMM, HH:mm", { locale: pl })}</TableCell>
+                              <TableCell className="text-[10px] text-gray-400 font-bold uppercase">
+                                {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
+                                <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>
+                              </TableCell>
                               <TableCell><div className="font-bold text-primary">{lead.name}</div><div className="text-[10px] text-muted-foreground">{lead.email}</div></TableCell>
                               <TableCell className="text-right"><Button variant="outline" size="sm" onClick={() => { setSelectedLeadHistory(lead); setActiveTab('messages'); }}><MessageSquare size={14} /></Button></TableCell>
                             </TableRow>
@@ -635,7 +649,10 @@ export default function Admin() {
                             <TableBody>
                               {getThreadedLeads().filter(l => !!l.archived === showArchived).map(lead => (
                                 <TableRow key={lead.id} className="cursor-pointer hover:bg-slate-50/50 group" onClick={() => setSelectedLeadHistory(lead)}>
-                                  <TableCell className="text-[10px] font-bold text-gray-400 uppercase">{format(new Date(lead.created_at), "dd.MM HH:mm", { locale: pl })}</TableCell>
+                                  <TableCell className="text-[10px] font-bold text-gray-400 uppercase">
+                                    {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
+                                    <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>
+                                  </TableCell>
                                   <TableCell>
                                     <div className="font-bold text-sm text-primary">{lead.name}</div>
                                     <div className="text-[10px] text-muted-foreground">{lead.email}</div>
