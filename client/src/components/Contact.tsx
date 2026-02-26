@@ -1,7 +1,8 @@
-import { Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, CheckCircle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useContactForm } from '@/hooks/useContactForm';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 /**
  * Contact Section Component
@@ -22,10 +23,11 @@ export default function Contact() {
     phone: '',
     branch: 'Poznań',
     message: '',
+    website: '', // Honeypot
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -35,9 +37,10 @@ export default function Contact() {
     e.preventDefault();
     const result = await submit(formData);
     if (result.success) {
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      toast.success("Wiadomość została wysłana!");
+      setFormData({ name: '', email: '', phone: '', branch: 'Poznań', message: '', website: '' });
     } else {
-      alert(result.error);
+      toast.error(result.error || "Wystąpił błąd podczas wysyłania.");
     }
   };
 
@@ -129,6 +132,18 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                {/* Honeypot field - hidden from humans */}
+                <div style={{ display: 'none' }}>
+                  <input
+                    type="text"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-primary uppercase tracking-widest ml-1">Imię i Nazwisko</label>
                   <input

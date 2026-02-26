@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { 
   Loader2, 
   LayoutDashboard, 
@@ -383,56 +384,68 @@ export default function Admin() {
     } catch (error) { console.error("Failed to save order", error); }
   };
 
-  const handleSendReply = async (id: number) => {
-    if (!replyMessage.trim()) return;
-    setIsSendingReply(true);
-    const token = localStorage.getItem('adminToken');
-    try {
-      const res = await fetch(`${API_BASE}/api/admin/leads/${id}/reply`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ message: replyMessage })
-      });
-      if (res.ok) {
-        const newReply: Reply = { id: Date.now(), message: replyMessage, created_at: new Date().toISOString() };
-        setLeads(leads.map(l => l.id === id ? { ...l, replies: [...(l.replies || []), newReply] } : l));
-        setReplyMessage("");
-        alert("Wysłano!");
+    const handleSendReply = async (id: number) => {
+      if (!replyMessage.trim()) return;
+      setIsSendingReply(true);
+      const token = localStorage.getItem('adminToken');
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/leads/${id}/reply`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ message: replyMessage })
+        });
+        if (res.ok) {
+          const newReply: Reply = { id: Date.now(), message: replyMessage, created_at: new Date().toISOString() };
+          setLeads(leads.map(l => l.id === id ? { ...l, replies: [...(l.replies || []), newReply] } : l));
+          setReplyMessage("");
+          toast.success("Odpowiedź została wysłana e-mailem!");
+        } else {
+          toast.error("Błąd podczas wysyłania odpowiedzi.");
+        }
+      } catch (error) { 
+        console.error("Failed to reply", error);
+        toast.error("Błąd połączenia.");
       }
-    } catch (error) { console.error("Failed to reply", error); }
-    finally { setIsSendingReply(false); }
-  };
-
-  const handleProjectSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingProject && (!selectedFiles || selectedFiles.length === 0)) {
-        alert("Wybierz zdjęcia!");
-        return;
-    }
-    setUploading(true);
-    setUploadProgress(0);
-    const formData = new FormData();
-    formData.append('title', newProject.title);
-    formData.append('category', newProject.category);
-    formData.append('description', newProject.description);
-    if (selectedFiles) { for (let i = 0; i < selectedFiles.length; i++) formData.append('images', selectedFiles[i]); }
-    const url = editingProject ? `${API_BASE}/api/admin/projects/${editingProject.id}` : `${API_BASE}/api/admin/projects`;
-    const token = localStorage.getItem('adminToken');
-    const xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener('progress', (e) => { if (e.lengthComputable) setUploadProgress(Math.round((e.loaded * 100) / e.total)); });
-    xhr.addEventListener('load', async () => {
-      setUploading(false);
-      if (xhr.status >= 200 && xhr.status < 300) {
-        setEditingProject(null);
-        setFormKey(prev => prev + 1);
-        setPortfolioView('list');
-        fetchData();
-      } else { alert("Błąd zapisu"); }
-    });
-    xhr.open(editingProject ? 'PUT' : 'POST', url);
-    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-    xhr.send(formData);
-  };
+      finally { setIsSendingReply(false); }
+    };
+  
+    const handleProjectSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!editingProject && (!selectedFiles || selectedFiles.length === 0)) {
+          toast.error("Proszę wybrać co najmniej jedno zdjęcie.");
+          return;
+      }
+      setUploading(true);
+      setUploadProgress(0);
+      const formData = new FormData();
+      formData.append('title', newProject.title);
+      formData.append('category', newProject.category);
+      formData.append('description', newProject.description);
+      if (selectedFiles) { for (let i = 0; i < selectedFiles.length; i++) formData.append('images', selectedFiles[i]); }
+      const url = editingProject ? `${API_BASE}/api/admin/projects/${editingProject.id}` : `${API_BASE}/api/admin/projects`;
+      const token = localStorage.getItem('adminToken');
+      const xhr = new XMLHttpRequest();
+      
+      xhr.upload.addEventListener('progress', (e) => { if (e.lengthComputable) setUploadProgress(Math.round((e.loaded * 100) / e.total)); });
+      xhr.addEventListener('load', async () => {
+        setUploading(false);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          setEditingProject(null);
+          setFormKey(prev => prev + 1);
+          setPortfolioView('list');
+          fetchData();
+          toast.success(editingProject ? "Zmiany zostały zapisane!" : "Nowy projekt został dodany do portfolio!");
+        } else { 
+          toast.error("Wystąpił błąd podczas zapisu projektu."); 
+        }
+      });
+      xhr.open(editingProject ? 'PUT' : 'POST', url);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      xhr.send(formData);
+    };
 
   if (!isAuthenticated) {
     return (

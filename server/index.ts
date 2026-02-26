@@ -22,6 +22,8 @@ const contactSchema = z.object({
   phone: z.string().optional().or(z.literal('')),
   branch: z.enum(["Poznań", "Warszawa"], { errorMap: () => ({ message: "Wybierz filię" }) }),
   message: z.string().min(1, "Wiadomość jest wymagana"),
+  // Honeypot field - bots will fill this, humans won't
+  website: z.string().optional(),
 });
 
 const projectSchema = z.object({
@@ -316,6 +318,13 @@ async function startServer() {
   app.post("/api/contact", async (req, res) => {
     try {
       const data = contactSchema.parse(req.body);
+      
+      // Honeypot check - bots will fill this, humans won't see it
+      if (data.website) {
+        console.log("[AntiSpam] Bot detected (Honeypot filled). Returning mock success.");
+        return res.json({ success: true });
+      }
+
       const db = readDb();
       const newLead = { ...data, id: Date.now(), ip: req.clientIp || "", created_at: new Date().toISOString() };
       db.leads.push(newLead);
