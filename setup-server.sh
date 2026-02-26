@@ -54,7 +54,8 @@ pnpm build
 
 # 6. Konfiguracja Nginx pod domenę $DOMAIN
 echo "🌐 Konfiguracja Nginx dla domeny $DOMAIN..."
-sudo truncate -s 0 /etc/nginx/sites-available/default
+CONF_FILE="/etc/nginx/sites-available/$DOMAIN"
+sudo truncate -s 0 $CONF_FILE
 echo "server {
     listen 80;
     listen [::]:80;
@@ -68,7 +69,11 @@ echo "server {
         proxy_set_header Host \$host;
         proxy_cache_bypass \$http_upgrade;
     }
-}" | sudo tee /etc/nginx/sites-available/default > /dev/null
+}" | sudo tee $CONF_FILE > /dev/null
+
+# Aktywacja konfiguracji
+sudo ln -sf $CONF_FILE /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default 2>/dev/null
 
 # 7. Restart i certyfikat SSL
 echo "🔄 Restartowanie Nginx i aktywacja SSL..."
