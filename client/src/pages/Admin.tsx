@@ -577,7 +577,10 @@ export default function Admin() {
         
         <nav className="p-4 space-y-2">
           <button
-            onClick={() => setActiveTab('dashboard')}
+            onClick={() => {
+              setActiveTab('dashboard');
+              if (window.innerWidth < 768) setSidebarOpen(false);
+            }}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-colors text-left",
               activeTab === 'dashboard' ? "bg-accent text-white font-bold shadow-md" : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -588,7 +591,10 @@ export default function Admin() {
           </button>
           
           <button
-             onClick={() => setActiveTab('messages')}
+             onClick={() => {
+               setActiveTab('messages');
+               if (window.innerWidth < 768) setSidebarOpen(false);
+             }}
              className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-colors text-left",
               activeTab === 'messages' ? "bg-accent text-white font-bold shadow-md" : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -596,15 +602,18 @@ export default function Admin() {
           >
             <MessageSquare size={20} />
             Wiadomości
-            {leads.length > 0 && (
+            {leads.filter(l => !l.archived).length > 0 && (
               <span className="ml-auto bg-white text-primary text-xs font-bold px-2 py-0.5 rounded-full">
-                {leads.length}
+                {leads.filter(l => !l.archived).length}
               </span>
             )}
           </button>
 
           <button
-             onClick={() => setActiveTab('portfolio')}
+             onClick={() => {
+               setActiveTab('portfolio');
+               if (window.innerWidth < 768) setSidebarOpen(false);
+             }}
              className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-colors text-left",
               activeTab === 'portfolio' ? "bg-accent text-white font-bold shadow-md" : "text-white/70 hover:bg-white/10 hover:text-white"
