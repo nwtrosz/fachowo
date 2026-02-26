@@ -126,6 +126,49 @@ async function startServer() {
     }
   });
 
+  // Admin: Send Reply
+  app.post("/api/admin/leads/:id/reply", async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { message } = req.body;
+      if (!message) return res.status(400).json({ error: "Wiadomość jest wymagana" });
+
+      const db = readDb();
+      const lead = db.leads.find(l => l.id === id);
+      
+      if (!lead) return res.status(404).json({ error: "Lead not found" });
+
+      // Send Email
+      if (EMAIL_USER && EMAIL_PASS) {
+        const transporter = nodemailer.createTransport({ 
+          service: "gmail", 
+          auth: { user: EMAIL_USER, pass: EMAIL_PASS } 
+        });
+        
+        await transporter.sendMail({ 
+          from: EMAIL_USER, 
+          to: lead.email, 
+          subject: `Re: Zapytanie Fachowo.eu - ${lead.branch}`, 
+          text: `${message}\n\n---\nZ poważaniem,\nZespół Fachowo.eu\nwww.fachowo.eu` 
+        });
+      }
+
+      // Save reply to DB
+      if (!lead.replies) lead.replies = [];
+      lead.replies.push({
+        id: Date.now(),
+        message,
+        created_at: new Date().toISOString()
+      });
+      
+      writeDb(db);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Reply error:", error);
+      res.status(500).json({ error: "Nie udało się wysłać odpowiedzi" });
+    }
+  });
+
   // Admin: Get Stats
   app.get("/api/admin/stats", (_req, res) => {
     try {

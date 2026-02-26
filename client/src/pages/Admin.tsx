@@ -33,6 +33,12 @@ import {
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 
+interface Reply {
+  id: number;
+  message: string;
+  created_at: string;
+}
+
 interface Lead {
   id: number;
   name: string;
@@ -45,6 +51,7 @@ interface Lead {
   city: string;
   created_at: string;
   archived?: boolean;
+  replies?: Reply[];
 }
 
 interface Stats {
@@ -80,6 +87,8 @@ export default function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
   const [selectedLeadHistory, setSelectedLeadHistory] = useState<Lead | null>(null);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [isSendingReply, setIsSendingReply] = useState(false);
 
   // Form State
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -154,6 +163,44 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Failed to archive lead", error);
+    }
+  };
+
+  const handleSendReply = async (id: number) => {
+    if (!replyMessage.trim()) return;
+    setIsSendingReply(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/leads/${id}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: replyMessage })
+      });
+      if (res.ok) {
+        // Update local state with the new reply
+        const newReply: Reply = {
+          id: Date.now(),
+          message: replyMessage,
+          created_at: new Date().toISOString()
+        };
+        
+        setLeads(leads.map(l => {
+          if (l.id === id) {
+            const currentReplies = l.replies || [];
+            return { ...l, replies: [...currentReplies, newReply] };
+          }
+          return l;
+        }));
+        
+        setReplyMessage("");
+        alert("Odpowiedź została wysłana!");
+      } else {
+        alert("Błąd podczas wysyłania odpowiedzi.");
+      }
+    } catch (error) {
+      console.error("Failed to send reply", error);
+      alert("Błąd połączenia.");
+    } finally {
+      setIsSendingReply(false);
     }
   };
 
@@ -537,22 +584,65 @@ export default function Admin() {
                                             <X className="w-4 h-4 mr-2" /> Zamknij historię
                                           </Button>
                                         </CardHeader>
-                                        <CardContent>
-                                          <div className="space-y-4">
-                                            {getLeadHistory(selectedLeadHistory).map((h) => (
-                                              <div key={h.id} className="p-4 rounded-lg bg-secondary/10 border-l-4 border-l-accent">
-                                                <div className="flex justify-between mb-2">
-                                                  <span className="text-xs font-bold text-muted-foreground">
-                                                    {format(new Date(h.created_at), "dd.MM.yyyy HH:mm", { locale: pl })}
-                                                  </span>
-                                                  <Badge variant="secondary" className="text-[10px]">{h.branch}</Badge>
-                                                </div>
-                                                <p className="text-sm italic">"{h.message}"</p>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </CardContent>
-                                      </Card>
+                                                                <CardContent>
+                                                                  <div className="space-y-6">
+                                                                    <div className="space-y-4">
+                                                                      <h4 className="text-sm font-bold uppercase text-muted-foreground border-b pb-2">Otrzymane wiadomości i odpowiedzi</h4>
+                                                                      {(() => {
+                                                                        const history = getLeadHistory(selectedLeadHistory);
+                                                                        // Combine inquiries and replies for a chronological view
+                                                                        const timeline = [
+                                                                          ...history.map(h => ({ ...h, type: 'inquiry' })),
+                                                                          ...(leads.find(l => l.id === selectedLeadHistory.id)?.replies || []).map(r => ({ ...r, type: 'reply', branch: selectedLeadHistory.branch }))
+                                                                        ].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+                                        
+                                                                        return timeline.map((item: any) => (
+                                                                          <div key={`${item.type}-${item.id}`} className={cn(
+                                                                            "p-4 rounded-xl border-l-4",
+                                                                            item.type === 'inquiry' ? "bg-white border-l-accent border shadow-sm" : "bg-primary/5 border-l-primary border-dashed border ml-8"
+                                                                          )}>
+                                                                            <div className="flex justify-between mb-2">
+                                                                              <div className="flex items-center gap-2">
+                                                                                <Badge variant={item.type === 'inquiry' ? "outline" : "default"} className="text-[10px]">
+                                                                                  {item.type === 'inquiry' ? "KLIENT" : "TWOJA ODPOWIEDŹ"}
+                                                                                </Badge>
+                                                                                <span className="text-[10px] font-bold text-muted-foreground">
+                                                                                  {format(new Date(item.created_at), "dd.MM.yyyy HH:mm", { locale: pl })}
+                                                                                </span>
+                                                                              </div>
+                                                                              <Badge variant="secondary" className="text-[10px]">{item.branch}</Badge>
+                                                                            </div>
+                                                                            <p className="text-sm whitespace-pre-wrap">{item.message}</p>
+                                                                          </div>
+                                                                        ));
+                                                                      })()}
+                                                                    </div>
+                                        
+                                                                    {/* Reply Form */}
+                                                                    <div className="pt-6 border-t">
+                                                                      <h4 className="text-sm font-bold mb-4 uppercase text-primary">Wyślij odpowiedź do: {selectedLeadHistory.email}</h4>
+                                                                      <Textarea 
+                                                                        placeholder="Napisz treść odpowiedzi..."
+                                                                        className="mb-4 min-h-[150px]"
+                                                                        value={replyMessage}
+                                                                        onChange={(e) => setReplyMessage(e.target.value)}
+                                                                      />
+                                                                      <div className="flex justify-end gap-3">
+                                                                        <Button variant="outline" onClick={() => { setReplyMessage(""); setSelectedLeadHistory(null); }}>Anuluj</Button>
+                                                                        <Button 
+                                                                          disabled={isSendingReply || !replyMessage.trim()}
+                                                                          onClick={() => handleSendReply(selectedLeadHistory.id)}
+                                                                        >
+                                                                          {isSendingReply ? <Loader2 className="animate-spin mr-2" /> : <MessageSquare className="mr-2 h-4 w-4" />}
+                                                                          Wyślij E-mail
+                                                                        </Button>
+                                                                      </div>
+                                                                      <p className="text-[10px] text-muted-foreground mt-2 text-center">
+                                                                        Odpowiedź zostanie wysłana z adresu fachowo.eu@gmail.com
+                                                                      </p>
+                                                                    </div>
+                                                                  </div>
+                                                                </CardContent>                                      </Card>
                                     ) : (
                                       <Card>
                                         <Table>
