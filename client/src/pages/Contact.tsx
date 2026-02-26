@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
