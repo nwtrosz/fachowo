@@ -4,7 +4,11 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, 'data.json');
+
+// On VPS, __dirname is dist/, so we go up one level to root/storage/data.json
+// In development, we go up one level to root/server/data.json (legacy) or root/storage/data.json
+const DB_DIR = path.resolve(__dirname, "..", "storage");
+const DB_PATH = path.join(DB_DIR, 'data.json');
 
 // Interface for DB structure
 interface DB {
@@ -17,8 +21,12 @@ const defaultDB: DB = {
   projects: []
 };
 
-// Ensure DB file exists
+// Ensure DB directory and file exist
 export const initDb = () => {
+  if (!fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  }
+  
   if (!fs.existsSync(DB_PATH)) {
     console.log("Creating new database file at", DB_PATH);
     fs.writeFileSync(DB_PATH, JSON.stringify(defaultDB, null, 2));

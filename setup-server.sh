@@ -27,6 +27,22 @@ fi
 
 # 4. Instalacja bibliotek projektu i budowanie
 echo "🛠 Budowanie projektu..."
+
+# Migracja danych przed czyszczeniem dist (zabezpieczenie)
+mkdir -p storage/uploads
+if [ -f "dist/data.json" ]; then
+    echo "📦 Migracja bazy danych..."
+    mv dist/data.json storage/data.json
+elif [ -f "server/data.json" ]; then
+    echo "📦 Migracja bazy danych z serwera..."
+    cp server/data.json storage/data.json
+fi
+
+if [ -d "dist/public/uploads" ]; then
+    echo "🖼 Migracja zdjęć projektów..."
+    cp -r dist/public/uploads/* storage/uploads/ 2>/dev/null
+fi
+
 rm -rf dist
 pnpm install
 pnpm build

@@ -40,9 +40,14 @@ const EMAIL_PASS = "xxcw tyjh rbtr eflj";
 // Multer Setup
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    let uploadPath = process.env.NODE_ENV === "production"
-      ? path.resolve(__dirname, "public", "uploads")
-      : path.resolve(__dirname, "..", "client", "public", "uploads");
+    // Persistent storage outside of dist
+    let uploadPath = path.resolve(__dirname, "..", "storage", "uploads");
+    
+    // In development, we might want them in client public too, 
+    // but for VPS, root/storage/uploads is safest and most persistent.
+    if (process.env.NODE_ENV !== "production") {
+      uploadPath = path.resolve(__dirname, "..", "client", "public", "uploads");
+    }
 
     if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
@@ -51,7 +56,7 @@ const storage = multer.diskStorage({
     cb(null, `project-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`);
   },
 });
-const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } }); // Increase to 100MB
 
 function seedProjects() {
   const db = readDb();
@@ -71,15 +76,21 @@ async function startServer() {
   seedProjects();
 
   app.use(cors());
-  app.use(express.json({ limit: '50mb' }));
+  app.use(express.json({ limit: '100mb' }));
   app.use(requestIp.mw());
 
-  // Kluczowa poprawka ścieżek
   const staticPath = process.env.NODE_ENV === "production"
     ? path.resolve(__dirname, "public")
     : path.resolve(__dirname, "..", "client", "public");
 
   app.use(express.static(staticPath));
+
+  // Serve persistent uploads folder
+  const persistentUploadsPath = process.env.NODE_ENV === "production"
+    ? path.resolve(__dirname, "..", "storage", "uploads")
+    : path.resolve(__dirname, "..", "client", "public", "uploads");
+  
+  app.use("/uploads", express.static(persistentUploadsPath));
 
   // --- API ---
   app.post("/api/login", (req, res) => {
