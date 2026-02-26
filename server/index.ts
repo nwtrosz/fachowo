@@ -386,7 +386,22 @@ async function startServer() {
       writeDb(db);
       if (EMAIL_USER && EMAIL_PASS) {
         const transport = nodemailer.createTransport({ service: "gmail", auth: { user: EMAIL_USER, pass: EMAIL_PASS } });
-        await transport.sendMail({ from: EMAIL_USER, to: "fachowo.eu@gmail.com", subject: `Nowa wiadomość: ${data.name}`, text: `Imię: ${data.name}\nEmail: ${data.email}\nFilia: ${data.branch}\n\n${data.message}` });
+        
+        // 1. Mail to you (Notification)
+        await transport.sendMail({ 
+          from: EMAIL_USER, 
+          to: "fachowo.eu@gmail.com", 
+          subject: `Nowa wiadomość: ${data.name}`, 
+          text: `Imię: ${data.name}\nEmail: ${data.email}\nFilia: ${data.branch}\n\n${data.message}` 
+        });
+
+        // 2. Mail to Customer (Auto-Confirmation)
+        await transport.sendMail({
+          from: `"Fachowo.eu" <${EMAIL_USER}>`,
+          to: data.email,
+          subject: "Dziękujemy za kontakt - Fachowo.eu",
+          text: `Witaj ${data.name}!\n\nDziękujemy za przesłanie zapytania do naszej filii w mieście ${data.branch}.\n\nOtrzymaliśmy Twoją wiadomość i nasi specjaliści już nad nią pracują. Skontaktujemy się z Tobą telefonicznie lub mailowo w ciągu najbliższych 24 godzin roboczych, aby omówić szczegóły i przygotować bezpłatną wycenę.\n\n---\nZ poważaniem,\nZespół Fachowo.eu\nwww.fachowo.net.pl\nTel: +48 123 456 789`
+        });
       }
       res.json({ success: true });
     } catch (e) { res.status(400).json({ success: false }); }
