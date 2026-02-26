@@ -41,15 +41,10 @@ const EMAIL_PASS = "xxcw tyjh rbtr eflj";
 // Multer Setup
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    // Persistent storage outside of dist
     let uploadPath = path.resolve(__dirname, "..", "storage", "uploads");
-    
-    // In development, we might want them in client public too, 
-    // but for VPS, root/storage/uploads is safest and most persistent.
     if (process.env.NODE_ENV !== "production") {
       uploadPath = path.resolve(__dirname, "..", "client", "public", "uploads");
     }
-
     if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
@@ -57,7 +52,7 @@ const storage = multer.diskStorage({
     cb(null, `project-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`);
   },
 });
-const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } }); // Increase to 100MB
+const upload = multer({ storage, limits: { fileSize: 100 * 1024 * 1024 } });
 
 function seedProjects() {
   const db = readDb();
@@ -81,29 +76,19 @@ async function startServer() {
   app.use(express.urlencoded({ limit: '100mb', extended: true }));
   app.use(requestIp.mw());
 
-  // Visitor Tracking Middleware
+  // Visitor Tracking
   app.use((req, res, next) => {
-    // Skip tracking for API calls and static assets to be more accurate
-    if (req.path.startsWith('/api') || req.path.includes('.')) {
-      return next();
-    }
-
+    if (req.path.startsWith('/api') || req.path.includes('.')) return next();
     try {
       const clientIp = req.clientIp || "unknown";
       const today = new Date().toISOString().split('T')[0];
       const db = readDb();
-      
       if (!db.visitors) db.visitors = [];
-      
-      const alreadyTracked = db.visitors.some(v => v.ip === clientIp && v.date === today);
-      
-      if (!alreadyTracked) {
+      if (!db.visitors.some(v => v.ip === clientIp && v.date === today)) {
         db.visitors.push({ ip: clientIp, date: today });
         writeDb(db);
       }
-    } catch (e) {
-      console.error("Visitor tracking error:", e);
-    }
+    } catch (e) {}
     next();
   });
 
@@ -112,26 +97,16 @@ async function startServer() {
     : path.resolve(__dirname, "..", "client", "public");
 
   app.use(express.static(staticPath));
-
-  // Serve persistent uploads folder
-  const persistentUploadsPath = process.env.NODE_ENV === "production"
-    ? path.resolve(__dirname, "..", "storage", "uploads")
-    : path.resolve(__dirname, "..", "client", "public", "uploads");
-  
-  app.use("/uploads", express.static(persistentUploadsPath));
+  app.use("/uploads", express.static(process.env.NODE_ENV === "production" ? path.resolve(__dirname, "..", "storage", "uploads") : path.resolve(__dirname, "..", "client", "public", "uploads")));
 
   // --- API ---
   app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    
-    // User definitions
     const users = [
       { username: "popek", password: "admin123", role: "user" },
       { username: "admin", password: "admin123", role: "admin" }
     ];
-
     const foundUser = users.find(u => u.username === username && u.password === password);
-
     if (foundUser) {
       adminToken = nanoid();
       currentAdminUser = foundUser.username;
@@ -144,384 +119,161 @@ async function startServer() {
   app.get("/api/projects", (_req, res) => {
     try {
       const db = readDb();
-      const activeProjects = db.projects.filter(p => !p.archived);
-      res.json([...activeProjects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    } catch (e) {
-      res.status(500).json({ error: "Failed to fetch projects" });
-    }
+      res.json(db.projects.filter(p => !p.archived).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Get All Projects (including archived)
   app.get("/api/admin/projects", (_req, res) => {
-    try {
-      const db = readDb();
-      res.json([...db.projects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    } catch (e) {
-      res.status(500).json({ error: "Failed to fetch projects" });
-    }
-  });
-
-// Admin: Get Leads
-  app.get("/api/admin/leads", (_req, res) => {
-    try {
-      const db = readDb();
-      res.json([...db.leads].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    } catch (error) {
-      console.error("Error fetching leads:", error);
-      res.status(500).json({ error: "Failed to fetch leads" });
-    }
-  });
-
-  // Admin: Archive Lead
-  app.post("/api/admin/leads/:id/archive", (req, res) => {
-    try {
-      const id = Number(req.params.id);
-      const db = readDb();
-      const lead = db.leads.find(l => l.id === id);
-      if (lead) {
-        // @ts-ignore
-        lead.archived = !lead.archived;
-        writeDb(db);
-        res.json({ success: true, archived: lead.archived });
-      } else {
-        res.status(404).json({ error: "Lead not found" });
-      }
-    } catch (error) {
-      res.status(500).json({ error: "Failed to archive lead" });
-    }
-  });
-
-  // Admin: Permanent Delete Lead (ONLY ADMIN USER)
-  app.delete("/api/admin/leads/:id", (req, res) => {
-    try {
-      if (currentAdminUser !== "admin") {
-        return res.status(403).json({ error: "Brak uprawnień do usuwania" });
-      }
-
-      const id = Number(req.params.id);
-      const db = readDb();
-      db.leads = db.leads.filter(l => l.id !== id);
-      writeDb(db);
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Błąd podczas usuwania wiadomości" });
-    }
-  });
-      const id = Number(req.params.id);
-      const db = readDb();
-      const lead = db.leads.find(l => l.id === id);
-      if (lead) {
-        // @ts-ignore
-        lead.archived = !lead.archived;
-        writeDb(db);
-        res.json({ success: true, archived: lead.archived });
-      } else {
-        res.status(404).json({ error: "Lead not found" });
-      }
-    } catch (error) {
-      res.status(500).json({ error: "Failed to archive lead" });
-    }
-  });
-
-  // Admin: Send Reply
-  app.post("/api/admin/leads/:id/reply", async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-      const { message } = req.body;
-      if (!message) return res.status(400).json({ error: "Wiadomość jest wymagana" });
-
-      const db = readDb();
-      const lead = db.leads.find(l => l.id === id);
-      
-      if (!lead) return res.status(404).json({ error: "Lead not found" });
-
-      // Send Email
-      if (EMAIL_USER && EMAIL_PASS) {
-        const transporter = nodemailer.createTransport({ 
-          service: "gmail", 
-          auth: { user: EMAIL_USER, pass: EMAIL_PASS } 
-        });
-        
-        await transporter.sendMail({ 
-          from: EMAIL_USER, 
-          to: lead.email, 
-          subject: `Re: Zapytanie Fachowo.eu - ${lead.branch}`, 
-          text: `${message}\n\n---\nZ poważaniem,\nZespół Fachowo.eu\nwww.fachowo.eu` 
-        });
-      }
-
-      // Save reply to DB
-      if (!lead.replies) lead.replies = [];
-      lead.replies.push({
-        id: Date.now(),
-        message,
-        created_at: new Date().toISOString()
-      });
-      
-      writeDb(db);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Reply error:", error);
-      res.status(500).json({ error: "Nie udało się wysłać odpowiedzi" });
-    }
-  });
-
-  // Admin: Get Stats
-  app.get("/api/admin/stats", (_req, res) => {
-    try {
-      const db = readDb();
-      const today = new Date().toISOString().split('T')[0];
-      const todayVisitors = (db.visitors || []).filter(v => v.date === today).length;
-      
-      res.json({ 
-          totalLeads: db.leads.length,
-          uniqueVisitors: todayVisitors
-      });
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-      res.status(500).json({ error: "Failed to fetch stats" });
-    }
+    try { res.json(readDb().projects.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())); } catch (e) { res.status(500).end(); }
   });
 
   app.post("/api/admin/projects", upload.array("images", 50), (req, res) => {
     try {
-      console.log("[Portfolio] Received project upload request:", req.body);
       const validated = projectSchema.parse(req.body);
       const files = req.files as Express.Multer.File[];
-      
-      if (!files || files.length === 0) {
-        console.error("[Portfolio] Upload failed: No images provided");
-        return res.status(400).json({ error: "Proszę wybrać co najmniej jedno zdjęcie." });
-      }
-
-      console.log(`[Portfolio] Processing ${files.length} images...`);
+      if (!files || files.length === 0) return res.status(400).json({ error: "No images" });
       const imageUrls = files.map(f => `/uploads/${f.filename}`);
       const db = readDb();
-      
-      const newProject = { 
-        id: Date.now(), 
-        ...validated, 
-        image: imageUrls[0], 
-        images: imageUrls, 
-        created_at: new Date().toISOString() 
-      };
-      
-      db.projects.push(newProject);
+      db.projects.push({ id: Date.now(), ...validated, image: imageUrls[0], images: imageUrls, created_at: new Date().toISOString() });
       writeDb(db);
-      console.log("[Portfolio] Project added successfully:", newProject.title);
       res.json({ success: true });
-    } catch (e) { 
-      if (e instanceof z.ZodError) {
-        return res.status(400).json({ error: e.errors[0].message });
-      }
-      console.error("[Portfolio] SYSTEM ERROR DURING UPLOAD:", e);
-      res.status(500).json({ error: "Błąd systemowy podczas wgrywania projektu." }); 
-    }
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Update Project
   app.put("/api/admin/projects/:id", upload.array("images", 50), (req, res) => {
     try {
       const id = Number(req.params.id);
       const validated = projectSchema.parse(req.body);
       const files = req.files as Express.Multer.File[];
-      
       const db = readDb();
-      const index = db.projects.findIndex(p => p.id === id);
-      
-      if (index === -1) return res.status(404).json({ error: "Projekt nie istnieje" });
-
-      const currentProject = db.projects[index];
-      let imageUrls = [...(currentProject.images || [currentProject.image])];
-
-      // Append new files instead of replacing
-      if (files && files.length > 0) {
-        const newImages = files.map(f => `/uploads/${f.filename}`);
-        imageUrls = [...imageUrls, ...newImages];
-      }
-
-      db.projects[index] = {
-        ...currentProject,
-        ...validated,
-        image: imageUrls[0] || "", // First image is the thumbnail
-        images: imageUrls
-      };
-
+      const idx = db.projects.findIndex(p => p.id === id);
+      if (idx === -1) return res.status(404).end();
+      let images = [...(db.projects[idx].images || [db.projects[idx].image])];
+      if (files && files.length > 0) images = [...images, ...files.map(f => `/uploads/${f.filename}`)];
+      db.projects[idx] = { ...db.projects[idx], ...validated, image: images[0] || "", images };
       writeDb(db);
-      res.json({ success: true, project: db.projects[index] });
-    } catch (e) {
-      res.status(500).json({ error: "Błąd podczas aktualizacji projektu" });
-    }
+      res.json({ success: true, project: db.projects[idx] });
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Delete Individual Image from Project
   app.post("/api/admin/projects/:id/images/delete", (req, res) => {
     try {
       const id = Number(req.params.id);
       const { imageUrl } = req.body;
-      
-      if (!imageUrl) return res.status(400).json({ error: "Image URL required" });
-
       const db = readDb();
-      const project = db.projects.find(p => p.id === id);
-      
-      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
-
-      // Filter out the image
-      const initialImages = project.images || [project.image];
-      project.images = initialImages.filter(img => img !== imageUrl);
-      
-      // Update main thumbnail if needed
-      if (project.image === imageUrl) {
-        project.image = project.images[0] || "";
-      }
-
-      // Try to delete physical file
-      try {
-        const fileName = path.basename(imageUrl);
-        const filePath = path.resolve(__dirname, "..", "storage", "uploads", fileName);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-      } catch (fileErr) {
-        console.error("Failed to delete physical file:", fileErr);
-      }
-
+      const p = db.projects.find(proj => proj.id === id);
+      if (!p) return res.status(404).end();
+      p.images = (p.images || []).filter(img => img !== imageUrl);
+      if (p.image === imageUrl) p.image = p.images[0] || "";
       writeDb(db);
-      res.json({ success: true, images: project.images });
-    } catch (e) {
-      res.status(500).json({ error: "Błąd podczas usuwania zdjęcia" });
-    }
+      res.json({ success: true, images: p.images });
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Reorder Images in Project
   app.post("/api/admin/projects/:id/images/reorder", (req, res) => {
     try {
       const id = Number(req.params.id);
       const { imageUrls } = req.body;
-      
-      if (!Array.isArray(imageUrls)) return res.status(400).json({ error: "Invalid data" });
-
       const db = readDb();
-      const project = db.projects.find(p => p.id === id);
-      
-      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
-
-      project.images = imageUrls;
-      // First image becomes the thumbnail
-      project.image = imageUrls[0] || "";
-
+      const p = db.projects.find(proj => proj.id === id);
+      if (!p) return res.status(404).end();
+      p.images = imageUrls;
+      p.image = imageUrls[0] || "";
       writeDb(db);
       res.json({ success: true });
-    } catch (e) {
-      res.status(500).json({ error: "Błąd podczas zmiany kolejności" });
-    }
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Archive Project (Soft Delete)
   app.delete("/api/admin/projects/:id", (req, res) => {
     try {
-      const id = Number(req.params.id);
       const db = readDb();
-      const project = db.projects.find(p => p.id === id);
-      
-      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
-
-      // @ts-ignore
-      project.archived = true;
-      writeDb(db);
-      res.json({ success: true, archived: true });
-    } catch (e) {
-      res.status(500).json({ error: "Błąd podczas archiwizacji projektu" });
-    }
+      const p = db.projects.find(proj => proj.id === Number(req.params.id));
+      if (p) { p.archived = true; writeDb(db); }
+      res.json({ success: true });
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Permanent Delete Project
   app.delete("/api/admin/projects/:id/permanent", (req, res) => {
     try {
-      const id = Number(req.params.id);
       const db = readDb();
-      db.projects = db.projects.filter(p => p.id !== id);
+      db.projects = db.projects.filter(p => p.id !== Number(req.params.id));
       writeDb(db);
       res.json({ success: true });
-    } catch (e) {
-      res.status(500).json({ error: "Błąd podczas trwałego usuwania projektu" });
-    }
+    } catch (e) { res.status(500).end(); }
   });
 
-  // Admin: Restore Project
   app.post("/api/admin/projects/:id/restore", (req, res) => {
     try {
-      const id = Number(req.params.id);
       const db = readDb();
-      const project = db.projects.find(p => p.id === id);
-      
-      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
+      const p = db.projects.find(proj => proj.id === Number(req.params.id));
+      if (p) { p.archived = false; writeDb(db); }
+      res.json({ success: true });
+    } catch (e) { res.status(500).end(); }
+  });
 
-      // @ts-ignore
-      project.archived = false;
+  app.get("/api/admin/leads", (_req, res) => {
+    try { res.json([...readDb().leads].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())); } catch (e) { res.status(500).end(); }
+  });
+
+  app.post("/api/admin/leads/:id/archive", (req, res) => {
+    try {
+      const db = readDb();
+      const l = db.leads.find(lead => lead.id === Number(req.params.id));
+      if (l) { l.archived = !l.archived; writeDb(db); }
+      res.json({ success: true });
+    } catch (e) { res.status(500).end(); }
+  });
+
+  app.delete("/api/admin/leads/:id", (req, res) => {
+    try {
+      if (currentAdminUser !== "admin") return res.status(403).end();
+      const db = readDb();
+      db.leads = db.leads.filter(l => l.id !== Number(req.params.id));
       writeDb(db);
-      res.json({ success: true, archived: false });
-    } catch (e) {
-      res.status(500).json({ error: "Błąd podczas przywracania projektu" });
-    }
+      res.json({ success: true });
+    } catch (e) { res.status(500).end(); }
+  });
+
+  app.post("/api/admin/leads/:id/reply", async (req, res) => {
+    try {
+      const { message } = req.body;
+      const db = readDb();
+      const l = db.leads.find(lead => lead.id === Number(req.params.id));
+      if (!l) return res.status(404).end();
+      if (EMAIL_USER && EMAIL_PASS) {
+        const transport = nodemailer.createTransport({ service: "gmail", auth: { user: EMAIL_USER, pass: EMAIL_PASS } });
+        await transport.sendMail({ from: EMAIL_USER, to: l.email, subject: `Re: Fachowo.eu`, text: message });
+      }
+      if (!l.replies) l.replies = [];
+      l.replies.push({ id: Date.now(), message, created_at: new Date().toISOString() });
+      writeDb(db);
+      res.json({ success: true });
+    } catch (e) { res.status(500).end(); }
+  });
+
+  app.get("/api/admin/stats", (_req, res) => {
+    try {
+      const db = readDb();
+      const today = new Date().toISOString().split('T')[0];
+      res.json({ totalLeads: db.leads.length, uniqueVisitors: (db.visitors || []).filter(v => v.date === today).length });
+    } catch (e) { res.status(500).end(); }
   });
 
   app.post("/api/contact", async (req, res) => {
     try {
-      console.log("[Contact] Received message request:", req.body);
       const data = contactSchema.parse(req.body);
-      
-      const clientIp = req.clientIp || "unknown";
-      const geo = geoip.lookup(clientIp);
-      
       const db = readDb();
-      
-      const newLead = { 
-        ...data, 
-        id: Date.now(), 
-        ip: clientIp,
-        city: geo?.city || "",
-        country: geo?.country || "",
-        created_at: new Date().toISOString() 
-      };
+      const newLead = { ...data, id: Date.now(), ip: req.clientIp || "", created_at: new Date().toISOString() };
       db.leads.push(newLead);
       writeDb(db);
-      console.log("[Contact] Lead saved to database with location:", geo?.city);
-
       if (EMAIL_USER && EMAIL_PASS) {
-        console.log("[Contact] Attempting to send email via Nodemailer...");
-        const transporter = nodemailer.createTransport({ 
-          service: "gmail", 
-          auth: { user: EMAIL_USER, pass: EMAIL_PASS } 
-        });
-        
-        try {
-          await transporter.sendMail({ 
-            from: EMAIL_USER, 
-            to: "fachowo.eu@gmail.com", 
-            subject: `Nowa wiadomość (${data.branch}): ${data.name}`, 
-            text: `Imię: ${data.name}\nEmail: ${data.email}\nTelefon: ${data.phone || 'Nie podano'}\nFilia: ${data.branch}\n\nWiadomość:\n${data.message}` 
-          });
-          console.log("[Contact] Email sent successfully!");
-        } catch (emailError) {
-          console.error("[Contact] NODEMAILER ERROR:", emailError);
-          // Don't return false to user if DB save worked, but maybe notify about email lag
-        }
+        const transport = nodemailer.createTransport({ service: "gmail", auth: { user: EMAIL_USER, pass: EMAIL_PASS } });
+        await transport.sendMail({ from: EMAIL_USER, to: "fachowo.eu@gmail.com", subject: `Nowa wiadomość: ${data.name}`, text: `Imię: ${data.name}\nEmail: ${data.email}\nFilia: ${data.branch}\n\n${data.message}` });
       }
-      
       res.json({ success: true });
-    } catch (e) { 
-      if (e instanceof z.ZodError) {
-        console.log("[Contact] Validation error:", e.errors[0].message);
-        return res.status(400).json({ success: false, error: e.errors[0].message });
-      }
-      console.error("[Contact] DB ERROR:", e);
-      res.status(400).json({ success: false, error: "Błąd przetwarzania danych." }); 
-    }
+    } catch (e) { res.status(400).json({ success: false }); }
   });
 
-  // Obsługa wszystkich innych ścieżek - SERWUJ PLIK Z DIST, NIE Z CLIENT!
   app.get("*", (req, res) => {
     if (req.path.startsWith('/api')) return res.status(404).end();
     res.sendFile(path.join(staticPath, "index.html"));
