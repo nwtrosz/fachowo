@@ -10,12 +10,15 @@ import { useEffect } from 'react';
 interface SEOHeadProps {
   title?: string;
   description?: string;
+  image?: string;
 }
 
-export function SEOHead({ title, description }: SEOHeadProps) {
+export function SEOHead({ title, description, image }: SEOHeadProps) {
   useEffect(() => {
     const defaultTitle = 'Fachowo.eu - Usługi Budowlane i Transportowe';
     const defaultDesc = 'Profesjonalne usługi budowlane, remontowe i transportowe w Poznaniu i Warszawie. Darmowa wycena w 24h.';
+    // Fallback image for home page and pages without specific image
+    const defaultImage = '/assets/hero.jpg';
     
     const fullTitle = title ? `${title} | Fachowo.eu` : defaultTitle;
     const fullDesc = description || defaultDesc;
@@ -36,13 +39,17 @@ export function SEOHead({ title, description }: SEOHeadProps) {
 
     updateMeta('description', fullDesc);
     
+    // Build absolute image URL
+    const imagePath = image || defaultImage;
+    const absoluteImageUrl = imagePath.startsWith('http') 
+      ? imagePath 
+      : window.location.origin + imagePath;
+
     // Open Graph
     updateMeta('og:title', fullTitle, true);
     updateMeta('og:description', fullDesc, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:url', window.location.href, true);
-    // Use absolute URL for the image (JPG for compatibility)
-    const absoluteImageUrl = window.location.origin + '/projects/apartment.jpg';
     updateMeta('og:image', absoluteImageUrl, true);
 
     // Twitter

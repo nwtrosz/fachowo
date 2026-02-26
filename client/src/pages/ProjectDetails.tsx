@@ -66,7 +66,11 @@ export default function ProjectDetails() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <SEOHead title={project.title} description={project.description} />
+      <SEOHead 
+        title={project.title} 
+        description={project.description} 
+        image={project.image}
+      />
       <Navigation />
 
       <main className="flex-1 pt-20 md:pt-24">
