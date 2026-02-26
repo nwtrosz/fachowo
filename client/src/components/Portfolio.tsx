@@ -19,6 +19,7 @@ interface Project {
   title: string;
   category: string;
   image: string;
+  images?: string[];
   description: string;
 }
 
@@ -95,7 +96,7 @@ export default function Portfolio() {
                   {/* Image Container */}
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
-                      src={project.image}
+                      src={project.image || (project.images && project.images[0]) || '/assets/hero.jpg'}
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
