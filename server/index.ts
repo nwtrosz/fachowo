@@ -110,16 +110,41 @@ async function startServer() {
 
   app.post("/api/contact", async (req, res) => {
     try {
+      console.log("[Contact] Received message request:", req.body);
       const data = contactSchema.parse(req.body);
       const db = readDb();
-      db.leads.push({ ...data, id: Date.now(), created_at: new Date().toISOString() });
+      
+      const newLead = { ...data, id: Date.now(), created_at: new Date().toISOString() };
+      db.leads.push(newLead);
       writeDb(db);
+      console.log("[Contact] Lead saved to database.");
+
       if (EMAIL_USER && EMAIL_PASS) {
-        const transporter = nodemailer.createTransport({ service: "gmail", auth: { user: EMAIL_USER, pass: EMAIL_PASS } });
-        await transporter.sendMail({ from: EMAIL_USER, to: "fachowo.eu@gmail.com", subject: `Nowa wiadomość: ${data.name}`, text: data.message });
+        console.log("[Contact] Attempting to send email via Nodemailer...");
+        const transporter = nodemailer.createTransport({ 
+          service: "gmail", 
+          auth: { user: EMAIL_USER, pass: EMAIL_PASS } 
+        });
+        
+        try {
+          await transporter.sendMail({ 
+            from: EMAIL_USER, 
+            to: "fachowo.eu@gmail.com", 
+            subject: `Nowa wiadomość: ${data.name}`, 
+            text: `Imię: ${data.name}\nEmail: ${data.email}\nTelefon: ${data.phone || 'Nie podano'}\n\nWiadomość:\n${data.message}` 
+          });
+          console.log("[Contact] Email sent successfully!");
+        } catch (emailError) {
+          console.error("[Contact] NODEMAILER ERROR:", emailError);
+          // Don't return false to user if DB save worked, but maybe notify about email lag
+        }
       }
+      
       res.json({ success: true });
-    } catch (e) { res.status(400).json({ success: false }); }
+    } catch (e) { 
+      console.error("[Contact] VALIDATION OR DB ERROR:", e);
+      res.status(400).json({ success: false, error: "Błąd przetwarzania danych." }); 
+    }
   });
 
   // Obsługa wszystkich innych ścieżek - SERWUJ PLIK Z DIST, NIE Z CLIENT!
