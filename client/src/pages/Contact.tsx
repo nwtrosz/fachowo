@@ -192,18 +192,17 @@ export default function Contact() {
                       <div className="grid md:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-bold text-primary mb-2">
-                            Wybierz Filię *
+                            Email *
                           </label>
-                          <select
-                            name="branch"
-                            value={formData.branch}
+                          <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
                             onChange={handleChange}
                             required
                             className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-background"
-                          >
-                            <option value="Poznań">Poznań</option>
-                            <option value="Warszawa">Warszawa</option>
-                          </select>
+                            placeholder="jan@example.com"
+                          />
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-primary mb-2">
@@ -221,16 +220,31 @@ export default function Contact() {
                         </div>
                       </div>
 
-
+                      <div>
+                        <label className="block text-sm font-bold text-primary mb-2">
+                          Wybierz Filię *
+                        </label>
+                        <select
+                          name="branch"
+                          value={formData.branch}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-background"
+                        >
+                          <option value="Poznań">Poznań</option>
+                          <option value="Warszawa">Warszawa</option>
+                        </select>
+                      </div>
 
                       <div>
                         <label className="block text-sm font-bold text-primary mb-2">
-                          Opis projektu
+                          Opis projektu *
                         </label>
                         <textarea
                           name="message"
                           value={formData.message}
                           onChange={handleChange}
+                          required
                           rows={5}
                           className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-background resize-none"
                           placeholder="Opisz swój projekt, powierzchnię, lokalizację i inne ważne szczegóły..."
