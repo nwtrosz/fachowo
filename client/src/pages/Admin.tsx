@@ -652,7 +652,7 @@ export default function Admin() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 md:p-8">
+        <main className="flex-1 overflow-auto p-3 md:p-8 bg-slate-50/50">
           <div className="max-w-6xl mx-auto">
             {loading ? (
               <div className="flex items-center justify-center h-64">
@@ -662,26 +662,31 @@ export default function Admin() {
               <>
                 {/* Dashboard View */}
                 {activeTab === 'dashboard' && (
-                  <div className="space-y-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">Pulpit Zarządzania</h1>
+                  <div className="space-y-6 md:space-y-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Pulpit Zarządzania</h1>
+                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm w-fit">
+                        {format(new Date(), "EEEE, d MMMM yyyy", { locale: pl })}
+                      </div>
+                    </div>
                     
                     {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <Card className="shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-primary">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                      <Card className="shadow-sm border-none bg-white rounded-2xl border-l-4 border-l-primary">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">Wszystkie Zapytania</CardTitle>
-                          <MessageSquare className="w-4 h-4 text-accent" />
+                          <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Wszystkie Zapytania</CardTitle>
+                          <MessageSquare className="w-4 h-4 text-primary opacity-20" />
                         </CardHeader>
                         <CardContent>
                           <div className="text-3xl font-bold text-primary">{stats?.totalLeads || 0}</div>
-                          <p className="text-xs text-muted-foreground mt-1">Łączna liczba wiadomości</p>
+                          <p className="text-[10px] text-muted-foreground mt-1 uppercase font-medium">Łączna liczba wiadomości</p>
                         </CardContent>
                       </Card>
 
-                      <Card className="shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+                      <Card className="shadow-sm border-none bg-white rounded-2xl border-l-4 border-l-green-500">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">Nowe Dzisiaj</CardTitle>
-                          <User className="w-4 h-4 text-green-500" />
+                          <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Nowe Dzisiaj</CardTitle>
+                          <User className="w-4 h-4 text-green-500 opacity-20" />
                         </CardHeader>
                         <CardContent>
                           <div className="text-3xl font-bold text-primary">
@@ -693,36 +698,39 @@ export default function Admin() {
                                }
                              }).length}
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">Aktywne zapytania z dzisiaj</p>
+                          <p className="text-[10px] text-muted-foreground mt-1 uppercase font-medium">Aktywne zapytania z dzisiaj</p>
                         </CardContent>
                       </Card>
 
-                      <Card className="shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-accent">
+                      <Card className="shadow-sm border-none bg-white rounded-2xl border-l-4 border-l-accent sm:col-span-2 lg:col-span-1">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">Projekty w Portfolio</CardTitle>
-                          <Briefcase className="w-4 h-4 text-accent" />
+                          <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Portfolio</CardTitle>
+                          <Briefcase className="w-4 h-4 text-accent opacity-20" />
                         </CardHeader>
                         <CardContent>
                           <div className="text-3xl font-bold text-primary">{projects.length}</div>
-                          <p className="text-xs text-muted-foreground mt-1">Aktywne realizacje</p>
+                          <p className="text-[10px] text-muted-foreground mt-1 uppercase font-medium">Aktywne realizacje</p>
                         </CardContent>
                       </Card>
                     </div>
 
                     {/* Recent Messages Preview */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Ostatnie Wiadomości</CardTitle>
-                        <CardDescription>Podgląd 5 ostatnich zapytań z formularza kontaktowego.</CardDescription>
+                    <Card className="border-none shadow-md rounded-2xl overflow-hidden bg-white">
+                      <CardHeader className="border-b border-slate-50 flex flex-row items-center justify-between">
+                        <div>
+                          <CardTitle className="text-lg font-bold text-primary">Ostatnie Wiadomości</CardTitle>
+                          <CardDescription className="text-xs">Podgląd najnowszych zapytań</CardDescription>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-accent font-bold text-xs" onClick={() => setActiveTab('messages')}>ZOBACZ WSZYSTKIE</Button>
                       </CardHeader>
-                      <CardContent>
+                      <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead>Data</TableHead>
-                              <TableHead>Klient</TableHead>
-                              <TableHead>Temat</TableHead>
-                              <TableHead className="text-right">Akcja</TableHead>
+                            <TableRow className="bg-slate-50/50">
+                              <TableHead className="text-[10px] uppercase font-bold tracking-wider">Data</TableHead>
+                              <TableHead className="text-[10px] uppercase font-bold tracking-wider">Klient</TableHead>
+                              <TableHead className="text-[10px] uppercase font-bold tracking-wider hidden md:table-cell">Wiadomość</TableHead>
+                              <TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Akcja</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -733,21 +741,47 @@ export default function Admin() {
                                 let formattedDate = "Brak daty";
                               try {
                                 if (lead.created_at) {
-                                  formattedDate = format(new Date(lead.created_at), "d MMM, HH:mm", { locale: pl });
+                                  formattedDate = format(new Date(lead.created_at), "d MMM", { locale: pl });
                                 }
                               } catch (e) {}
                               
                               return (
-                                <TableRow key={lead.id}>
-                                  <TableCell className="font-medium text-gray-600">
+                                <TableRow key={lead.id} className="group hover:bg-slate-50/50 transition-colors">
+                                  <TableCell className="font-bold text-[10px] text-gray-400 uppercase">
                                     {formattedDate}
                                   </TableCell>
                                 <TableCell>
-                                  <div className="font-semibold text-primary">{lead.name}</div>
-                                  <div className="text-xs text-muted-foreground">{lead.email}</div>
+                                  <div className="font-bold text-primary text-sm">{lead.name}</div>
+                                  <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{lead.email}</div>
                                 </TableCell>
-                                <TableCell className="max-w-[200px] truncate text-muted-foreground">
-                                  {lead.message}
+                                <TableCell className="max-w-[250px] truncate text-muted-foreground text-xs hidden md:table-cell italic">
+                                  "{lead.message}"
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <Button variant="outline" size="sm" className="h-8 w-8 md:w-auto p-0 md:px-3 rounded-lg border-slate-200" onClick={() => {
+                                    setSelectedLeadHistory(lead);
+                                    setActiveTab('messages');
+                                  }}>
+                                    <MessageSquare size={14} className="md:mr-2" />
+                                    <span className="hidden md:inline text-xs font-bold uppercase">Szczegóły</span>
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                              );
+                            })}
+                            {leads.filter(l => !l.archived).length === 0 && (
+                              <TableRow>
+                                <TableCell colSpan={4} className="text-center py-16 text-muted-foreground italic text-sm">
+                                  Brak nowych wiadomości. Odpocznij chwilę!
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </Card>
+                  </div>
+                )}
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <Button variant="ghost" size="sm" onClick={() => setActiveTab('messages')}>Zobacz</Button>

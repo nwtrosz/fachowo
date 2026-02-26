@@ -50,13 +50,13 @@ export default function Portfolio() {
     : projects.filter((p) => p.category === activeFilter);
 
   return (
-    <section id="portfolio" className="py-20 bg-background">
+    <section id="portfolio" className="py-16 md:py-24 bg-background overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="max-w-2xl mb-12">
-          <span className="font-label text-accent text-sm font-bold uppercase tracking-wider">Nasze Realizacje</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
-            Projekty z Naszego Portfolio
+        <div className="max-w-2xl mb-10 md:mb-12">
+          <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">Nasze Realizacje</span>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-primary mt-2 mb-4 leading-tight">
+            Projekty z Naszego <br className="hidden sm:block" /> Portfolio
           </h2>
           <div className="w-16 h-1 bg-accent rounded-full" aria-hidden="true" />
         </div>
@@ -68,16 +68,16 @@ export default function Portfolio() {
         ) : (
           <>
             {/* Filters */}
-            <div className="flex flex-wrap gap-4 mb-12 justify-center md:justify-start">
+            <div className="flex flex-wrap gap-2 md:gap-4 mb-10 justify-start">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setActiveFilter(category)}
                   className={cn(
-                    "px-6 py-2 rounded-full font-medium transition-all duration-300 border",
+                    "px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-tighter transition-all duration-300 border cursor-pointer",
                     activeFilter === category
-                      ? "bg-accent text-white border-accent shadow-md scale-105"
-                      : "bg-transparent text-foreground/70 border-border hover:border-accent hover:text-accent"
+                      ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105"
+                      : "bg-white text-foreground/70 border-border hover:border-accent hover:text-accent"
                   )}
                 >
                   {category}
@@ -86,24 +86,24 @@ export default function Portfolio() {
             </div>
 
             {/* Projects Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 bg-white border border-border/50"
+                  className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 bg-white border border-border/50 flex flex-col"
                 >
                   {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative aspect-[4/3] overflow-hidden">
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                     />
                     
-                    {/* Overlay on Hover */}
+                    {/* Overlay - visible on hover or mobile tap focus */}
                     <div className="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
-                      <p className="text-white/90 text-sm mb-6 leading-relaxed">
+                      <p className="text-white/90 text-sm mb-6 leading-relaxed line-clamp-4 italic">
                         {project.description}
                       </p>
                       <button 
@@ -117,17 +117,25 @@ export default function Portfolio() {
 
                     {/* Badge (always visible, top left) */}
                     <div className="absolute top-4 left-4 z-10">
-                      <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold uppercase tracking-wider rounded shadow-sm">
+                      <span className="inline-block px-3 py-1 bg-accent/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-md">
                         {project.category}
                       </span>
                     </div>
                   </div>
 
                   {/* Content Below Image */}
-                  <div className="p-6 border-t border-border/50">
-                    <h3 className="font-display text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+                  <div className="p-6 md:p-8 border-t border-border/50 flex-1 flex flex-col justify-center">
+                    <h3 className="font-display text-xl md:text-2xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
                       {project.title}
                     </h3>
+                    <div className="mt-4 pt-4 border-t border-slate-100 sm:hidden">
+                       <button 
+                        onClick={() => setLocation(`/portfolio/${project.id}`)}
+                        className="text-accent font-bold text-sm uppercase tracking-widest flex items-center gap-2"
+                       >
+                         Szczegóły <ExternalLink size={14} />
+                       </button>
+                    </div>
                   </div>
                 </div>
               ))}

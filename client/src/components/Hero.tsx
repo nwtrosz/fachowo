@@ -57,31 +57,39 @@ export default function Hero({ backgroundImage }: HeroProps) {
       />
 
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 text-center text-white max-w-2xl">
+      <div className="relative z-20 container mx-auto px-4 text-center text-white max-w-3xl pt-12 md:pt-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <span className="font-label text-accent text-sm tracking-widest">
+          <span className="font-label text-accent text-xs md:text-sm tracking-widest uppercase font-bold">
             Witaj w Fachowo.eu
           </span>
 
-          <h1 className="font-display text-5xl md:text-7xl font-bold mt-4 mb-6 leading-tight" itemProp="headline">
-            Usługi Budowlane i Transportowe
+          <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold mt-4 mb-6 leading-[1.1]" itemProp="headline">
+            Usługi Budowlane <br className="hidden sm:block" /> i Transportowe
           </h1>
 
-          <p className="text-lg md:text-xl mb-8 text-white/90 font-light">
+          <p className="text-base md:text-xl mb-10 text-white/90 font-light max-w-xl mx-auto leading-relaxed">
             Szybkie i niezawodne usługi remontowe, transportowe i sprzątające dla Twojego domu i biura.
           </p>
 
-          <button 
-            onClick={() => navigate('/kontakt')}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-accent text-primary font-bold rounded hover:bg-accent/90 transition-all hover:gap-3 cursor-pointer"
-          >
-            Poproś o wycenę
-            <ArrowRight size={20} />
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={() => navigate('/kontakt')}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-accent text-primary font-bold rounded-lg hover:bg-accent/90 transition-all hover:gap-3 cursor-pointer shadow-lg shadow-accent/20"
+            >
+              Poproś o wycenę
+              <ArrowRight size={20} />
+            </button>
+            <button 
+              onClick={() => navigate('/portfolio')}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-lg hover:bg-white hover:text-primary transition-all cursor-pointer"
+            >
+              Realizacje
+            </button>
+          </div>
         </motion.div>
       </div>
     </section>

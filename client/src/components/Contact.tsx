@@ -63,39 +63,39 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-white">
+    <section id="contact" className="py-16 md:py-24 bg-white overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="max-w-2xl mb-16">
-          <span className="font-label text-accent text-sm">Skontaktuj się z nami</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
-            Zapytaj o Bezpłatną Wycenę
+        <div className="max-w-2xl mb-12 md:mb-16">
+          <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">Skontaktuj się z nami</span>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-primary mt-2 mb-4 leading-tight">
+            Zapytaj o Bezpłatną <br className="hidden sm:block" /> Wycenę
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Contact Information */}
-          <div>
-            <p className="text-foreground/70 text-lg mb-8 leading-relaxed">
+          <div className="space-y-8">
+            <p className="text-foreground/70 text-base md:text-lg leading-relaxed italic border-l-4 border-accent pl-6">
               Masz projekt w głowie? Skontaktuj się z nami! Oferujemy bezpłatne wyceny dla wszystkich rodzajów usług budowlanych, remontowych i transportowych. Szybko odpowiadamy i pracujemy elastycznie.
             </p>
 
-            <div className="space-y-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-4">
               {contactInfo.map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <a
                     key={index}
                     href={item.href}
-                    className="flex items-start gap-4 p-4 rounded hover:bg-secondary/5 transition-colors group"
+                    className="flex items-start gap-4 p-5 rounded-2xl bg-secondary/5 border border-border/50 hover:bg-white hover:shadow-xl hover:border-accent transition-all duration-500 group"
                   >
-                    <div className="w-12 h-12 bg-accent/10 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-accent/20 transition-colors">
-                      <Icon size={24} className="text-accent" />
+                    <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 group-hover:bg-accent group-hover:text-white transition-colors">
+                      <Icon size={24} className="text-accent group-hover:text-inherit" />
                     </div>
                     <div>
-                      <p className="font-bold text-primary text-sm">{item.label}</p>
-                      <p className="text-foreground/70 group-hover:text-accent transition-colors">
+                      <p className="font-bold text-primary text-xs uppercase tracking-widest mb-1">{item.label}</p>
+                      <p className="text-foreground/70 font-medium group-hover:text-accent transition-colors">
                         {item.value}
                       </p>
                     </div>
@@ -106,110 +106,101 @@ export default function Contact() {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-background p-8 rounded border border-border">
+          <div className="bg-white p-6 md:p-10 rounded-3xl border border-border shadow-2xl shadow-primary/5 relative">
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-accent/10 rounded-full blur-3xl" />
+            
             {submitted ? (
-              <div className="flex items-center justify-center h-full min-h-[400px]">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle size={32} className="text-accent" />
-                  </div>
-                  <h3 className="font-display text-2xl font-bold text-primary mb-2">
-                    Dziękujemy!
-                  </h3>
-                  <p className="text-foreground/70 mb-6">
-                    Otrzymaliśmy Twoją wiadomość i wkrótce się z Tobą skontaktujemy.
-                  </p>
-                  <Button 
-                    onClick={() => setSubmitted(false)} 
-                    variant="outline" 
-                    className="border-accent text-accent hover:bg-accent/10"
-                  >
-                    Wyślij kolejną wiadomość
-                  </Button>
+              <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
+                <div className="w-20 h-20 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
+                  <CheckCircle size={40} className="text-accent" />
                 </div>
+                <h3 className="font-display text-3xl font-bold text-primary mb-4">
+                  DZIĘKUJEMY!
+                </h3>
+                <p className="text-foreground/70 mb-8 max-w-xs mx-auto">
+                  Otrzymaliśmy Twoją wiadomość. Nasz zespół skontaktuje się z Tobą w ciągu 24 godzin.
+                </p>
+                <Button 
+                  onClick={() => setSubmitted(false)} 
+                  className="bg-primary text-white font-bold px-8 py-4 rounded-xl hover:bg-accent transition-all shadow-lg"
+                >
+                  Wyślij kolejną
+                </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-bold text-primary mb-2">
-                    Imię i Nazwisko
-                  </label>
+              <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-primary uppercase tracking-widest ml-1">Imię i Nazwisko</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="Twoje imię i nazwisko"
+                    className="w-full px-5 py-4 bg-secondary/5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                    placeholder="np. Jan Kowalski"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-primary mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="twoj@email.com"
-                  />
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-primary uppercase tracking-widest ml-1">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-5 py-4 bg-secondary/5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                      placeholder="twoj@email.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-primary uppercase tracking-widest ml-1">Wybierz Filię</label>
+                    <select
+                      name="branch"
+                      value={formData.branch}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-5 py-4 bg-secondary/5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="Poznań">Filia Poznań</option>
+                      <option value="Warszawa">Filia Warszawa</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-primary mb-2">
-                    Wybierz Filię
-                  </label>
-                  <select
-                    name="branch"
-                    value={formData.branch}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent bg-white"
-                  >
-                    <option value="Poznań">Filia Poznań</option>
-                    <option value="Warszawa">Filia Warszawa</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-primary mb-2">
-                    Telefon
-                  </label>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-primary uppercase tracking-widest ml-1">Telefon</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="+48 (12) 345-6789"
+                    className="w-full px-5 py-4 bg-secondary/5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                    placeholder="+48 123 456 789"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-primary mb-2">
-                    Wiadomość
-                  </label>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-primary uppercase tracking-widest ml-1">Wiadomość</label>
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     required
                     rows={4}
-                    className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+                    className="w-full px-5 py-4 bg-secondary/5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all resize-none"
                     placeholder="Powiedz nam o swoim projekcie..."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-primary text-white font-bold rounded hover:bg-primary/90 transition-colors"
+                  disabled={loading}
+                  className="w-full px-8 py-5 bg-primary text-white font-bold rounded-xl hover:bg-accent transition-all shadow-xl shadow-primary/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 text-lg cursor-pointer"
                 >
-                  Wyślij Wiadomość
+                  {loading ? <Loader2 className="animate-spin" /> : 'Wyślij Wiadomość'}
                 </button>
               </form>
             )}
