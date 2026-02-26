@@ -322,6 +322,30 @@ async function startServer() {
     }
   });
 
+  // Admin: Reorder Images in Project
+  app.post("/api/admin/projects/:id/images/reorder", (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { imageUrls } = req.body;
+      
+      if (!Array.isArray(imageUrls)) return res.status(400).json({ error: "Invalid data" });
+
+      const db = readDb();
+      const project = db.projects.find(p => p.id === id);
+      
+      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
+
+      project.images = imageUrls;
+      // First image becomes the thumbnail
+      project.image = imageUrls[0] || "";
+
+      writeDb(db);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: "Błąd podczas zmiany kolejności" });
+    }
+  });
+
   // Admin: Archive Project (Soft Delete)
   app.delete("/api/admin/projects/:id", (req, res) => {
     try {

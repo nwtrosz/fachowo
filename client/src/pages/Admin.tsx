@@ -30,10 +30,90 @@ import {
   Upload,
   Edit,
   ArrowLeft,
-  CheckCircle
+  CheckCircle,
+  GripVertical
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  horizontalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+interface SortableImageProps {
+  id: string;
+  img: string;
+  onDelete: (url: string) => void;
+  isThumbnail?: boolean;
+}
+
+function SortableImage({ id, img, onDelete, isThumbnail }: SortableImageProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 'auto',
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={cn(
+        "relative aspect-square group rounded-lg overflow-hidden border-2",
+        isThumbnail ? "border-accent ring-2 ring-accent/20" : "border-white"
+      )}
+    >
+      <img src={img} className="w-full h-full object-cover shadow-sm" alt="" />
+      
+      {/* Drag Handle */}
+      <div 
+        {...attributes} 
+        {...listeners}
+        className="absolute top-1 left-1 w-6 h-6 bg-black/50 text-white rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical size={14} />
+      </div>
+
+      {/* Delete Button */}
+      <button 
+        type="button"
+        onClick={() => onDelete(img)}
+        className="absolute top-1 right-1 w-6 h-6 bg-destructive text-white rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:scale-110"
+      >
+        <X size={14} strokeWidth={3} />
+      </button>
+
+      {isThumbnail && (
+        <div className="absolute bottom-0 left-0 right-0 bg-accent text-[8px] font-bold text-white text-center py-0.5 uppercase tracking-tighter">
+          Główne
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface Reply {
   id: number;
@@ -97,6 +177,18 @@ export default function Admin() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formKey, setFormKey] = useState(0);
   const [portfolioView, setPortfolioView] = useState<'list' | 'add' | 'edit'>('list');
+
+  // DnD Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Form State
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -232,6 +324,36 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Failed to archive lead", error);
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !editingProject || !editingProject.images) return;
+
+    const oldIndex = editingProject.images.indexOf(active.id as string);
+    const newIndex = editingProject.images.indexOf(over.id as string);
+
+    const newImages = arrayMove(editingProject.images, oldIndex, newIndex);
+    
+    // Update locally immediately
+    const updatedProject = { 
+      ...editingProject, 
+      images: newImages, 
+      image: newImages[0] 
+    };
+    setEditingProject(updatedProject);
+    setProjects(projects.map(p => p.id === editingProject.id ? updatedProject : p));
+
+    // Save to server
+    try {
+      await fetch(`${API_BASE}/api/admin/projects/${editingProject.id}/images/reorder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrls: newImages })
+      });
+    } catch (error) {
+      console.error("Failed to save new order", error);
     }
   };
 
@@ -986,21 +1108,33 @@ export default function Admin() {
                                     
                                     {portfolioView === 'edit' && editingProject?.images && editingProject.images.length > 0 && (
                                        <div className="space-y-3 mb-4">
-                                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest">Obecna Galeria ({editingProject.images.length})</p>
-                                          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 bg-secondary/5 p-3 rounded-xl border border-dashed">
-                                             {editingProject.images.map((img, idx) => (
-                                                <div key={idx} className="relative aspect-square group">
-                                                   <img src={img} className="w-full h-full object-cover rounded-lg border border-white shadow-sm" alt="" />
-                                                   <button 
-                                                      type="button"
-                                                      onClick={() => handleDeleteImage(editingProject.id, img)}
-                                                      className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:scale-110"
-                                                   >
-                                                      <X size={12} strokeWidth={3} />
-                                                   </button>
-                                                </div>
-                                             ))}
+                                          <div className="flex justify-between items-center">
+                                             <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest">Obecna Galeria ({editingProject.images.length})</p>
+                                             <p className="text-[10px] text-accent font-medium">Przeciągnij, aby zmienić kolejność</p>
                                           </div>
+                                          
+                                          <DndContext 
+                                            sensors={sensors}
+                                            collisionDetection={closestCenter}
+                                            onDragEnd={handleDragEnd}
+                                          >
+                                            <SortableContext 
+                                              items={editingProject.images}
+                                              strategy={horizontalListSortingStrategy}
+                                            >
+                                              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 bg-secondary/5 p-3 rounded-xl border border-dashed">
+                                                {editingProject.images.map((img, idx) => (
+                                                  <SortableImage 
+                                                    key={img} 
+                                                    id={img} 
+                                                    img={img} 
+                                                    onDelete={() => handleDeleteImage(editingProject.id, img)} 
+                                                    isThumbnail={idx === 0}
+                                                  />
+                                                ))}
+                                              </div>
+                                            </SortableContext>
+                                          </DndContext>
                                        </div>
                                     )}
 
