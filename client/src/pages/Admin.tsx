@@ -29,7 +29,8 @@ import {
   Image as ImageIcon,
   Upload,
   Edit,
-  ArrowLeft
+  ArrowLeft,
+  CheckCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
