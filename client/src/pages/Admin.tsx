@@ -89,6 +89,7 @@ export default function Admin() {
   const [selectedLeadHistory, setSelectedLeadHistory] = useState<Lead | null>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Form State
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -247,36 +248,46 @@ export default function Admin() {
       }
     }
 
-    try {
-      let res;
-      if (editingProject) {
-         res = await fetch(`${API_BASE}/api/admin/projects/${editingProject.id}`, {
-            method: 'PUT',
-            body: formData,
-         });
-      } else {
-         res = await fetch(`${API_BASE}/api/admin/projects`, {
-            method: 'POST',
-            body: formData,
-         });
+    const url = editingProject 
+      ? `${API_BASE}/api/admin/projects/${editingProject.id}` 
+      : `${API_BASE}/api/admin/projects`;
+    
+    const xhr = new XMLHttpRequest();
+    
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded * 100) / e.total);
+        setUploadProgress(percent);
       }
+    });
 
-      if (res.ok) {
-        setEditingProject(null); // Close edit mode / clear form
-        // Refresh projects
+    xhr.addEventListener('load', async () => {
+      setUploading(false);
+      setUploadProgress(0);
+      
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setEditingProject(null);
         const projectsRes = await fetch(`${API_BASE}/api/projects`);
         if (projectsRes.ok) setProjects(await projectsRes.json());
         alert(editingProject ? "Projekt zaktualizowany!" : "Projekt dodany!");
       } else {
-        const errorData = await res.json();
-        alert(`Błąd zapisu projektu: ${errorData.error || res.statusText}`);
+        let errorMessage = "Błąd zapisu projektu";
+        try {
+          const errorData = JSON.parse(xhr.responseText);
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {}
+        alert(errorMessage);
       }
-    } catch (error) {
-      console.error("Error saving project", error);
-      alert("Wystąpił błąd połączenia z serwerem.");
-    } finally {
+    });
+
+    xhr.addEventListener('error', () => {
       setUploading(false);
-    }
+      setUploadProgress(0);
+      alert("Wystąpił błąd połączenia z serwerem. Sprawdź rozmiar zdjęć.");
+    });
+
+    xhr.open(editingProject ? 'PUT' : 'POST', url);
+    xhr.send(formData);
   };
 
   const handleDeleteProject = async (id: number) => {
@@ -795,10 +806,22 @@ export default function Admin() {
                                  </div>
 
                                  <div className="flex gap-2">
-                                    <Button type="submit" className="flex-1" disabled={uploading}>
-                                       {uploading ? <Loader2 className="animate-spin mr-2" /> : (editingProject ? <Edit className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />)}
-                                       {editingProject ? "Zapisz Zmiany" : "Dodaj Projekt"}
-                                    </Button>
+                                    <div className="flex-1 space-y-2">
+                                       <Button type="submit" className="w-full" disabled={uploading}>
+                                          {uploading ? <Loader2 className="animate-spin mr-2" /> : (editingProject ? <Edit className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />)}
+                                          {editingProject ? "Zapisz Zmiany" : "Dodaj Projekt"}
+                                       </Button>
+                                       
+                                       {uploading && (
+                                          <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                             <div 
+                                                className="bg-accent h-2.5 rounded-full transition-all duration-300" 
+                                                style={{ width: `${uploadProgress}%` }}
+                                             ></div>
+                                             <p className="text-[10px] text-center mt-1 text-muted-foreground">Wysyłanie: {uploadProgress}%</p>
+                                          </div>
+                                       )}
+                                    </div>
                                     {editingProject && (
                                        <Button type="button" variant="outline" onClick={() => setEditingProject(null)}>
                                           Anuluj
