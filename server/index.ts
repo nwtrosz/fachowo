@@ -105,7 +105,23 @@ async function startServer() {
   });
 
   app.get("/api/projects", (_req, res) => {
-    res.json([...readDb().projects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    try {
+      const db = readDb();
+      const activeProjects = db.projects.filter(p => !p.archived);
+      res.json([...activeProjects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } catch (e) {
+      res.status(500).json({ error: "Failed to fetch projects" });
+    }
+  });
+
+  // Admin: Get All Projects (including archived)
+  app.get("/api/admin/projects", (_req, res) => {
+    try {
+      const db = readDb();
+      res.json([...db.projects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } catch (e) {
+      res.status(500).json({ error: "Failed to fetch projects" });
+    }
   });
 
 // Admin: Get Leads
@@ -266,22 +282,52 @@ async function startServer() {
     }
   });
 
-  // Admin: Delete Project
+  // Admin: Archive Project (Soft Delete)
   app.delete("/api/admin/projects/:id", (req, res) => {
     try {
       const id = Number(req.params.id);
       const db = readDb();
-      const initialLength = db.projects.length;
-      db.projects = db.projects.filter(p => p.id !== id);
+      const project = db.projects.find(p => p.id === id);
       
-      if (db.projects.length === initialLength) {
-        return res.status(404).json({ error: "Projekt nie istnieje" });
-      }
+      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
 
+      // @ts-ignore
+      project.archived = true;
+      writeDb(db);
+      res.json({ success: true, archived: true });
+    } catch (e) {
+      res.status(500).json({ error: "Błąd podczas archiwizacji projektu" });
+    }
+  });
+
+  // Admin: Permanent Delete Project
+  app.delete("/api/admin/projects/:id/permanent", (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const db = readDb();
+      db.projects = db.projects.filter(p => p.id !== id);
       writeDb(db);
       res.json({ success: true });
     } catch (e) {
-      res.status(500).json({ error: "Błąd podczas usuwania projektu" });
+      res.status(500).json({ error: "Błąd podczas trwałego usuwania projektu" });
+    }
+  });
+
+  // Admin: Restore Project
+  app.post("/api/admin/projects/:id/restore", (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const db = readDb();
+      const project = db.projects.find(p => p.id === id);
+      
+      if (!project) return res.status(404).json({ error: "Projekt nie istnieje" });
+
+      // @ts-ignore
+      project.archived = false;
+      writeDb(db);
+      res.json({ success: true, archived: false });
+    } catch (e) {
+      res.status(500).json({ error: "Błąd podczas przywracania projektu" });
     }
   });
 

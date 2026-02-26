@@ -68,6 +68,7 @@ interface Project {
   images?: string[]; // All images
   description: string;
   created_at: string;
+  archived?: boolean;
 }
 
 export default function Admin() {
@@ -87,6 +88,8 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'messages' | 'portfolio'>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
+  const [showArchivedProjects, setShowArchivedProjects] = useState(false);
+  const [deleteClickCount, setDeleteClickCount] = useState<{ [key: number]: number }>({});
   const [selectedLeadHistory, setSelectedLeadHistory] = useState<Lead | null>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
@@ -143,7 +146,7 @@ export default function Admin() {
       const [leadsRes, statsRes, projectsRes] = await Promise.all([
         fetch(`${API_BASE}/api/admin/leads`),
         fetch(`${API_BASE}/api/admin/stats`),
-        fetch(`${API_BASE}/api/projects`)
+        fetch(`${API_BASE}/api/admin/projects`)
       ]);
       
       if (leadsRes.ok) setLeads(await leadsRes.json());
@@ -155,6 +158,41 @@ export default function Admin() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleArchiveProject = async (id: number) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/projects/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setProjects(projects.map(p => p.id === id ? { ...p, archived: true } : p));
+      }
+    } catch (error) { console.error("Failed to archive", error); }
+  };
+
+  const handleRestoreProject = async (id: number) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/projects/${id}/restore`, { method: 'POST' });
+      if (res.ok) {
+        setProjects(projects.map(p => p.id === id ? { ...p, archived: false } : p));
+      }
+    } catch (error) { console.error("Failed to restore", error); }
+  };
+
+  const handlePermanentDeleteProject = async (id: number) => {
+    const currentCount = deleteClickCount[id] || 0;
+    
+    if (currentCount < 2) {
+      setDeleteClickCount({ ...deleteClickCount, [id]: currentCount + 1 });
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/projects/${id}/permanent`, { method: 'DELETE' });
+      if (res.ok) {
+        setProjects(projects.filter(p => p.id !== id));
+        setDeleteClickCount({ ...deleteClickCount, [id]: 0 });
+      }
+    } catch (error) { console.error("Failed to delete permanently", error); }
   };
 
   const handleArchiveLead = async (id: number) => {
@@ -740,22 +778,46 @@ export default function Admin() {
                           {portfolioView === 'add' && "Dodaj Nowy Projekt"}
                           {portfolioView === 'edit' && `Edytuj Projekt: ${editingProject?.title}`}
                         </h1>
-                        {portfolioView === 'list' ? (
-                          <Button onClick={() => setPortfolioView('add')}>
-                            <Plus className="mr-2 h-4 w-4" /> Dodaj Projekt
-                          </Button>
-                        ) : (
-                          <Button variant="outline" onClick={() => { setPortfolioView('list'); setEditingProject(null); }}>
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Wróć do listy
-                          </Button>
-                        )}
+                        <div className="flex gap-3">
+                          {portfolioView === 'list' && (
+                            <div className="flex gap-2 bg-white p-1 rounded-lg border mr-4">
+                              <Button 
+                                variant={!showArchivedProjects ? "default" : "ghost"} 
+                                size="sm" 
+                                onClick={() => setShowArchivedProjects(false)}
+                              >
+                                Aktywne
+                              </Button>
+                              <Button 
+                                variant={showArchivedProjects ? "default" : "ghost"} 
+                                size="sm" 
+                                onClick={() => setShowArchivedProjects(true)}
+                              >
+                                Archiwum
+                              </Button>
+                            </div>
+                          )}
+                          {portfolioView === 'list' ? (
+                            <Button onClick={() => setPortfolioView('add')}>
+                              <Plus className="mr-2 h-4 w-4" /> Dodaj Projekt
+                            </Button>
+                          ) : (
+                            <Button variant="outline" onClick={() => { setPortfolioView('list'); setEditingProject(null); }}>
+                              <ArrowLeft className="mr-2 h-4 w-4" /> Wróć do listy
+                            </Button>
+                          )}
+                        </div>
                      </div>
 
                      {portfolioView === 'list' ? (
                         <div className="space-y-4">
-                           <h2 className="text-xl font-semibold text-muted-foreground">Twoje Realizacje ({projects.length})</h2>
+                           <h2 className="text-xl font-semibold text-muted-foreground">
+                             {showArchivedProjects ? "Zarchiwizowane Projekty" : "Aktywne Realizacje"} ({projects.filter(p => !!p.archived === showArchivedProjects).length})
+                           </h2>
                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                              {projects.map((project) => (
+                              {projects
+                                .filter(p => !!p.archived === showArchivedProjects)
+                                .map((project) => (
                                  <div key={project.id} className="bg-white border rounded-xl overflow-hidden flex flex-col group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                     <div className="relative h-48 bg-gray-100">
                                        <img 
@@ -777,38 +839,64 @@ export default function Admin() {
                                        </p>
                                        
                                        <div className="flex gap-3 mt-auto">
-                                          <Button 
-                                             variant="outline" 
-                                             size="sm" 
-                                             className="flex-1 border-primary/20 hover:bg-primary hover:text-white"
-                                             onClick={() => {
-                                               setEditingProject(project);
-                                               setPortfolioView('edit');
-                                             }}
-                                          >
-                                             <Edit className="w-4 h-4 mr-2" />
-                                             Edytuj
-                                          </Button>
-                                          <Button 
-                                             variant="destructive" 
-                                             size="sm" 
-                                             className="flex-1 opacity-80 hover:opacity-100"
-                                             onClick={() => handleDeleteProject(project.id)}
-                                          >
-                                             <Trash2 className="w-4 h-4 mr-2" />
-                                             Usuń
-                                          </Button>
+                                          {!showArchivedProjects ? (
+                                            <>
+                                              <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                className="flex-1 border-primary/20 hover:bg-primary hover:text-white"
+                                                onClick={() => {
+                                                  setEditingProject(project);
+                                                  setPortfolioView('edit');
+                                                }}
+                                              >
+                                                <Edit className="w-4 h-4 mr-2" />
+                                                Edytuj
+                                              </Button>
+                                              <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                className="flex-1 text-muted-foreground hover:text-amber-600 hover:border-amber-200"
+                                                onClick={() => handleArchiveProject(project.id)}
+                                              >
+                                                <Briefcase className="w-4 h-4 mr-2" />
+                                                Archiwizuj
+                                              </Button>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                className="flex-1 text-emerald-600 border-emerald-100 hover:bg-emerald-50"
+                                                onClick={() => handleRestoreProject(project.id)}
+                                              >
+                                                <Plus className="w-4 h-4 mr-2" />
+                                                Przywróć
+                                              </Button>
+                                              <Button 
+                                                variant={ (deleteClickCount[project.id] || 0) === 0 ? "outline" : "destructive" }
+                                                size="sm" 
+                                                className="flex-1"
+                                                onClick={() => handlePermanentDeleteProject(project.id)}
+                                              >
+                                                <Trash2 className="w-4 h-4 mr-2" />
+                                                {(deleteClickCount[project.id] || 0) === 0 && "Usuń trwale"}
+                                                {(deleteClickCount[project.id] || 0) === 1 && "Potwierdź (2/3)"}
+                                                {(deleteClickCount[project.id] || 0) === 2 && "USUŃ TERAZ (3/3)"}
+                                              </Button>
+                                            </>
+                                          )}
                                        </div>
                                     </div>
                                  </div>
                               ))}
-                              {projects.length === 0 && (
+                              {projects.filter(p => !!p.archived === showArchivedProjects).length === 0 && (
                                  <div className="col-span-full text-center py-20 border-2 border-dashed rounded-2xl text-muted-foreground bg-white">
                                     <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                                        <Briefcase className="w-8 h-8 opacity-20" />
                                     </div>
-                                    <p className="text-lg font-medium">Brak projektów w portfolio.</p>
-                                    <Button variant="link" onClick={() => setPortfolioView('add')} className="text-accent">Dodaj swoją pierwszą realizację</Button>
+                                    <p className="text-lg font-medium">{showArchivedProjects ? "Archiwum jest puste." : "Brak aktywnych projektów."}</p>
                                  </div>
                               )}
                            </div>
