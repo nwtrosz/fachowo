@@ -44,6 +44,7 @@ interface Lead {
   country: string;
   city: string;
   created_at: string;
+  archived?: boolean;
 }
 
 interface Stats {
@@ -77,6 +78,8 @@ export default function Admin() {
   // UI State
   const [activeTab, setActiveTab] = useState<'dashboard' | 'messages' | 'portfolio'>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showArchived, setShowArchived] = useState(false);
+  const [selectedLeadHistory, setSelectedLeadHistory] = useState<Lead | null>(null);
 
   // Form State
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -139,6 +142,26 @@ export default function Admin() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleArchiveLead = async (id: number) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/leads/${id}/archive`, {
+        method: 'POST'
+      });
+      if (res.ok) {
+        setLeads(leads.map(l => l.id === id ? { ...l, archived: !l.archived } : l));
+      }
+    } catch (error) {
+      console.error("Failed to archive lead", error);
+    }
+  };
+
+  const getLeadHistory = (lead: Lead) => {
+    return leads.filter(l => 
+      (l.email && l.email === lead.email) || 
+      (l.phone && l.phone === lead.phone)
+    ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   };
 
   // Populate form on edit
@@ -480,53 +503,124 @@ export default function Admin() {
                   </div>
                 )}
 
-                {/* Messages View */}
-                {activeTab === 'messages' && (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h1 className="text-3xl font-bold text-gray-900">Wiadomości od Klientów</h1>
-                    </div>
-                    <Card>
-                        <Table>
-                          <TableHeader>
-                                                        <TableRow>
-                                                          <TableHead>Data</TableHead>
-                                                          <TableHead>Klient</TableHead>
-                                                          <TableHead>Kontakt</TableHead>
-                                                          <TableHead>Filia</TableHead>
-                                                          <TableHead>Wiadomość</TableHead>
-                                                        </TableRow>
-                                                      </TableHeader>
-                                                      <TableBody>
-                                                        {leads.map((lead) => {
-                                                          let formattedDate = "Brak daty";
-                                                          try {
-                                                            if (lead.created_at) {
-                                                              formattedDate = format(new Date(lead.created_at), "dd.MM.yyyy HH:mm", { locale: pl });
-                                                            }
-                                                          } catch (e) {}
-                                                          
-                                                          return (
-                                                            <TableRow key={lead.id}>
-                                                              <TableCell>{formattedDate}</TableCell>
-                                                              <TableCell className="font-medium">{lead.name}</TableCell>
-                                                              <TableCell>{lead.email}<br/><span className="text-xs text-muted-foreground">{lead.phone}</span></TableCell>
-                                                              <TableCell>
-                                                                <Badge variant="outline" className={cn(
-                                                                  lead.branch === 'Poznań' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-emerald-200 text-emerald-700 bg-emerald-50'
-                                                                )}>
-                                                                  {lead.branch || 'Nie określono'}
-                                                                </Badge>
-                                                              </TableCell>
-                                                              <TableCell>{lead.message}</TableCell>
-                                                            </TableRow>
-                                                          );
-                                                        })}                          {leads.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-8">Brak wiadomości</TableCell></TableRow>}
-                          </TableBody>
-                        </Table>
-                    </Card>
-                  </div>
-                )}
+                                {/* Messages View */}
+                                {activeTab === 'messages' && (
+                                  <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                      <h1 className="text-3xl font-bold text-gray-900">Wiadomości od Klientów</h1>
+                                      <div className="flex gap-2 bg-white p-1 rounded-lg border">
+                                        <Button 
+                                          variant={!showArchived ? "default" : "ghost"} 
+                                          size="sm" 
+                                          onClick={() => setShowArchived(false)}
+                                        >
+                                          Aktywne
+                                        </Button>
+                                        <Button 
+                                          variant={showArchived ? "default" : "ghost"} 
+                                          size="sm" 
+                                          onClick={() => setShowArchived(true)}
+                                        >
+                                          Zarchiwizowane
+                                        </Button>
+                                      </div>
+                                    </div>
+                
+                                    {selectedLeadHistory ? (
+                                      <Card className="border-accent">
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                          <div>
+                                            <CardTitle>Historia kontaktu: {selectedLeadHistory.name}</CardTitle>
+                                            <CardDescription>{selectedLeadHistory.email} | {selectedLeadHistory.phone}</CardDescription>
+                                          </div>
+                                          <Button variant="outline" size="sm" onClick={() => setSelectedLeadHistory(null)}>
+                                            <X className="w-4 h-4 mr-2" /> Zamknij historię
+                                          </Button>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="space-y-4">
+                                            {getLeadHistory(selectedLeadHistory).map((h) => (
+                                              <div key={h.id} className="p-4 rounded-lg bg-secondary/10 border-l-4 border-l-accent">
+                                                <div className="flex justify-between mb-2">
+                                                  <span className="text-xs font-bold text-muted-foreground">
+                                                    {format(new Date(h.created_at), "dd.MM.yyyy HH:mm", { locale: pl })}
+                                                  </span>
+                                                  <Badge variant="secondary" className="text-[10px]">{h.branch}</Badge>
+                                                </div>
+                                                <p className="text-sm italic">"{h.message}"</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                    ) : (
+                                      <Card>
+                                        <Table>
+                                          <TableHeader>
+                                            <TableRow>
+                                              <TableHead>Data</TableHead>
+                                              <TableHead>Klient</TableHead>
+                                              <TableHead>Kontakt</TableHead>
+                                              <TableHead>Filia</TableHead>
+                                              <TableHead>Wiadomość</TableHead>
+                                              <TableHead className="text-right">Akcje</TableHead>
+                                            </TableRow>
+                                          </TableHeader>
+                                          <TableBody>
+                                            {leads
+                                              .filter(l => !!l.archived === showArchived)
+                                              .map((lead) => {
+                                                let formattedDate = "Brak daty";
+                                                try {
+                                                  if (lead.created_at) {
+                                                    formattedDate = format(new Date(lead.created_at), "dd.MM.yyyy HH:mm", { locale: pl });
+                                                  }
+                                                } catch (e) {}
+                                                
+                                                return (
+                                                  <TableRow 
+                                                    key={lead.id} 
+                                                    className="cursor-pointer hover:bg-secondary/5"
+                                                    onClick={() => setSelectedLeadHistory(lead)}
+                                                  >
+                                                    <TableCell>{formattedDate}</TableCell>
+                                                    <TableCell className="font-medium">{lead.name}</TableCell>
+                                                    <TableCell>{lead.email}<br/><span className="text-xs text-muted-foreground">{lead.phone}</span></TableCell>
+                                                    <TableCell>
+                                                      <Badge variant="outline" className={cn(
+                                                        lead.branch === 'Poznań' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-emerald-200 text-emerald-700 bg-emerald-50'
+                                                      )}>
+                                                        {lead.branch || 'Nie określono'}
+                                                      </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="max-w-xs truncate">{lead.message}</TableCell>
+                                                    <TableCell className="text-right">
+                                                      <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="text-muted-foreground hover:text-primary"
+                                                        onClick={(e) => {
+                                                          e.stopPropagation();
+                                                          handleArchiveLead(lead.id);
+                                                        }}
+                                                      >
+                                                        {showArchived ? "Przywróć" : "Archiwizuj"}
+                                                      </Button>
+                                                    </TableCell>
+                                                  </TableRow>
+                                                );
+                                              })}
+                                            {leads.filter(l => !!l.archived === showArchived).length === 0 && (
+                                              <TableRow>
+                                                <TableCell colSpan={6} className="text-center py-8">Brak wiadomości</TableCell>
+                                              </TableRow>
+                                            )}
+                                          </TableBody>
+                                        </Table>
+                                      </Card>
+                                    )}
+                                  </div>
+                                )}
 
                 {/* Portfolio View */}
                 {activeTab === 'portfolio' && (

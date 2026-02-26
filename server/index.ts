@@ -96,7 +96,7 @@ async function startServer() {
     res.json([...readDb().projects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
   });
 
-  // Admin: Get Leads
+// Admin: Get Leads
   app.get("/api/admin/leads", (_req, res) => {
     try {
       const db = readDb();
@@ -104,6 +104,25 @@ async function startServer() {
     } catch (error) {
       console.error("Error fetching leads:", error);
       res.status(500).json({ error: "Failed to fetch leads" });
+    }
+  });
+
+  // Admin: Archive Lead
+  app.post("/api/admin/leads/:id/archive", (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const db = readDb();
+      const lead = db.leads.find(l => l.id === id);
+      if (lead) {
+        // @ts-ignore
+        lead.archived = !lead.archived;
+        writeDb(db);
+        res.json({ success: true, archived: lead.archived });
+      } else {
+        res.status(404).json({ error: "Lead not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Failed to archive lead" });
     }
   });
 
