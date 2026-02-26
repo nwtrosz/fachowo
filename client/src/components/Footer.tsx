@@ -103,12 +103,12 @@ export default function Footer() {
               &copy; {currentYear} Fachowo.eu. Wszystkie prawa zastrzeżone.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-accent transition-colors">
+              <Link href="/polityka-prywatnosci" className="hover:text-accent transition-colors cursor-pointer">
                 Polityka Prywatności
-              </a>
-              <a href="#" className="hover:text-accent transition-colors">
+              </Link>
+              <Link href="/warunki-uslugi" className="hover:text-accent transition-colors cursor-pointer">
                 Warunki Usługi
-              </a>
+              </Link>
             </div>
           </div>
         </div>

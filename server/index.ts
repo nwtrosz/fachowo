@@ -313,7 +313,29 @@ async function startServer() {
     try {
       const db = readDb();
       const today = new Date().toISOString().split('T')[0];
-      res.json({ totalLeads: db.leads.length, uniqueVisitors: (db.visitors || []).filter(v => v.date === today).length });
+      
+      // Calculate daily history for the last 7 days
+      const history = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        
+        const dayLeads = (db.leads || []).filter(l => l.created_at && l.created_at.startsWith(dateStr)).length;
+        const dayVisitors = (db.visitors || []).filter(v => v.date === dateStr).length;
+        
+        history.push({
+          date: format(d, "EEE", { locale: pl }),
+          leads: dayLeads,
+          visitors: dayVisitors
+        });
+      }
+
+      res.json({ 
+          totalLeads: db.leads.length,
+          uniqueVisitors: (db.visitors || []).filter(v => v.date === today).length,
+          history
+      });
     } catch (e) { res.status(500).end(); }
   });
 

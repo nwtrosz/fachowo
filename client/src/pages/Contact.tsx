@@ -329,6 +329,10 @@ export default function Contact() {
                             <MapPin size={18} className="text-accent flex-shrink-0 mt-0.5" />
                             <p className="font-medium">{branch.address}</p>
                           </div>
+                          <a href={`tel:${branch.phone.replace(/\D/g, '')}`} className="flex items-start gap-3 pt-2 hover:text-accent transition-colors group/link">
+                            <Phone size={18} className="text-accent flex-shrink-0 mt-0.5 group-hover/link:scale-110 transition-transform" />
+                            <p className="font-bold">{branch.phone}</p>
+                          </a>
                           <div className="flex items-start gap-3 pt-2">
                             <Clock size={18} className="text-accent flex-shrink-0 mt-0.5" />
                             <p className="font-medium text-[11px] uppercase tracking-tighter leading-tight">{branch.hours}</p>

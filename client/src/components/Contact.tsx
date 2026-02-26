@@ -48,7 +48,7 @@ export default function Contact() {
     {
       icon: Phone,
       label: 'Telefon Główny',
-      value: '+48 (12) 345-6789',
+      value: '+48 123 456 789',
       href: 'tel:+48123456789',
     },
     {

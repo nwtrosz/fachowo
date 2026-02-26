@@ -116,6 +116,19 @@ function SortableImage({ id, img, onDelete, isThumbnail }: SortableImageProps) {
   );
 }
 
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend
+} from 'recharts';
+
 interface Reply {
   id: number;
   message: string;
@@ -140,6 +153,7 @@ interface Lead {
 interface Stats {
   totalLeads: number;
   uniqueVisitors: number;
+  history?: { date: string, leads: number, visitors: number }[];
 }
 
 interface Project {
@@ -590,6 +604,112 @@ export default function Admin() {
                       <Card className="border-l-4 border-l-green-500"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Dzisiejsze Goście</CardHeader><CardContent><div className="text-3xl font-bold">{stats?.uniqueVisitors || 0}</div></CardContent></Card>
                       <Card className="border-l-4 border-l-accent"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Projekty</CardHeader><CardContent><div className="text-3xl font-bold">{projects.length}</div></CardContent></Card>
                     </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="lg:col-span-2">
+                        <Card className="shadow-md rounded-2xl bg-white border-none h-full">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg font-bold text-primary">Aktywność (Ostatnie 7 dni)</CardTitle>
+                            <CardDescription className="text-xs">Porównanie odwiedzin i zapytań</CardDescription>
+                          </CardHeader>
+                          <CardContent className="h-[250px] pt-4">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <AreaChart data={stats?.history || []}>
+                                <defs>
+                                  <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#0F1F38" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#0F1F38" stopOpacity={0}/>
+                                  </linearGradient>
+                                  <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                                  </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <XAxis 
+                                  dataKey="date" 
+                                  axisLine={false} 
+                                  tickLine={false} 
+                                  tick={{ fontSize: 10, fontWeight: 'bold' }} 
+                                  stroke="#94a3b8"
+                                />
+                                <YAxis hide />
+                                <Tooltip 
+                                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                />
+                                <Area 
+                                  type="monotone" 
+                                  dataKey="visitors" 
+                                  name="Odwiedziny"
+                                  stroke="#0F1F38" 
+                                  strokeWidth={3}
+                                  fillOpacity={1} 
+                                  fill="url(#colorVisitors)" 
+                                />
+                                <Area 
+                                  type="monotone" 
+                                  dataKey="leads" 
+                                  name="Zapytania"
+                                  stroke="#f59e0b" 
+                                  strokeWidth={3}
+                                  fillOpacity={1} 
+                                  fill="url(#colorLeads)" 
+                                />
+                              </AreaChart>
+                            </ResponsiveContainer>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      <div className="space-y-6">
+                        <Card className="shadow-md rounded-2xl bg-primary text-white border-none">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-bold uppercase tracking-widest opacity-50">Skuteczność</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="text-4xl font-bold text-accent italic">
+                              {stats && stats.totalLeads > 0 ? ((stats.totalLeads / 500) * 100).toFixed(1) : 0}%
+                            </div>
+                            <p className="text-[10px] mt-2 opacity-70">Wskaźnik konwersji względem celu</p>
+                            <div className="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
+                               <motion.div 
+                                 initial={{ width: 0 }}
+                                 animate={{ width: `${Math.min(100, (stats?.totalLeads || 0) / 5)}%` }}
+                                 className="bg-accent h-full"
+                               />
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="shadow-md rounded-2xl bg-white border-none">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-bold text-primary uppercase tracking-widest">Najczęstsza Filia</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-center justify-between mb-2 text-xs">
+                               <span className="font-medium">Poznań</span>
+                               <span className="font-bold">{leads.filter(l => l.branch === 'Poznań').length}</span>
+                            </div>
+                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                               <div 
+                                 className="bg-primary h-full" 
+                                 style={{ width: `${(leads.filter(l => l.branch === 'Poznań').length / Math.max(1, leads.length)) * 100}%` }}
+                               />
+                            </div>
+                            <div className="flex items-center justify-between mb-2 text-xs">
+                               <span className="font-medium">Warszawa</span>
+                               <span className="font-bold">{leads.filter(l => l.branch === 'Warszawa').length}</span>
+                            </div>
+                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                               <div 
+                                 className="bg-accent h-full" 
+                                 style={{ width: `${(leads.filter(l => l.branch === 'Warszawa').length / Math.max(1, leads.length)) * 100}%` }}
+                               />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+
                     <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
                       <CardHeader className="border-b flex flex-row items-center justify-between">
                         <CardTitle className="text-lg">Ostatnie Wiadomości</CardTitle>

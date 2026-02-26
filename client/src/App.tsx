@@ -9,6 +9,7 @@ import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import Portfolio from "./pages/Portfolio";
 import ProjectDetails from "./pages/ProjectDetails";
+import * as Legal from "./pages/Legal";
 import * as Services from "./pages/services/AllServices";
 
 function Router() {
@@ -18,6 +19,8 @@ function Router() {
       <Route path={"/admin"} component={Admin} />
       <Route path={"/portfolio"} component={Portfolio} />
       <Route path={"/portfolio/:id"} component={ProjectDetails} />
+      <Route path={"/polityka-prywatnosci"} component={Legal.PrivacyPolicy} />
+      <Route path={"/warunki-uslugi"} component={Legal.TermsOfService} />
       
       {/* Building Services */}
       <Route path={"/usluga/kompleksowe-wykonczenie"} component={Services.KompleksoweWykonczenie} />

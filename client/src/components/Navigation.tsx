@@ -20,31 +20,31 @@ export default function Navigation() {
   const [, navigate] = useLocation();
 
   const buildingServices = [
-    { name: 'Kompleksowe wykończenie mieszkań pod klucz', href: '/usluga/kompleksowe-wykonczenie' },
+    { name: 'Kompleksowe Wykończenie', href: '/usluga/kompleksowe-wykonczenie' },
     { name: 'Malowanie', href: '/usluga/malowanie' },
-    { name: 'Gładzenie ścian', href: '/usluga/gladzenie-scian' },
+    { name: 'Gładzenie Ścian', href: '/usluga/gladzenie-scian' },
     { name: 'Tynkowanie', href: '/usluga/tynkowanie' },
     { name: 'Kładzenie Paneli', href: '/usluga/kladanie-paneli' },
-    { name: 'Instalacje elektryczne', href: '/usluga/instalacje-elektryczne' },
+    { name: 'Instalacje Elektryczne', href: '/usluga/instalacje-elektryczne' },
     { name: 'Kładzenie Płytek', href: '/usluga/kladanie-plytek' },
     { name: 'Posadzki', href: '/usluga/posadzki' },
-    { name: 'Wyburzenia, Rozbiórki', href: '/usluga/wyburzenia-rozbiorki' },
+    { name: 'Wyburzenia i Rozbiórki', href: '/usluga/wyburzenia-rozbiorki' },
     { name: 'Kucie Tynków', href: '/usluga/kucie-tynkow' },
-    { name: 'Kucie płytek', href: '/usluga/kucie-plytek' },
-    { name: 'Skuwanie posadzek', href: '/usluga/skuwanie-posadzek' },
-    { name: 'Szlifowanie betonu', href: '/usluga/szlifowanie-betonu' },
-    { name: 'Wnoszenie materiałów budowlanych', href: '/usluga/wnoszenie-materialow' },
-    { name: 'Wynoszenie gruzu', href: '/usluga/wynoszenie-gruzu' },
-    { name: 'Drapanie ścian z farby i innych warstw', href: '/usluga/drapanie-scian' },
-    { name: 'Sprzątanie po budowie', href: '/usluga/sprzatanie-po-budowie' },
+    { name: 'Kucie Płytek', href: '/usluga/kucie-plytek' },
+    { name: 'Skuwanie Posadzek', href: '/usluga/skuwanie-posadzek' },
+    { name: 'Szlifowanie Betonu', href: '/usluga/szlifowanie-betonu' },
+    { name: 'Wnoszenie Materiałów', href: '/usluga/wnoszenie-materialow' },
+    { name: 'Wynoszenie Gruzu', href: '/usluga/wynoszenie-gruzu' },
+    { name: 'Drapanie Ścian', href: '/usluga/drapanie-scian' },
+    { name: 'Sprzątanie po Budowie', href: '/usluga/sprzatanie-po-budowie' },
   ];
 
   const transportServices = [
-    { name: 'Przeprowadzki, Transport Mebli', href: '/usluga/przeprowadzki-transport' },
-    { name: 'Opróżnianiem mieszkań po lokatorach', href: '/usluga/oprozniam-mieszkania' },
-    { name: 'Utylizacją Odpadów', href: '/usluga/utylizacja-odpadow' },
-    { name: 'Sprzątaniem po najmie', href: '/usluga/sprzatanie-po-najmie' },
-    { name: 'Transport i wnoszenie materiałów budowlanych na budowę', href: '/usluga/transport-materialow' },
+    { name: 'Przeprowadzki i Transport', href: '/usluga/przeprowadzki-transport' },
+    { name: 'Opróżnianie Mieszkań', href: '/usluga/oprozniam-mieszkania' },
+    { name: 'Utylizacja Odpadów', href: '/usluga/utylizacja-odpadow' },
+    { name: 'Sprzątanie po Najmie', href: '/usluga/sprzatanie-po-najmie' },
+    { name: 'Transport Materiałów na Budowę', href: '/usluga/transport-materialow' },
   ];
 
   const handleNavigation = (href: string) => {
