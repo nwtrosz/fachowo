@@ -11,6 +11,11 @@ import cors from "cors";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { initDb, readDb, writeDb } from "./json-db";
+import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+
+// Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,9 +37,10 @@ const projectSchema = z.object({
 // Admin Session
 let adminToken = "";
 
-// Email configuration
-const EMAIL_USER = "fachowo.eu@gmail.com"; 
-const EMAIL_PASS = "xxcw tyjh rbtr eflj"; 
+// Email configuration from environment
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS;
+const EMAIL_TO = process.env.EMAIL_TO || "fachowo.eu@gmail.com";
 
 // Multer Setup
 const storage = multer.diskStorage({
@@ -73,7 +79,6 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(requestIp.mw());
 
-  // Kluczowa poprawka ścieżek
   const staticPath = process.env.NODE_ENV === "production"
     ? path.resolve(__dirname, "public")
     : path.resolve(__dirname, "..", "client", "public");
@@ -83,10 +88,20 @@ async function startServer() {
   // --- API ---
   app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    if (username === "popek" && password === "admin123") {
+    
+    const envUser = process.env.ADMIN_USER || "popek";
+    const envPassHash = process.env.ADMIN_PASSWORD_HASH;
+
+    // Secure comparison using bcrypt
+    if (username === envUser && envPassHash && bcrypt.compareSync(password, envPassHash)) {
       adminToken = nanoid();
       res.json({ success: true, token: adminToken });
     } else {
+      // Fallback for first setup if .env is missing or incorrect (temporary)
+      if (!envPassHash && username === "popek" && password === "admin123") {
+         adminToken = nanoid();
+         return res.json({ success: true, token: adminToken });
+      }
       res.status(401).json({ success: false, error: "Błędne dane" });
     }
   });
@@ -116,13 +131,12 @@ async function startServer() {
       writeDb(db);
       if (EMAIL_USER && EMAIL_PASS) {
         const transporter = nodemailer.createTransport({ service: "gmail", auth: { user: EMAIL_USER, pass: EMAIL_PASS } });
-        await transporter.sendMail({ from: EMAIL_USER, to: "fachowo.eu@gmail.com", subject: `Nowa wiadomość: ${data.name}`, text: data.message });
+        await transporter.sendMail({ from: EMAIL_USER, to: EMAIL_TO, subject: `Nowa wiadomość: ${data.name}`, text: `Imię: ${data.name}\nEmail: ${data.email}\nTelefon: ${data.phone}\n\nWiadomość:\n${data.message}` });
       }
       res.json({ success: true });
     } catch (e) { res.status(400).json({ success: false }); }
   });
 
-  // Obsługa wszystkich innych ścieżek - SERWUJ PLIK Z DIST, NIE Z CLIENT!
   app.get("*", (req, res) => {
     if (req.path.startsWith('/api')) return res.status(404).end();
     res.sendFile(path.join(staticPath, "index.html"));
