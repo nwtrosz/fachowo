@@ -81,6 +81,32 @@ async function startServer() {
   app.use(express.urlencoded({ limit: '100mb', extended: true }));
   app.use(requestIp.mw());
 
+  // Visitor Tracking Middleware
+  app.use((req, res, next) => {
+    // Skip tracking for API calls and static assets to be more accurate
+    if (req.path.startsWith('/api') || req.path.includes('.')) {
+      return next();
+    }
+
+    try {
+      const clientIp = req.clientIp || "unknown";
+      const today = new Date().toISOString().split('T')[0];
+      const db = readDb();
+      
+      if (!db.visitors) db.visitors = [];
+      
+      const alreadyTracked = db.visitors.some(v => v.ip === clientIp && v.date === today);
+      
+      if (!alreadyTracked) {
+        db.visitors.push({ ip: clientIp, date: today });
+        writeDb(db);
+      }
+    } catch (e) {
+      console.error("Visitor tracking error:", e);
+    }
+    next();
+  });
+
   const staticPath = process.env.NODE_ENV === "production"
     ? path.resolve(__dirname, "public")
     : path.resolve(__dirname, "..", "client", "public");
@@ -244,9 +270,12 @@ async function startServer() {
   app.get("/api/admin/stats", (_req, res) => {
     try {
       const db = readDb();
+      const today = new Date().toISOString().split('T')[0];
+      const todayVisitors = (db.visitors || []).filter(v => v.date === today).length;
+      
       res.json({ 
           totalLeads: db.leads.length,
-          uniqueVisitors: 0
+          uniqueVisitors: todayVisitors
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -442,12 +471,23 @@ async function startServer() {
     try {
       console.log("[Contact] Received message request:", req.body);
       const data = contactSchema.parse(req.body);
+      
+      const clientIp = req.clientIp || "unknown";
+      const geo = geoip.lookup(clientIp);
+      
       const db = readDb();
       
-      const newLead = { ...data, id: Date.now(), created_at: new Date().toISOString() };
+      const newLead = { 
+        ...data, 
+        id: Date.now(), 
+        ip: clientIp,
+        city: geo?.city || "",
+        country: geo?.country || "",
+        created_at: new Date().toISOString() 
+      };
       db.leads.push(newLead);
       writeDb(db);
-      console.log("[Contact] Lead saved to database.");
+      console.log("[Contact] Lead saved to database with location:", geo?.city);
 
       if (EMAIL_USER && EMAIL_PASS) {
         console.log("[Contact] Attempting to send email via Nodemailer...");

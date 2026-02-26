@@ -770,10 +770,15 @@ export default function Admin() {
                                   <TableCell className="font-bold text-[10px] text-gray-400 uppercase">
                                     {formattedDate}
                                   </TableCell>
-                                <TableCell>
-                                  <div className="font-bold text-primary text-sm">{lead.name}</div>
-                                  <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{lead.email}</div>
-                                </TableCell>
+                                  <TableCell>
+                                    <div className="font-bold text-primary text-sm">{lead.name}</div>
+                                    <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{lead.email}</div>
+                                    {lead.city && (
+                                      <div className="text-[9px] font-bold text-accent uppercase mt-1">
+                                        📍 {lead.city}, {lead.country}
+                                      </div>
+                                    )}
+                                  </TableCell>
                                 <TableCell className="max-w-[250px] truncate text-muted-foreground text-xs hidden md:table-cell italic">
                                   "{lead.message}"
                                 </TableCell>
