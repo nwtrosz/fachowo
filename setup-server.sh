@@ -3,13 +3,15 @@
 # --- KONFIGURACJA ---
 APP_NAME="fachowo-oryginal"
 PORT=3001
+DOMAIN="fachowo.net.pl"
+EMAIL="fachowo.eu@gmail.com"
 
-echo "🚀 ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA: $APP_NAME"
+echo "🚀 ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA I DOMENY: $DOMAIN"
 
 # 1. Aktualizacja zależności systemowych
 echo "📦 Sprawdzam pakiety systemowe..."
 sudo apt update
-sudo apt install -y nginx git curl
+sudo apt install -y nginx git curl certbot python3-certbot-nginx
 
 # 2. Optymalizacja Nginx (Limity i Timeouty)
 echo "🛠 Optymalizuję Nginx (100MB, 5min timeout)..."
@@ -37,7 +39,6 @@ sudo chmod -R 775 storage
 
 # 5. Instalacja bibliotek projektu i budowanie
 echo "🛠 Budowanie projektu..."
-# Migracja danych przed czyszczeniem dist (zabezpieczenie)
 if [ -f "dist/data.json" ]; then
     mv dist/data.json storage/data.json 2>/dev/null
 elif [ -f "server/data.json" ] && [ ! -f "storage/data.json" ]; then
@@ -51,13 +52,14 @@ rm -rf dist
 pnpm install
 pnpm build
 
-# 6. Konfiguracja Reverse Proxy w Nginx
-echo "🌐 Konfiguracja Nginx na porcie $PORT..."
+# 6. Konfiguracja Nginx pod domenę $DOMAIN
+echo "🌐 Konfiguracja Nginx dla domeny $DOMAIN..."
 sudo truncate -s 0 /etc/nginx/sites-available/default
 echo "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name _;
+    listen 80;
+    listen [::]:80;
+    server_name $DOMAIN www.$DOMAIN;
+
     location / {
         proxy_pass http://localhost:$PORT;
         proxy_http_version 1.1;
@@ -68,9 +70,15 @@ echo "server {
     }
 }" | sudo tee /etc/nginx/sites-available/default > /dev/null
 
-# 7. Restart Nginx
-echo "🔄 Restartowanie Nginx..."
+# 7. Restart i certyfikat SSL
+echo "🔄 Restartowanie Nginx i aktywacja SSL..."
 sudo nginx -t && sudo systemctl restart nginx
+
+# Próba wygenerowania SSL (jeśli DNS są gotowe)
+if [[ "$1" == "--ssl" ]]; then
+    echo "🔒 Generowanie certyfikatu SSL..."
+    sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
+fi
 
 # 8. Uruchomienie aplikacji przez PM2
 echo "🎬 Uruchamianie aplikacji..."
@@ -79,5 +87,8 @@ sudo fuser -k $PORT/tcp 2>/dev/null
 NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
 
-echo "✅ KONFIGURACJA ZAKOŃCZONA SUKCESEM!"
-echo "Twoja strona Fachowo.eu powinna być już dostępna i zoptymalizowana."
+echo "✅ PEŁNA KONFIGURACJA ZAKOŃCZONA!"
+echo "Strona powinna być dostępna pod adresem: http://$DOMAIN"
+if [[ "$1" == "--ssl" ]]; then
+    echo "Zabezpieczono certyfikatem HTTPS."
+fi
