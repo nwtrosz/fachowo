@@ -230,6 +230,60 @@ async function startServer() {
     }
   });
 
+  // Admin: Update Project
+  app.put("/api/admin/projects/:id", upload.array("images", 50), (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const validated = projectSchema.parse(req.body);
+      const files = req.files as Express.Multer.File[];
+      
+      const db = readDb();
+      const index = db.projects.findIndex(p => p.id === id);
+      
+      if (index === -1) return res.status(404).json({ error: "Projekt nie istnieje" });
+
+      const currentProject = db.projects[index];
+      let imageUrls = currentProject.images || [currentProject.image];
+
+      // If new files uploaded, we can either replace or append. 
+      // For simplicity, let's replace if new ones are provided.
+      if (files && files.length > 0) {
+        imageUrls = files.map(f => `/uploads/${f.filename}`);
+      }
+
+      db.projects[index] = {
+        ...currentProject,
+        ...validated,
+        image: imageUrls[0],
+        images: imageUrls
+      };
+
+      writeDb(db);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: "Błąd podczas aktualizacji projektu" });
+    }
+  });
+
+  // Admin: Delete Project
+  app.delete("/api/admin/projects/:id", (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const db = readDb();
+      const initialLength = db.projects.length;
+      db.projects = db.projects.filter(p => p.id !== id);
+      
+      if (db.projects.length === initialLength) {
+        return res.status(404).json({ error: "Projekt nie istnieje" });
+      }
+
+      writeDb(db);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: "Błąd podczas usuwania projektu" });
+    }
+  });
+
   app.post("/api/contact", async (req, res) => {
     try {
       console.log("[Contact] Received message request:", req.body);
