@@ -20,6 +20,7 @@ const contactSchema = z.object({
   name: z.string().min(1, "Imię jest wymagane"),
   email: z.string().email("Niepoprawny format email"),
   phone: z.string().optional().or(z.literal('')),
+  branch: z.enum(["Poznań", "Warszawa"], { errorMap: () => ({ message: "Wybierz filię" }) }),
   message: z.string().min(1, "Wiadomość jest wymagana"),
 });
 
@@ -130,8 +131,8 @@ async function startServer() {
           await transporter.sendMail({ 
             from: EMAIL_USER, 
             to: "fachowo.eu@gmail.com", 
-            subject: `Nowa wiadomość: ${data.name}`, 
-            text: `Imię: ${data.name}\nEmail: ${data.email}\nTelefon: ${data.phone || 'Nie podano'}\n\nWiadomość:\n${data.message}` 
+            subject: `Nowa wiadomość (${data.branch}): ${data.name}`, 
+            text: `Imię: ${data.name}\nEmail: ${data.email}\nTelefon: ${data.phone || 'Nie podano'}\nFilia: ${data.branch}\n\nWiadomość:\n${data.message}` 
           });
           console.log("[Contact] Email sent successfully!");
         } catch (emailError) {

@@ -20,6 +20,7 @@ export default function Contact() {
     name: '',
     email: '',
     phone: '',
+    branch: 'Poznań',
     message: '',
   });
 
@@ -157,6 +158,22 @@ export default function Contact() {
                     className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="twoj@email.com"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-primary mb-2">
+                    Wybierz Filię
+                  </label>
+                  <select
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent bg-white"
+                  >
+                    <option value="Poznań">Filia Poznań</option>
+                    <option value="Warszawa">Filia Warszawa</option>
+                  </select>
                 </div>
 
                 <div>

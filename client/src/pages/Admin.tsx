@@ -38,6 +38,7 @@ interface Lead {
   name: string;
   email: string;
   phone: string;
+  branch?: string;
   message: string;
   ip: string;
   country: string;
@@ -488,32 +489,39 @@ export default function Admin() {
                     <Card>
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead>Data</TableHead>
-                              <TableHead>Klient</TableHead>
-                              <TableHead>Kontakt</TableHead>
-                              <TableHead>Wiadomość</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {leads.map((lead) => {
-                              let formattedDate = "Brak daty";
-                              try {
-                                if (lead.created_at) {
-                                  formattedDate = format(new Date(lead.created_at), "dd.MM.yyyy HH:mm", { locale: pl });
-                                }
-                              } catch (e) {}
-                              
-                              return (
-                                <TableRow key={lead.id}>
-                                  <TableCell>{formattedDate}</TableCell>
-                                <TableCell className="font-medium">{lead.name}</TableCell>
-                                <TableCell>{lead.email}<br/><span className="text-xs text-muted-foreground">{lead.phone}</span></TableCell>
-                                <TableCell>{lead.message}</TableCell>
-                              </TableRow>
-                            );
-                          })}
-                          {leads.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-8">Brak wiadomości</TableCell></TableRow>}
+                                                        <TableRow>
+                                                          <TableHead>Data</TableHead>
+                                                          <TableHead>Klient</TableHead>
+                                                          <TableHead>Kontakt</TableHead>
+                                                          <TableHead>Filia</TableHead>
+                                                          <TableHead>Wiadomość</TableHead>
+                                                        </TableRow>
+                                                      </TableHeader>
+                                                      <TableBody>
+                                                        {leads.map((lead) => {
+                                                          let formattedDate = "Brak daty";
+                                                          try {
+                                                            if (lead.created_at) {
+                                                              formattedDate = format(new Date(lead.created_at), "dd.MM.yyyy HH:mm", { locale: pl });
+                                                            }
+                                                          } catch (e) {}
+                                                          
+                                                          return (
+                                                            <TableRow key={lead.id}>
+                                                              <TableCell>{formattedDate}</TableCell>
+                                                              <TableCell className="font-medium">{lead.name}</TableCell>
+                                                              <TableCell>{lead.email}<br/><span className="text-xs text-muted-foreground">{lead.phone}</span></TableCell>
+                                                              <TableCell>
+                                                                <Badge variant="outline" className={cn(
+                                                                  lead.branch === 'Poznań' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-emerald-200 text-emerald-700 bg-emerald-50'
+                                                                )}>
+                                                                  {lead.branch || 'Nie określono'}
+                                                                </Badge>
+                                                              </TableCell>
+                                                              <TableCell>{lead.message}</TableCell>
+                                                            </TableRow>
+                                                          );
+                                                        })}                          {leads.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-8">Brak wiadomości</TableCell></TableRow>}
                           </TableBody>
                         </Table>
                     </Card>
