@@ -185,15 +185,38 @@ async function startServer() {
 
   app.post("/api/admin/projects", upload.array("images", 50), (req, res) => {
     try {
+      console.log("[Portfolio] Received project upload request:", req.body);
       const validated = projectSchema.parse(req.body);
       const files = req.files as Express.Multer.File[];
-      if (!files || files.length === 0) return res.status(400).json({ error: "No images" });
+      
+      if (!files || files.length === 0) {
+        console.error("[Portfolio] Upload failed: No images provided");
+        return res.status(400).json({ error: "Proszę wybrać co najmniej jedno zdjęcie." });
+      }
+
+      console.log(`[Portfolio] Processing ${files.length} images...`);
       const imageUrls = files.map(f => `/uploads/${f.filename}`);
       const db = readDb();
-      db.projects.push({ id: Date.now(), ...validated, image: imageUrls[0], images: imageUrls, created_at: new Date().toISOString() });
+      
+      const newProject = { 
+        id: Date.now(), 
+        ...validated, 
+        image: imageUrls[0], 
+        images: imageUrls, 
+        created_at: new Date().toISOString() 
+      };
+      
+      db.projects.push(newProject);
       writeDb(db);
+      console.log("[Portfolio] Project added successfully:", newProject.title);
       res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: "Failed" }); }
+    } catch (e) { 
+      if (e instanceof z.ZodError) {
+        return res.status(400).json({ error: e.errors[0].message });
+      }
+      console.error("[Portfolio] SYSTEM ERROR DURING UPLOAD:", e);
+      res.status(500).json({ error: "Błąd systemowy podczas wgrywania projektu." }); 
+    }
   });
 
   app.post("/api/contact", async (req, res) => {
