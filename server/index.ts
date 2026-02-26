@@ -141,7 +141,7 @@ async function startServer() {
   app.use(requestIp.mw());
 
   const staticPath = process.env.NODE_ENV === "production"
-    ? path.resolve("dist", "public")
+    ? path.resolve(__dirname, "public")
     : path.resolve(__dirname, "..", "client", "public");
 
   const indexPath = process.env.NODE_ENV === "production"
