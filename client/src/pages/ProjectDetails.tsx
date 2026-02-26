@@ -3,8 +3,8 @@ import { useRoute, useLocation, Link } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { SEOHead } from '@/components/SEOHead';
-import { ChevronLeft, Calendar, Tag, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ChevronLeft, Calendar, Tag, Image as ImageIcon, Loader2, X, Maximize2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 
@@ -24,6 +24,7 @@ export default function ProjectDetails() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -69,6 +70,39 @@ export default function ProjectDetails() {
       <Navigation />
 
       <main className="flex-1 pt-24">
+        {/* Lightbox Overlay */}
+        <AnimatePresence>
+          {isLightboxOpen && selectedImage && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-10"
+              onClick={() => setIsLightboxOpen(false)}
+            >
+              <button 
+                className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+                onClick={() => setIsLightboxOpen(false)}
+              >
+                <X size={40} />
+              </button>
+              
+              <motion.img 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                src={selectedImage}
+                alt={project.title}
+                className="max-w-full max-h-full object-contain rounded shadow-2xl"
+              />
+              
+              <div className="absolute bottom-10 left-0 right-0 text-center text-white/50 text-sm font-light uppercase tracking-[0.3em]">
+                {project.title}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Project Header */}
         <section className="bg-primary text-white py-12 md:py-20">
           <div className="container mx-auto px-4">
@@ -112,13 +146,19 @@ export default function ProjectDetails() {
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="relative aspect-video rounded-xl overflow-hidden shadow-2xl bg-gray-100"
+                  className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-gray-100 group cursor-zoom-in"
+                  onClick={() => setIsLightboxOpen(true)}
                 >
                   <img
                     src={selectedImage || project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30">
+                      <Maximize2 size={24} />
+                    </div>
+                  </div>
                 </motion.div>
 
                 {gallery.length > 1 && (
@@ -127,8 +167,8 @@ export default function ProjectDetails() {
                       <button
                         key={idx}
                         onClick={() => setSelectedImage(img)}
-                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-                          selectedImage === img ? 'border-accent scale-105 shadow-md' : 'border-transparent hover:border-accent/50'
+                        className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                          selectedImage === img ? 'border-accent scale-105 shadow-md' : 'border-transparent hover:border-accent/50 opacity-70 hover:opacity-100'
                         }`}
                       >
                         <img src={img} alt={`Widok ${idx + 1}`} className="w-full h-full object-cover" />
