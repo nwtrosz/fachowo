@@ -35,7 +35,11 @@ export function ServicePage({
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title={title} description={subtitle} />
+      <SEOHead 
+        title={title} 
+        description={subtitle} 
+        image={images[0]} 
+      />
       <Navigation />
       {/* Header */}
       <div className="bg-primary text-white pt-24 pb-8">
