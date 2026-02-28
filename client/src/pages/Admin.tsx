@@ -147,6 +147,7 @@ interface Lead {
   city: string;
   created_at: string;
   archived?: boolean;
+  read?: boolean;
   replies?: Reply[];
 }
 
@@ -424,6 +425,27 @@ export default function Admin() {
     } catch (error) { console.error("Failed to archive lead", error); }
   };
 
+  const handleMarkAsRead = async (lead: Lead) => {
+    if (lead.read) return; // Already read
+    
+    const token = localStorage.getItem('adminToken');
+    try {
+      await fetch(`${API_BASE}/api/admin/leads/${lead.id}/read`, { 
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      // Update locally: mark all leads with same email/phone as read
+      setLeads(prev => prev.map(l => {
+        if ((l.email === lead.email && l.email) || (l.phone === lead.phone && l.phone) || l.id === lead.id) {
+          return { ...l, read: true };
+        }
+        return l;
+      }));
+    } catch (error) {
+      console.error("Failed to mark as read", error);
+    }
+  };
+
   const handleDeleteLead = async (id: number) => {
     if (!confirm("TRWAŁE USUNIĘCIE CAŁEJ ROZMOWY?")) return;
     const token = localStorage.getItem('adminToken');
@@ -565,7 +587,7 @@ export default function Admin() {
         <nav className="p-4 space-y-2">
           {[
             { id: 'dashboard', label: 'Pulpit', icon: LayoutDashboard },
-            { id: 'messages', label: 'Wiadomości', icon: MessageSquare, count: leads.filter(l => !l.archived).length },
+            { id: 'messages', label: 'Wiadomości', icon: MessageSquare, count: leads.filter(l => !l.read && !l.archived).length },
             { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
           ].map(item => (
             <button key={item.id} onClick={() => { setActiveTab(item.id as any); if (window.innerWidth < 768) setSidebarOpen(false); }} className={cn(
@@ -741,7 +763,11 @@ export default function Admin() {
                                     <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{lead.email}</div>
                                   </TableCell>
                                   <TableCell className="text-right">
-                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={() => { setSelectedLeadHistory(lead); setActiveTab('messages'); }}>
+                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={() => { 
+                                      handleMarkAsRead(lead);
+                                      setSelectedLeadHistory(lead); 
+                                      setActiveTab('messages'); 
+                                    }}>
                                       <MessageSquare size={14} />
                                     </Button>
                                   </TableCell>
@@ -842,7 +868,17 @@ export default function Admin() {
                             <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="w-[100px]">Ostatnia Akcja</TableHead><TableHead>Klient</TableHead><TableHead>Filia</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
                             <TableBody>
                               {getThreadedLeads().filter(l => !!l.archived === showArchived).map(lead => (
-                                <TableRow key={lead.id} className="cursor-pointer hover:bg-slate-50/50 group" onClick={() => setSelectedLeadHistory(lead)}>
+                                <TableRow 
+                                  key={lead.id} 
+                                  className={cn(
+                                    "cursor-pointer hover:bg-slate-50/50 group",
+                                    !lead.read && !showArchived && "bg-accent/5 font-bold"
+                                  )} 
+                                  onClick={() => {
+                                    handleMarkAsRead(lead);
+                                    setSelectedLeadHistory(lead);
+                                  }}
+                                >
                                   <TableCell className="text-[10px] font-bold text-gray-400 uppercase">
                                     {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
                                     <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>

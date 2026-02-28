@@ -280,6 +280,26 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
+  // Admin: Mark conversation as read
+  app.post("/api/admin/leads/:id/read", authMiddleware, (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const db = readDb();
+      const targetLead = db.leads.find(l => l.id === id);
+      
+      if (targetLead) {
+        // Mark all messages from this contact as read
+        db.leads.forEach(l => {
+          if ((l.email === targetLead.email && targetLead.email) || (l.phone === targetLead.phone && targetLead.phone) || l.id === id) {
+            l.read = true;
+          }
+        });
+        writeDb(db);
+      }
+      res.json({ success: true });
+    } catch (e) { res.status(500).end(); }
+  });
+
   app.delete("/api/admin/leads/:id", authMiddleware, (req: any, res) => {
     try {
       if (req.user.username !== "admin") {
@@ -381,7 +401,13 @@ async function startServer() {
       }
 
       const db = readDb();
-      const newLead = { ...data, id: Date.now(), ip: req.clientIp || "", created_at: new Date().toISOString() };
+      const newLead = { 
+        ...data, 
+        id: Date.now(), 
+        ip: req.clientIp || "", 
+        created_at: new Date().toISOString(),
+        read: false // New inquiries are unread by default
+      };
       db.leads.push(newLead);
       writeDb(db);
       if (EMAIL_USER && EMAIL_PASS) {
