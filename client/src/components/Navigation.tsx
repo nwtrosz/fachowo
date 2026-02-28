@@ -165,6 +165,13 @@ export default function Navigation() {
 
           <button
             onClick={() => handleNavigation('/kontakt')}
+            className="text-foreground font-medium hover:text-accent transition-colors cursor-pointer"
+          >
+            Kontakt
+          </button>
+
+          <button
+            onClick={() => handleNavigation('/kontakt')}
             className="px-6 py-2 bg-accent text-white font-medium rounded hover:bg-accent/90 transition-all hover:shadow-lg cursor-pointer"
           >
             Darmowa Wycena
@@ -267,6 +274,13 @@ export default function Navigation() {
                   </div>
                 )}
               </div>
+
+              <button
+                onClick={() => handleNavigation('/kontakt')}
+                className="text-left text-foreground font-display text-3xl font-bold hover:text-accent transition-colors"
+              >
+                Kontakt
+              </button>
 
               {switchable && (
                 <button
