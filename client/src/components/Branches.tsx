@@ -34,7 +34,7 @@ export default function Branches() {
         {/* Section Header */}
         <div className="max-w-2xl mb-16">
           <span className="font-label text-accent text-sm">Kontakt</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
             Gdzie Nas Znaleźć
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
@@ -45,10 +45,10 @@ export default function Branches() {
           {branches.map((branch, index) => (
             <div
               key={index}
-              className="bg-white p-8 rounded border border-border hover:border-accent hover:shadow-lg transition-all"
+              className="bg-card p-8 rounded border border-border hover:border-accent hover:shadow-lg transition-all"
             >
               {/* City Name */}
-              <h3 className="font-display text-3xl font-bold text-primary mb-6">
+              <h3 className="font-display text-3xl font-bold text-foreground mb-6">
                 Fachowo.net.pl {branch.city}
               </h3>
 
@@ -58,8 +58,8 @@ export default function Branches() {
                   <MapPin size={24} className="text-accent" />
                 </div>
                 <div>
-                  <p className="font-bold text-primary text-sm mb-1">Adres</p>
-                  <p className="text-foreground/70">{branch.address}</p>
+                  <p className="font-bold text-foreground text-sm mb-1">Adres</p>
+                  <p className="text-muted-foreground">{branch.address}</p>
                 </div>
               </div>
 
@@ -69,10 +69,10 @@ export default function Branches() {
                   <Phone size={24} className="text-accent" />
                 </div>
                 <div>
-                  <p className="font-bold text-primary text-sm mb-1">Telefon</p>
+                  <p className="font-bold text-foreground text-sm mb-1">Telefon</p>
                   <a
                     href={`tel:${branch.phone.replace(/\s/g, '')}`}
-                    className="text-foreground/70 hover:text-accent transition-colors"
+                    className="text-muted-foreground hover:text-accent transition-colors"
                   >
                     {branch.phone}
                   </a>
@@ -85,10 +85,10 @@ export default function Branches() {
                   <Mail size={24} className="text-accent" />
                 </div>
                 <div>
-                  <p className="font-bold text-primary text-sm mb-1">Email</p>
+                  <p className="font-bold text-foreground text-sm mb-1">Email</p>
                   <a
                     href={`mailto:${branch.email}`}
-                    className="text-foreground/70 hover:text-accent transition-colors"
+                    className="text-muted-foreground hover:text-accent transition-colors"
                   >
                     {branch.email}
                   </a>
@@ -101,8 +101,8 @@ export default function Branches() {
                   <Clock size={24} className="text-accent" />
                 </div>
                 <div>
-                  <p className="font-bold text-primary text-sm mb-1">Godziny Otwarcia</p>
-                  <p className="text-foreground/70 text-sm">{branch.hours}</p>
+                  <p className="font-bold text-foreground text-sm mb-1">Godziny Otwarcia</p>
+                  <p className="text-muted-foreground text-sm">{branch.hours}</p>
                 </div>
               </div>
             </div>

@@ -50,7 +50,7 @@ export default function Hero({ backgroundImage }: HeroProps) {
 
       {/* Diagonal clip-path divider at bottom */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-24 bg-white z-20"
+        className="absolute bottom-0 left-0 right-0 h-24 bg-background z-20"
         style={{
           clipPath: 'polygon(0 30%, 100% 0, 100% 100%, 0 100%)',
         }}

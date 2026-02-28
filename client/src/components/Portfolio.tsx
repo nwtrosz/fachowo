@@ -56,7 +56,7 @@ export default function Portfolio() {
         {/* Section Header */}
         <div className="max-w-2xl mb-10 md:mb-12">
           <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">Nasze Realizacje</span>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-primary mt-2 mb-4 leading-tight">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4 leading-tight">
             Projekty z Naszego <br className="hidden sm:block" /> Portfolio
           </h2>
           <div className="w-16 h-1 bg-accent rounded-full" aria-hidden="true" />
@@ -77,8 +77,8 @@ export default function Portfolio() {
                   className={cn(
                     "px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-tighter transition-all duration-300 border cursor-pointer",
                     activeFilter === category
-                      ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105"
-                      : "bg-white text-foreground/70 border-border hover:border-accent hover:text-accent"
+                      ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105"
+                      : "bg-muted/50 text-muted-foreground border-border hover:border-accent hover:text-accent"
                   )}
                 >
                   {category}
@@ -91,7 +91,7 @@ export default function Portfolio() {
               {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 bg-white border border-border/50 flex flex-col"
+                  className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 bg-card border border-border flex flex-col"
                 >
                   {/* Image Container */}
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -103,13 +103,13 @@ export default function Portfolio() {
                     />
                     
                     {/* Overlay - visible on hover or mobile tap focus */}
-                    <div className="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
-                      <p className="text-white/90 text-sm mb-6 leading-relaxed line-clamp-4 italic">
+                    <div className="absolute inset-0 bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
+                      <p className="text-primary-foreground/90 text-sm mb-6 leading-relaxed line-clamp-4 italic">
                         {project.description}
                       </p>
                       <button 
                         onClick={() => setLocation(`/portfolio/${project.id}`)}
-                        className="flex items-center gap-2 px-6 py-2 bg-accent text-white font-bold rounded-full hover:bg-accent/90 transition-transform active:scale-95 shadow-lg cursor-pointer"
+                        className="flex items-center gap-2 px-6 py-2 bg-accent text-accent-foreground font-bold rounded-full hover:bg-accent/90 transition-transform active:scale-95 shadow-lg cursor-pointer"
                       >
                         <span>Zobacz Detale</span>
                         <ExternalLink size={16} />
@@ -118,18 +118,18 @@ export default function Portfolio() {
 
                     {/* Badge (always visible, top left) */}
                     <div className="absolute top-4 left-4 z-10">
-                      <span className="inline-block px-3 py-1 bg-accent/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-md">
+                      <span className="inline-block px-3 py-1 bg-accent/90 backdrop-blur-sm text-accent-foreground text-[10px] font-bold uppercase tracking-widest rounded-lg shadow-md">
                         {project.category}
                       </span>
                     </div>
                   </div>
 
                   {/* Content Below Image */}
-                  <div className="p-6 md:p-8 border-t border-border/50 flex-1 flex flex-col justify-center">
-                    <h3 className="font-display text-xl md:text-2xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+                  <div className="p-6 md:p-8 border-t border-border flex-1 flex flex-col justify-center">
+                    <h3 className="font-display text-xl md:text-2xl font-bold text-foreground group-hover:text-accent transition-colors duration-300">
                       {project.title}
                     </h3>
-                    <div className="mt-4 pt-4 border-t border-slate-100 sm:hidden">
+                    <div className="mt-4 pt-4 border-t border-border sm:hidden">
                        <button 
                         onClick={() => setLocation(`/portfolio/${project.id}`)}
                         className="text-accent font-bold text-sm uppercase tracking-widest flex items-center gap-2"

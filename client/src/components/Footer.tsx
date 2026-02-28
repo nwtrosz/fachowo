@@ -15,13 +15,13 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-white py-12">
+    <footer className="bg-primary text-primary-foreground py-12">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
             <h3 className="font-display text-xl font-bold mb-2">Fachowo.net.pl</h3>
-            <p className="text-white/70 text-sm">
+            <p className="text-primary-foreground/70 text-sm">
               Profesjonalne usługi budowlane i transportowe.
             </p>
           </div>
@@ -29,7 +29,7 @@ export default function Footer() {
           {/* Services */}
           <div>
             <h4 className="font-bold mb-4">Usługi</h4>
-            <ul className="space-y-2 text-sm text-white/70">
+            <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li>
                 <Link href="/usluga/kompleksowe-wykonczenie" className="hover:text-accent transition-colors">
                   Usługi Budowlane
@@ -51,7 +51,7 @@ export default function Footer() {
           {/* Company */}
           <div>
             <h4 className="font-bold mb-4">Firma</h4>
-            <ul className="space-y-2 text-sm text-white/70">
+            <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li>
                 <Link href="/#about" className="hover:text-accent transition-colors">
                   O Nas
@@ -76,19 +76,19 @@ export default function Footer() {
             <div className="flex gap-4">
               <a
                 href="#"
-                className="w-10 h-10 bg-white/10 rounded flex items-center justify-center hover:bg-accent hover:text-primary transition-colors"
+                className="w-10 h-10 bg-primary-foreground/10 rounded flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <Facebook size={18} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-white/10 rounded flex items-center justify-center hover:bg-accent hover:text-primary transition-colors"
+                className="w-10 h-10 bg-primary-foreground/10 rounded flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <Linkedin size={18} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-white/10 rounded flex items-center justify-center hover:bg-accent hover:text-primary transition-colors"
+                className="w-10 h-10 bg-primary-foreground/10 rounded flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <Twitter size={18} />
               </a>
@@ -97,8 +97,8 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-white/10 pt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between text-sm text-white/70">
+        <div className="border-t border-primary-foreground/10 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between text-sm text-primary-foreground/70">
             <p>
               &copy; {currentYear} Fachowo.net.pl. Wszystkie prawa zastrzeżone.
             </p>

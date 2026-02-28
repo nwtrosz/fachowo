@@ -42,7 +42,7 @@ export default function Services() {
         {/* Section Header */}
         <div className="max-w-2xl mb-16">
           <span className="font-label text-accent text-sm">Nasze Usługi</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
             Nasze Oferta Usług
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
@@ -55,24 +55,24 @@ export default function Services() {
             return (
               <div
                 key={index}
-                className="bg-white p-8 rounded border border-border hover:border-accent hover:shadow-lg transition-all group"
+                className="bg-card p-8 rounded border border-border hover:border-accent hover:shadow-lg transition-all group"
               >
-                <div className="w-16 h-16 bg-secondary/10 rounded flex items-center justify-center mb-6 group-hover:bg-accent/10 transition-colors" aria-label={service.altText}>
+                <div className="w-16 h-16 bg-accent/10 rounded flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-colors" aria-label={service.altText}>
                   <Icon size={32} className="text-accent" aria-hidden="true" />
                 </div>
 
-                <h3 className="font-display text-2xl font-bold text-primary mb-3">
+                <h3 className="font-display text-2xl font-bold text-foreground mb-3">
                   {service.title}
                 </h3>
 
-                <p className="text-foreground/70 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   {service.description}
                 </p>
 
                 <div className="mt-6 pt-6 border-t border-border">
                   <Link
                     href={service.href}
-                    className="text-accent font-bold text-sm hover:text-primary transition-colors flex items-center gap-2 group/link cursor-pointer"
+                    className="text-accent font-bold text-sm hover:text-foreground transition-colors flex items-center gap-2 group/link cursor-pointer"
                   >
                     Dowiedz się więcej
                     <span className="group-hover/link:translate-x-1 transition-transform">→</span>

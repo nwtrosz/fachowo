@@ -570,7 +570,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-background font-sans overflow-hidden">
       <AnimatePresence>
         {sidebarOpen && (
           <motion.div 
@@ -582,11 +582,11 @@ export default function Admin() {
       </AnimatePresence>
 
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-[70] w-64 bg-primary text-white transition-transform duration-300 transform md:relative md:translate-x-0 shadow-2xl",
+        "fixed inset-y-0 left-0 z-[70] w-64 bg-sidebar text-sidebar-foreground transition-transform duration-300 transform md:relative md:translate-x-0 shadow-2xl",
         !sidebarOpen && "-translate-x-full"
       )}>
-        <div className="p-6 flex items-center gap-3 border-b border-white/10">
-          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-display text-xl font-bold">F</div>
+        <div className="p-6 flex items-center gap-3 border-b border-sidebar-border">
+          <div className="w-10 h-10 bg-sidebar-primary text-sidebar-primary-foreground rounded-lg flex items-center justify-center font-display text-xl font-bold">F</div>
           <span className="font-display text-xl font-bold tracking-tighter">Fachowo.net.pl</span>
         </div>
         <nav className="p-4 space-y-2">
@@ -597,23 +597,23 @@ export default function Admin() {
           ].map(item => (
             <button key={item.id} onClick={() => { setActiveTab(item.id as any); if (window.innerWidth < 768) setSidebarOpen(false); }} className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all text-left",
-              activeTab === item.id ? "bg-accent text-white font-bold shadow-md" : "text-white/60 hover:bg-white/5 hover:text-white"
+              activeTab === item.id ? "bg-accent text-accent-foreground font-bold shadow-md" : "text-sidebar-foreground/60 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
             )}>
               <item.icon size={20} />
               <span className="flex-1">{item.label}</span>
-              {item.count ? <span className="bg-white text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">{item.count}</span> : null}
+              {item.count ? <span className="bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{item.count}</span> : null}
             </button>
           ))}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
-          <Button variant="ghost" className="w-full text-white/60 hover:text-white hover:bg-white/5 justify-start gap-3" onClick={handleLogout}>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border">
+          <Button variant="ghost" className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/10 justify-start gap-3" onClick={handleLogout}>
             <LogOut size={20} /> Wyloguj się
           </Button>
         </div>
       </aside>
 
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shrink-0">
+        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-8 shrink-0">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}><Menu size={24} /></Button>
           <div className="flex-1 flex justify-end items-center gap-4">
              {switchable && (
@@ -621,18 +621,18 @@ export default function Admin() {
                  variant="ghost"
                  size="icon"
                  onClick={toggleTheme}
-                 className="rounded-full text-primary hover:bg-slate-100 transition-colors"
+                 className="rounded-full text-foreground hover:bg-accent/10 transition-colors"
                  title="Przełącz motyw"
                >
                  {theme === 'dark' ? <Sun size={20} className="text-accent" /> : <Moon size={20} />}
                </Button>
              )}
              <div className="text-xs text-muted-foreground hidden md:block">Zalogowany jako <span className="font-bold text-primary uppercase">{loggedInUser}</span></div>
-             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold uppercase text-xs">{loggedInUser.charAt(0) || 'A'}</div>
+             <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold uppercase text-xs">{loggedInUser.charAt(0) || 'A'}</div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-3 md:p-8 bg-slate-50/50">
+        <main className="flex-1 overflow-auto p-3 md:p-8 bg-background">
           <div className="max-w-6xl mx-auto">
             {loading ? (
               <div className="flex items-center justify-center h-64"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>
@@ -642,11 +642,11 @@ export default function Admin() {
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Pulpit Zarządzania</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">Pulpit Zarządzania</h1>
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-10 w-10 rounded-xl bg-white shadow-sm border-slate-200 text-primary hover:text-accent transition-colors"
+                          className="h-10 w-10 rounded-xl bg-card shadow-sm border-border text-foreground hover:text-accent transition-colors"
                           onClick={() => {
                             fetchData();
                             toast.info("Odświeżanie danych...");
@@ -655,20 +655,20 @@ export default function Admin() {
                           <RefreshCw size={18} className={cn(loading && "animate-spin")} />
                         </Button>
                       </div>
-                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm w-fit">
+                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-card px-4 py-2 rounded-xl border border-border shadow-sm w-fit">
                         {format(new Date(), "EEEE, d MMMM yyyy", { locale: pl })}
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <Card className="border-l-4 border-l-primary"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Wszystkie Zapytania</CardHeader><CardContent><div className="text-3xl font-bold">{stats?.totalLeads || 0}</div></CardContent></Card>
-                      <Card className="border-l-4 border-l-green-500"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Dzisiejsze Goście</CardHeader><CardContent><div className="text-3xl font-bold">{stats?.uniqueVisitors || 0}</div></CardContent></Card>
-                      <Card className="border-l-4 border-l-accent"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Projekty</CardHeader><CardContent><div className="text-3xl font-bold">{projects.length}</div></CardContent></Card>
+                      <Card className="border-l-4 border-l-primary bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Wszystkie Zapytania</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{stats?.totalLeads || 0}</div></CardContent></Card>
+                      <Card className="border-l-4 border-l-green-500 bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Dzisiejsze Goście</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{stats?.uniqueVisitors || 0}</div></CardContent></Card>
+                      <Card className="border-l-4 border-l-accent bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Projekty</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{projects.length}</div></CardContent></Card>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       <div className="lg:col-span-2">
-                        <Card className="shadow-md rounded-2xl bg-white border-none h-full">
+                        <Card className="shadow-md rounded-2xl bg-card border-none h-full">
                           <CardHeader className="pb-2">
-                            <CardTitle className="text-lg font-bold text-primary">Aktywność (Ostatnie 7 dni)</CardTitle>
+                            <CardTitle className="text-lg font-bold text-foreground">Aktywność (Ostatnie 7 dni)</CardTitle>
                             <CardDescription className="text-xs">Porównanie odwiedzin i zapytań</CardDescription>
                           </CardHeader>
                           <CardContent className="h-[250px] pt-4">
@@ -684,7 +684,7 @@ export default function Admin() {
                                     <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                                   </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E293B" />
                                 <XAxis 
                                   dataKey="date" 
                                   axisLine={false} 
@@ -694,7 +694,7 @@ export default function Admin() {
                                 />
                                 <YAxis hide />
                                 <Tooltip 
-                                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                  contentStyle={{ backgroundColor: theme === 'dark' ? '#0F1F38' : '#FFFFFF', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                                 />
                                 <Area 
                                   type="monotone" 
@@ -721,7 +721,7 @@ export default function Admin() {
                       </div>
 
                       <div className="space-y-6">
-                        <Card className="shadow-md rounded-2xl bg-primary text-white border-none">
+                        <Card className="shadow-md rounded-2xl bg-primary text-primary-foreground border-none">
                           <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold uppercase tracking-widest opacity-50">Skuteczność</CardTitle>
                           </CardHeader>
@@ -740,26 +740,26 @@ export default function Admin() {
                           </CardContent>
                         </Card>
 
-                        <Card className="shadow-md rounded-2xl bg-white border-none">
+                        <Card className="shadow-md rounded-2xl bg-card border-none">
                           <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold text-primary uppercase tracking-widest">Najczęstsza Filia</CardTitle>
+                            <CardTitle className="text-sm font-bold text-foreground uppercase tracking-widest">Najczęstsza Filia</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="flex items-center justify-between mb-2 text-xs">
-                               <span className="font-medium">Poznań</span>
-                               <span className="font-bold">{leads.filter(l => l.branch === 'Poznań').length}</span>
+                               <span className="font-medium text-foreground">Poznań</span>
+                               <span className="font-bold text-foreground">{leads.filter(l => l.branch === 'Poznań').length}</span>
                             </div>
-                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                            <div className="w-full bg-muted h-2 rounded-full overflow-hidden mb-4">
                                <div 
                                  className="bg-primary h-full" 
                                  style={{ width: `${(leads.filter(l => l.branch === 'Poznań').length / Math.max(1, leads.length)) * 100}%` }}
                                />
                             </div>
-                            <div className="flex items-center justify-between mb-2 text-xs">
+                            <div className="flex items-center justify-between mb-2 text-xs text-foreground">
                                <span className="font-medium">Warszawa</span>
                                <span className="font-bold">{leads.filter(l => l.branch === 'Warszawa').length}</span>
                             </div>
-                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                                <div 
                                  className="bg-accent h-full" 
                                  style={{ width: `${(leads.filter(l => l.branch === 'Warszawa').length / Math.max(1, leads.length)) * 100}%` }}
@@ -869,33 +869,33 @@ export default function Admin() {
                           <RefreshCw size={14} className={cn(loading && "animate-spin")} />
                         </Button>
                       </div>
-                      <div className="flex gap-1 bg-white p-1 rounded-xl border shadow-sm">
+                      <div className="flex gap-1 bg-card p-1 rounded-xl border border-border shadow-sm">
                         <Button variant={!showArchived ? "default" : "ghost"} size="sm" onClick={() => setShowArchived(false)} className="rounded-lg h-8">Aktywne</Button>
                         <Button variant={showArchived ? "default" : "ghost"} size="sm" onClick={() => setShowArchived(true)} className="rounded-lg h-8">Archiwum</Button>
                       </div>
                     </div>
 
                     {selectedLeadHistory ? (
-                      <Card className="border-accent shadow-2xl rounded-3xl overflow-hidden bg-white border-none">
-                        <CardHeader className="bg-slate-50/50 border-b flex flex-row items-center justify-between p-6">
-                          <div><CardTitle className="text-2xl font-bold text-primary">{selectedLeadHistory.name}</CardTitle><CardDescription className="font-medium">{selectedLeadHistory.email} | {selectedLeadHistory.phone}</CardDescription></div>
+                      <Card className="border-accent shadow-2xl rounded-3xl overflow-hidden bg-card border-none">
+                        <CardHeader className="bg-muted/30 border-b border-border flex flex-row items-center justify-between p-6">
+                          <div><CardTitle className="text-2xl font-bold text-foreground">{selectedLeadHistory.name}</CardTitle><CardDescription className="font-medium">{selectedLeadHistory.email} | {selectedLeadHistory.phone}</CardDescription></div>
                           <Button variant="outline" size="sm" onClick={() => setSelectedLeadHistory(null)} className="rounded-xl"><X className="mr-2 h-4 w-4" /> Zamknij</Button>
                         </CardHeader>
                         <CardContent className="p-6 space-y-8">
                           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                             {[...leads.filter(l => (l.email && l.email === selectedLeadHistory.email) || (l.phone && l.phone === selectedLeadHistory.phone)).map(h => ({ ...h, type: 'inquiry' })), ...(leads.find(l => l.id === selectedLeadHistory.id)?.replies || []).map(r => ({ ...r, type: 'reply' }))].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map((item: any) => (
-                              <div key={`${item.type}-${item.id}`} className={cn("p-5 rounded-2xl border-l-4 shadow-sm", item.type === 'inquiry' ? "bg-white border border-slate-100 border-l-accent" : "bg-primary/5 border border-primary/10 border-l-primary border-dashed ml-8")}>
+                              <div key={`${item.type}-${item.id}`} className={cn("p-5 rounded-2xl border-l-4 shadow-sm", item.type === 'inquiry' ? "bg-card border border-border border-l-accent" : "bg-primary/5 border border-primary/10 border-l-primary border-dashed ml-8")}>
                                 <div className="flex justify-between mb-2">
                                   <Badge variant={item.type === 'inquiry' ? "outline" : "default"} className="text-[9px] uppercase tracking-widest">{item.type === 'inquiry' ? "KLIENT" : "Ty"}</Badge>
                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{format(new Date(item.created_at), "dd.MM HH:mm", { locale: pl })}</span>
                                 </div>
-                                <p className="text-sm leading-relaxed text-slate-700">{item.message}</p>
+                                <p className="text-sm leading-relaxed text-foreground/80">{item.message}</p>
                               </div>
                             ))}
                           </div>
-                          <div className="pt-6 border-t border-slate-100">
+                          <div className="pt-6 border-t border-border">
                             <h4 className="text-xs font-bold text-primary uppercase tracking-widest mb-4">Szybka odpowiedź</h4>
-                            <Textarea placeholder="Napisz wiadomość do klienta..." className="mb-4 min-h-[150px] rounded-2xl bg-slate-50 border-none shadow-inner focus-visible:ring-accent p-4" value={replyMessage} onChange={(e) => setReplyMessage(e.target.value)} />
+                            <Textarea placeholder="Napisz wiadomość do klienta..." className="mb-4 min-h-[150px] rounded-2xl bg-muted/30 border-none shadow-inner focus-visible:ring-accent p-4" value={replyMessage} onChange={(e) => setReplyMessage(e.target.value)} />
                             <div className="flex justify-end gap-2">
                               <Button variant="ghost" onClick={() => setReplyMessage("")}>Wyczyść</Button>
                               <Button disabled={isSendingReply || !replyMessage.trim()} onClick={() => handleSendReply(selectedLeadHistory.id)} className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-primary/20">
@@ -907,16 +907,16 @@ export default function Admin() {
                         </CardContent>
                       </Card>
                     ) : (
-                      <Card className="rounded-2xl overflow-hidden shadow-sm bg-white border-none">
+                      <Card className="rounded-2xl overflow-hidden shadow-sm bg-card border-none">
                         <div className="overflow-x-auto">
                           <Table>
-                            <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="w-[100px]">Ostatnia Akcja</TableHead><TableHead>Klient</TableHead><TableHead>Filia</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
+                            <TableHeader><TableRow className="bg-muted/30 border-border"><TableHead className="w-[100px]">Ostatnia Akcja</TableHead><TableHead>Klient</TableHead><TableHead>Filia</TableHead><TableHead className="text-right">Akcja</TableHead></TableRow></TableHeader>
                             <TableBody>
                               {getThreadedLeads().filter(l => !!l.archived === showArchived).map(lead => (
                                 <TableRow 
                                   key={lead.id} 
                                   className={cn(
-                                    "cursor-pointer hover:bg-slate-50/50 group",
+                                    "cursor-pointer hover:bg-muted/20 group border-border",
                                     !lead.read && !showArchived && "bg-accent/5 font-bold"
                                   )} 
                                   onClick={() => {
@@ -924,19 +924,19 @@ export default function Admin() {
                                     setSelectedLeadHistory(lead);
                                   }}
                                 >
-                                  <TableCell className="text-[10px] font-bold text-gray-400 uppercase">
+                                  <TableCell className="text-[10px] font-bold text-muted-foreground uppercase">
                                     {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
                                     <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>
                                   </TableCell>
                                   <TableCell>
-                                    <div className="font-bold text-sm text-primary">{lead.name}</div>
+                                    <div className="font-bold text-sm text-foreground">{lead.name}</div>
                                     <div className="text-[10px] text-muted-foreground">{lead.email}</div>
                                     {lead.city && <div className="text-[9px] text-accent font-bold uppercase mt-1">📍 {lead.city}</div>}
                                   </TableCell>
-                                  <TableCell><Badge variant="outline" className="text-[9px] font-bold uppercase">{lead.branch || 'Brak'}</Badge></TableCell>
+                                  <TableCell><Badge variant="outline" className="text-[9px] font-bold uppercase border-border">{lead.branch || 'Brak'}</Badge></TableCell>
                                   <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                                     <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <Button variant="ghost" size="icon" onClick={() => handleArchiveLead(lead.id)} title={showArchived ? "Przywróć" : "Archiwizuj"}><Briefcase size={14} className={cn(showArchived ? "text-primary" : "text-slate-400")} /></Button>
+                                      <Button variant="ghost" size="icon" onClick={() => handleArchiveLead(lead.id)} title={showArchived ? "Przywróć" : "Archiwizuj"} className="hover:bg-muted"><Briefcase size={14} className={cn(showArchived ? "text-primary" : "text-muted-foreground")} /></Button>
                                       {loggedInUser === 'admin' && <Button variant="ghost" size="icon" onClick={() => handleDeleteLead(lead.id)} className="text-destructive hover:bg-destructive/10"><Trash2 size={14} /></Button>}
                                     </div>
                                   </TableCell>
@@ -953,38 +953,38 @@ export default function Admin() {
                 {activeTab === 'portfolio' && (
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <h1 className="text-2xl font-bold">{portfolioView === 'list' ? "Realizacje" : "Edytor Projektu"}</h1>
+                      <h1 className="text-2xl font-bold text-foreground">{portfolioView === 'list' ? "Realizacje" : "Edytor Projektu"}</h1>
                       {portfolioView === 'list' ? (
                         <div className="flex gap-2">
-                          <div className="bg-white p-1 rounded-xl border flex shadow-sm mr-2">
+                          <div className="bg-card p-1 rounded-xl border border-border flex shadow-sm mr-2">
                             <Button variant={!showArchivedProjects ? "default" : "ghost"} size="sm" onClick={() => setShowArchivedProjects(false)} className="h-8 text-xs">Aktywne</Button>
                             <Button variant={showArchivedProjects ? "default" : "ghost"} size="sm" onClick={() => setShowArchivedProjects(true)} className="h-8 text-xs">Archiwum</Button>
                           </div>
                           <Button onClick={() => setPortfolioView('add')} className="rounded-xl font-bold shadow-lg shadow-primary/20"><Plus className="mr-2 h-4 w-4" /> Dodaj</Button>
                         </div>
-                      ) : <Button variant="ghost" onClick={() => { setPortfolioView('list'); setEditingProject(null); }}><ArrowLeft className="mr-2 h-4 w-4" /> Wróć</Button>}
+                      ) : <Button variant="ghost" onClick={() => { setPortfolioView('list'); setEditingProject(null); }} className="text-foreground"><ArrowLeft className="mr-2 h-4 w-4" /> Wróć</Button>}
                     </div>
 
                     {portfolioView === 'list' ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {projects.filter(p => !!p.archived === showArchivedProjects).map(p => (
-                          <Card key={p.id} className="overflow-hidden rounded-2xl shadow-sm border-none group hover:shadow-xl transition-all bg-white">
-                            <div className="relative h-40 bg-slate-100">
+                          <Card key={p.id} className="overflow-hidden rounded-2xl shadow-sm border-none group hover:shadow-xl transition-all bg-card">
+                            <div className="relative h-40 bg-muted">
                               <img src={p.image} className="w-full h-full object-cover" />
-                              <Badge className="absolute top-2 left-2 bg-white/95 text-primary shadow-sm uppercase text-[9px] font-bold tracking-widest">{p.category}</Badge>
+                              <Badge className="absolute top-2 left-2 bg-card/95 text-foreground shadow-sm uppercase text-[9px] font-bold tracking-widest border-none">{p.category}</Badge>
                             </div>
-                            <CardHeader className="p-4 pb-2"><CardTitle className="text-base truncate font-bold text-primary">{p.title}</CardTitle></CardHeader>
+                            <CardHeader className="p-4 pb-2"><CardTitle className="text-base truncate font-bold text-foreground">{p.title}</CardTitle></CardHeader>
                             <CardContent className="p-4 pt-0 space-y-4">
                               <p className="text-xs text-muted-foreground line-clamp-2 h-8 italic font-light leading-relaxed">"{p.description}"</p>
                               <div className="flex gap-2">
                                 {!showArchivedProjects ? (
                                   <>
-                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg border-slate-100" onClick={() => { setEditingProject(p); setPortfolioView('edit'); }}><Edit size={14} className="mr-2" /> Edytuj</Button>
-                                    <Button variant="ghost" size="icon" onClick={() => handleArchiveProject(p.id)} className="hover:text-amber-600"><Briefcase size={14} /></Button>
+                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg border-border text-foreground hover:bg-muted" onClick={() => { setEditingProject(p); setPortfolioView('edit'); }}><Edit size={14} className="mr-2" /> Edytuj</Button>
+                                    <Button variant="ghost" size="icon" onClick={() => handleArchiveProject(p.id)} className="hover:text-amber-600 hover:bg-muted"><Briefcase size={14} /></Button>
                                   </>
                                 ) : (
                                   <>
-                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg text-emerald-600 border-emerald-50" onClick={() => handleRestoreProject(p.id)}><Plus size={14} className="mr-2" /> Przywróć</Button>
+                                    <Button variant="outline" size="sm" className="flex-1 rounded-lg text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10" onClick={() => handleRestoreProject(p.id)}><Plus size={14} className="mr-2" /> Przywróć</Button>
                                     <Button variant={ (deleteClickCount[p.id] || 0) === 0 ? "ghost" : "destructive" } size="sm" className="flex-1 rounded-lg" onClick={() => handlePermanentDeleteProject(p.id)}><Trash2 size={14} className="mr-2" /> {(deleteClickCount[p.id] || 0) === 0 ? "Usuń" : `Potwierdź (${deleteClickCount[p.id]}/2)`}</Button>
                                   </>
                                 )}
@@ -994,21 +994,21 @@ export default function Admin() {
                         ))}
                       </div>
                     ) : (
-                      <Card className="max-w-2xl mx-auto rounded-3xl shadow-2xl border-none bg-white">
-                        <CardHeader className="p-8 pb-0"><CardTitle className="text-2xl font-bold text-primary">{portfolioView === 'add' ? "Nowa realizacja" : "Edycja projektu"}</CardTitle></CardHeader>
+                      <Card className="max-w-2xl mx-auto rounded-3xl shadow-2xl border-none bg-card">
+                        <CardHeader className="p-8 pb-0"><CardTitle className="text-2xl font-bold text-foreground">{portfolioView === 'add' ? "Nowa realizacja" : "Edycja projektu"}</CardTitle></CardHeader>
                         <CardContent className="p-8">
                           <form key={formKey} onSubmit={handleProjectSubmit} className="space-y-6">
                             <div className="space-y-4">
-                              <div className="space-y-2"><label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Tytuł projektu</label><Input placeholder="np. Remont apartamentu" required value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-none shadow-inner" /></div>
-                              <div className="space-y-2"><label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Kategoria</label><select className="w-full h-12 rounded-xl bg-slate-50 border-none shadow-inner px-4 text-sm font-medium" value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})}><option value="Komercyjne">Komercyjne</option><option value="Mieszkaniowe">Mieszkaniowe</option><option value="Podłogi">Podłogi</option><option value="Inne">Inne</option></select></div>
-                              <div className="space-y-2"><label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Opis prac</label><Textarea placeholder="Opisz szczegóły realizacji..." required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="min-h-[120px] rounded-2xl bg-slate-50 border-none shadow-inner p-4 text-base" /></div>
+                              <div className="space-y-2"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Tytuł projektu</label><Input placeholder="np. Remont apartamentu" required value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none shadow-inner text-foreground" /></div>
+                              <div className="space-y-2"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Kategoria</label><select className="w-full h-12 rounded-xl bg-muted/30 border-none shadow-inner px-4 text-sm font-medium text-foreground appearance-none" value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})}><option value="Komercyjne">Komercyjne</option><option value="Mieszkaniowe">Mieszkaniowe</option><option value="Podłogi">Podłogi</option><option value="Inne">Inne</option></select></div>
+                              <div className="space-y-2"><label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Opis prac</label><Textarea placeholder="Opisz szczegóły realizacji..." required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="min-h-[120px] rounded-2xl bg-muted/30 border-none shadow-inner p-4 text-base text-foreground" /></div>
                               <div className="space-y-3">
                                 {portfolioView === 'edit' && editingProject?.images && (
                                   <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">Kolejność zdjęć (przeciągnij)</label>
+                                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Kolejność zdjęć (przeciągnij)</label>
                                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                                       <SortableContext items={editingProject.images} strategy={horizontalListSortingStrategy}>
-                                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 p-3 bg-muted/20 rounded-2xl border border-border shadow-sm">
                                           {editingProject.images.map((img, idx) => (
                                             <SortableImage key={img} id={img} img={img} onDelete={() => handleDeleteImage(editingProject.id, img)} isThumbnail={idx === 0} />
                                           ))}
@@ -1017,11 +1017,11 @@ export default function Admin() {
                                     </DndContext>
                                   </div>
                                 )}
-                                <div className="relative group border-2 border-dashed border-slate-200 rounded-3xl p-10 text-center hover:bg-slate-50 hover:border-accent transition-all cursor-pointer">
+                                <div className="relative group border-2 border-dashed border-border rounded-3xl p-10 text-center hover:bg-muted/20 hover:border-accent transition-all cursor-pointer">
                                   <input type="file" accept="image/*" multiple className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={e => setSelectedFiles(e.target.files)} required={portfolioView === 'add'} />
                                   <div className="flex flex-col items-center gap-2">
-                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-accent/10 group-hover:text-accent transition-colors"><Upload size={24} /></div>
-                                    <p className="text-sm font-bold text-primary">{selectedFiles ? `Wybrano plików: ${selectedFiles.length}` : "Dodaj zdjęcia do galerii"}</p>
+                                    <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center text-muted-foreground group-hover:bg-accent/10 group-hover:text-accent transition-colors"><Upload size={24} /></div>
+                                    <p className="text-sm font-bold text-foreground">{selectedFiles ? `Wybrano plików: ${selectedFiles.length}` : "Dodaj zdjęcia do galerii"}</p>
                                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Maks. 50 zdjęć na raz</p>
                                   </div>
                                 </div>
@@ -1029,7 +1029,7 @@ export default function Admin() {
                             </div>
                             <div className="space-y-4 pt-4">
                               <Button type="submit" className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-[0.98]" disabled={uploading}>{uploading ? <div className="flex items-center gap-3"><Loader2 className="animate-spin" /> <span>WYŚLIJ: {uploadProgress}%</span></div> : "ZAPISZ I PUBLIKUJ"}</Button>
-                              {uploading && <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><motion.div className="bg-accent h-full" initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} /></div>}
+                              {uploading && <div className="w-full bg-muted h-2 rounded-full overflow-hidden"><motion.div className="bg-accent h-full" initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} /></div>}
                             </div>
                           </form>
                         </CardContent>

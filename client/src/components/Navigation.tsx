@@ -58,7 +58,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-md border-b border-border shadow-sm transition-all duration-300">
+    <nav className="fixed top-0 left-0 right-0 z-[100] bg-background/95 backdrop-blur-md border-b border-border shadow-sm transition-all duration-300">
       <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
         {/* Logo */}
         <button
@@ -66,10 +66,10 @@ export default function Navigation() {
           className="flex items-center gap-3 no-underline cursor-pointer group"
         >
           <div className="w-12 h-12 md:w-14 md:h-14 bg-primary rounded flex items-center justify-center group-hover:scale-105 transition-transform">
-            <span className="text-white font-display text-xl md:text-2xl font-bold">F</span>
+            <span className="text-primary-foreground font-display text-xl md:text-2xl font-bold">F</span>
           </div>
           <div className="flex flex-col">
-            <span className="font-display text-xl md:text-2xl font-bold text-primary leading-none">
+            <span className="font-display text-xl md:text-2xl font-bold text-foreground leading-none">
               Fachowo.net.pl
             </span>
             <span className="text-[10px] uppercase tracking-widest text-accent font-bold hidden sm:block">Budujemy & Transportujemy</span>
@@ -111,7 +111,7 @@ export default function Navigation() {
 
             {isBuildingServicesOpen && (
               <div
-                className="absolute top-full left-0 mt-0 w-72 bg-white border border-border rounded shadow-lg py-2 max-h-[70vh] overflow-y-auto z-50"
+                className="absolute top-full left-0 mt-0 w-72 bg-card border border-border rounded shadow-lg py-2 max-h-[70vh] overflow-y-auto z-50"
                 onMouseEnter={() => setIsBuildingServicesOpen(true)}
                 onMouseLeave={() => setIsBuildingServicesOpen(false)}
               >
@@ -119,7 +119,7 @@ export default function Navigation() {
                   <button
                     key={service.name}
                     onClick={() => handleNavigation(service.href)}
-                    className="block w-full text-left px-4 py-2.5 text-foreground hover:bg-secondary/10 hover:text-accent transition-colors text-sm cursor-pointer"
+                    className="block w-full text-left px-4 py-2.5 text-card-foreground hover:bg-accent/10 hover:text-accent transition-colors text-sm cursor-pointer"
                   >
                     {service.name}
                   </button>
@@ -146,7 +146,7 @@ export default function Navigation() {
 
             {isTransportServicesOpen && (
               <div
-                className="absolute top-full left-0 mt-0 w-72 bg-white border border-border rounded shadow-lg py-2 z-50"
+                className="absolute top-full left-0 mt-0 w-72 bg-card border border-border rounded shadow-lg py-2 z-50"
                 onMouseEnter={() => setIsTransportServicesOpen(true)}
                 onMouseLeave={() => setIsTransportServicesOpen(false)}
               >
@@ -154,7 +154,7 @@ export default function Navigation() {
                   <button
                     key={service.name}
                     onClick={() => handleNavigation(service.href)}
-                    className="block w-full text-left px-4 py-2.5 text-foreground hover:bg-secondary/10 hover:text-accent transition-colors text-sm cursor-pointer"
+                    className="block w-full text-left px-4 py-2.5 text-card-foreground hover:bg-accent/10 hover:text-accent transition-colors text-sm cursor-pointer"
                   >
                     {service.name}
                   </button>
@@ -193,26 +193,26 @@ export default function Navigation() {
 
       {/* Mobile Navigation Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 top-0 left-0 w-full h-screen bg-white z-[100] md:hidden overflow-y-auto">
+        <div className="fixed inset-0 top-0 left-0 w-full h-screen bg-background z-[100] md:hidden overflow-y-auto">
           <div className="container mx-auto px-6 pt-28 pb-12 flex flex-col min-h-full">
             <div className="flex flex-col gap-6 flex-1">
               <button
                 onClick={() => handleNavigation('/')}
-                className="text-left text-primary font-display text-3xl font-bold hover:text-accent transition-colors"
+                className="text-left text-foreground font-display text-3xl font-bold hover:text-accent transition-colors"
               >
                 Strona główna
               </button>
 
               <button
                 onClick={() => handleNavigation('/portfolio')}
-                className="text-left text-primary font-display text-3xl font-bold hover:text-accent transition-colors"
+                className="text-left text-foreground font-display text-3xl font-bold hover:text-accent transition-colors"
               >
                 Portfolio
               </button>
 
               <div className="space-y-4">
                 <button
-                  className="flex items-center justify-between w-full text-primary font-display text-2xl font-bold border-b border-slate-100 pb-2"
+                  className="flex items-center justify-between w-full text-foreground font-display text-2xl font-bold border-b border-border pb-2"
                   onClick={() => setIsBuildingServicesOpen(!isBuildingServicesOpen)}
                 >
                   Usługi budowlane
@@ -230,7 +230,7 @@ export default function Navigation() {
                       <button
                         key={service.name}
                         onClick={() => handleNavigation(service.href)}
-                        className="text-left text-slate-600 hover:text-accent transition-colors text-base font-medium py-1"
+                        className="text-left text-muted-foreground hover:text-accent transition-colors text-base font-medium py-1"
                       >
                         {service.name}
                       </button>
@@ -241,7 +241,7 @@ export default function Navigation() {
 
               <div className="space-y-4">
                 <button
-                  className="flex items-center justify-between w-full text-primary font-display text-2xl font-bold border-b border-slate-100 pb-2"
+                  className="flex items-center justify-between w-full text-foreground font-display text-2xl font-bold border-b border-border pb-2"
                   onClick={() => setIsTransportServicesOpen(!isTransportServicesOpen)}
                 >
                   Usługi transportowe
@@ -259,7 +259,7 @@ export default function Navigation() {
                       <button
                         key={service.name}
                         onClick={() => handleNavigation(service.href)}
-                        className="text-left text-slate-600 hover:text-accent transition-colors text-base font-medium py-1"
+                        className="text-left text-muted-foreground hover:text-accent transition-colors text-base font-medium py-1"
                       >
                         {service.name}
                       </button>
@@ -271,7 +271,7 @@ export default function Navigation() {
               {switchable && (
                 <button
                   onClick={toggleTheme}
-                  className="flex items-center gap-4 text-primary font-display text-2xl font-bold border-b border-slate-100 pb-2 text-left"
+                  className="flex items-center gap-4 text-foreground font-display text-2xl font-bold border-b border-border pb-2 text-left"
                 >
                   {theme === 'dark' ? (
                     <>
@@ -286,14 +286,14 @@ export default function Navigation() {
               )}
             </div>
 
-            <div className="mt-12 space-y-4 pt-8 border-t border-slate-100">
+            <div className="mt-12 space-y-4 pt-8 border-t border-border">
               <button
                 onClick={() => handleNavigation('/kontakt')}
-                className="w-full py-5 bg-accent text-white font-bold rounded-xl text-xl shadow-lg shadow-accent/20 transition-all active:scale-95"
+                className="w-full py-5 bg-accent text-accent-foreground font-bold rounded-xl text-xl shadow-lg shadow-accent/20 transition-all active:scale-95"
               >
                 Darmowa Wycena
               </button>
-              <div className="flex justify-center gap-8 text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+              <div className="flex justify-center gap-8 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
                 <span>Poznań</span>
                 <span className="text-accent">•</span>
                 <span>Warszawa</span>
