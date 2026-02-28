@@ -676,15 +676,15 @@ export default function Admin() {
                               <AreaChart data={stats?.history || []}>
                                 <defs>
                                   <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#0F1F38" stopOpacity={0.1}/>
-                                    <stop offset="95%" stopColor="#0F1F38" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor={theme === 'dark' ? '#3B82F6' : '#0F1F38'} stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor={theme === 'dark' ? '#3B82F6' : '#0F1F38'} stopOpacity={0}/>
                                   </linearGradient>
                                   <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1}/>
                                     <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                                   </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E293B" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#1E293B' : '#f1f5f9'} />
                                 <XAxis 
                                   dataKey="date" 
                                   axisLine={false} 
@@ -694,13 +694,20 @@ export default function Admin() {
                                 />
                                 <YAxis hide />
                                 <Tooltip 
-                                  contentStyle={{ backgroundColor: theme === 'dark' ? '#0F1F38' : '#FFFFFF', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                  contentStyle={{ 
+                                    backgroundColor: theme === 'dark' ? '#0F1F38' : '#FFFFFF', 
+                                    borderRadius: '12px', 
+                                    border: 'none', 
+                                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                                    color: theme === 'dark' ? '#FAFAF8' : '#0F1F38'
+                                  }}
+                                  itemStyle={{ color: theme === 'dark' ? '#FAFAF8' : '#0F1F38' }}
                                 />
                                 <Area 
                                   type="monotone" 
                                   dataKey="visitors" 
                                   name="Odwiedziny"
-                                  stroke="#0F1F38" 
+                                  stroke={theme === 'dark' ? '#3B82F6' : '#0F1F38'} 
                                   strokeWidth={3}
                                   fillOpacity={1} 
                                   fill="url(#colorVisitors)" 
@@ -860,7 +867,7 @@ export default function Admin() {
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-8 w-8 rounded-lg bg-white shadow-sm border-slate-200 text-primary hover:text-accent transition-colors"
+                          className="h-8 w-8 rounded-lg bg-card shadow-sm border-border text-foreground hover:text-accent transition-colors"
                           onClick={() => {
                             fetchData();
                             toast.info("Odświeżanie wiadomości...");
