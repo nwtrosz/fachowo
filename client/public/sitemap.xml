@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://fachowo.eu/</loc>
+    <loc>https://fachowo.net.pl/</loc>
     <lastmod>2026-02-26</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://fachowo.eu/portfolio</loc>
+    <loc>https://fachowo.net.pl/portfolio</loc>
     <lastmod>2026-02-26</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fachowo.eu/kontakt</loc>
+    <loc>https://fachowo.net.pl/kontakt</loc>
     <lastmod>2026-02-26</lastmod>
     <priority>0.9</priority>
   </url>
-  <url><loc>https://fachowo.eu/usluga/kompleksowe-wykonczenie</loc><priority>0.7</priority></url>
-  <url><loc>https://fachowo.eu/usluga/malowanie</loc><priority>0.7</priority></url>
-  <url><loc>https://fachowo.eu/usluga/gladzenie-scian</loc><priority>0.7</priority></url>
-  <url><loc>https://fachowo.eu/usluga/tynkowanie</loc><priority>0.7</priority></url>
-  <url><loc>https://fachowo.eu/usluga/przeprowadzki-transport</loc><priority>0.7</priority></url>
-  <url><loc>https://fachowo.eu/usluga/utylizacja-odpadow</loc><priority>0.7</priority></url>
+  <url><loc>https://fachowo.net.pl/usluga/kompleksowe-wykonczenie</loc><priority>0.7</priority></url>
+  <url><loc>https://fachowo.net.pl/usluga/malowanie</loc><priority>0.7</priority></url>
+  <url><loc>https://fachowo.net.pl/usluga/gladzenie-scian</loc><priority>0.7</priority></url>
+  <url><loc>https://fachowo.net.pl/usluga/tynkowanie</loc><priority>0.7</priority></url>
+  <url><loc>https://fachowo.net.pl/usluga/przeprowadzki-transport</loc><priority>0.7</priority></url>
+  <url><loc>https://fachowo.net.pl/usluga/utylizacja-odpadow</loc><priority>0.7</priority></url>
 </urlset>

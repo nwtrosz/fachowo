@@ -9,7 +9,7 @@ import { useContactForm } from '@/hooks/useContactForm';
 
 /**
  * Contact Page - Conversion Optimized
- * Fachowo.eu - Professional Construction Services
+ * Fachowo.net.pl - Professional Construction Services
  * 
  * Design: Conversion-focused layout
  * - Trust signals and social proof
@@ -57,14 +57,14 @@ export default function Contact() {
       city: 'Poznań',
       address: 'ul. Budowlana 123, 61-999 Poznań',
       phone: '+48 (61) 345-6789',
-      email: 'poznan@fachowo.eu',
+      email: 'poznan@fachowo.net.pl',
       hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
     {
       city: 'Warszawa',
       address: 'ul. Konstruktorów 456, 02-999 Warszawa',
       phone: '+48 (22) 987-6543',
-      email: 'warszawa@fachowo.eu',
+      email: 'warszawa@fachowo.net.pl',
       hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
   ];
@@ -298,7 +298,7 @@ export default function Contact() {
                     </a>
 
                     <a
-                      href="mailto:info@fachowo.eu"
+                      href="mailto:info@fachowo.net.pl"
                       className="flex items-center gap-5 p-5 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:border-accent border border-transparent transition-all group"
                     >
                       <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all">
@@ -307,7 +307,7 @@ export default function Contact() {
                       <div>
                         <p className="font-bold text-[10px] text-primary uppercase tracking-widest opacity-50 mb-1">Email</p>
                         <p className="text-foreground font-bold group-hover:text-accent transition-colors">
-                          info@fachowo.eu
+                          info@fachowo.net.pl
                         </p>
                       </div>
                     </a>

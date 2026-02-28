@@ -13,7 +13,7 @@ import { motion, Variants } from 'framer-motion';
 
 /**
  * Home Page
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Hero with background image

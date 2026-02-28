@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 
 /**
  * Footer Component
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Dark navy background
@@ -20,7 +20,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="font-display text-xl font-bold mb-2">Fachowo.eu</h3>
+            <h3 className="font-display text-xl font-bold mb-2">Fachowo.net.pl</h3>
             <p className="text-white/70 text-sm">
               Profesjonalne usługi budowlane i transportowe.
             </p>
@@ -100,7 +100,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between text-sm text-white/70">
             <p>
-              &copy; {currentYear} Fachowo.eu. Wszystkie prawa zastrzeżone.
+              &copy; {currentYear} Fachowo.net.pl. Wszystkie prawa zastrzeżone.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <Link href="/polityka-prywatnosci" className="hover:text-accent transition-colors cursor-pointer">

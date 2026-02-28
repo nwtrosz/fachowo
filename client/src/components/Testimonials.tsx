@@ -6,7 +6,7 @@ export default function Testimonials() {
       id: 1,
       name: 'Jan Kowalski',
       role: 'Właściciel Biura',
-      content: 'Firma Fachowo.EU wykonała remont naszego biura szybko i profesjonalnie. Polecam!',
+      content: 'Firma Fachowo.NET.PL wykonała remont naszego biura szybko i profesjonalnie. Polecam!',
       rating: 5,
     },
     {

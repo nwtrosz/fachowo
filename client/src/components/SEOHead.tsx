@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 /**
  * SEO Head Component
- * Fachowo.eu - Structured Data & Meta Tags
+ * Fachowo.net.pl - Structured Data & Meta Tags
  * 
  * Provides JSON-LD structured data for Google and other search engines
  */
@@ -15,12 +15,12 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description, image }: SEOHeadProps) {
   useEffect(() => {
-    const defaultTitle = 'Fachowo.eu - Usługi Budowlane i Transportowe';
+    const defaultTitle = 'Fachowo.net.pl - Usługi Budowlane i Transportowe';
     const defaultDesc = 'Profesjonalne usługi budowlane, remontowe i transportowe w Poznaniu i Warszawie. Darmowa wycena w 24h.';
     // Fallback image using the converted hero.jpg
     const defaultImage = '/assets/hero.jpg';
     
-    const fullTitle = title ? `${title} | Fachowo.eu` : defaultTitle;
+    const fullTitle = title ? `${title} | Fachowo.net.pl` : defaultTitle;
     const fullDesc = description || defaultDesc;
 
     document.title = fullTitle;
@@ -63,11 +63,11 @@ export function SEOHead({ title, description, image }: SEOHeadProps) {
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: 'Fachowo.eu',
+    name: 'Fachowo.net.pl',
     description: 'Usługi budowlane, remontowe i transportowe - Poznań i Warszawa',
-    url: 'https://fachowo.eu',
+    url: 'https://fachowo.net.pl',
     telephone: '+48 61 345 6789',
-    email: 'info@fachowo.eu',
+    email: 'info@fachowo.net.pl',
     address: [
       {
         '@type': 'PostalAddress',
@@ -85,8 +85,8 @@ export function SEOHead({ title, description, image }: SEOHeadProps) {
       },
     ],
     sameAs: [
-      'https://www.facebook.com/fachowo.eu',
-      'https://www.instagram.com/fachowo.eu',
+      'https://www.facebook.com/fachowo.net.pl',
+      'https://www.instagram.com/fachowo.net.pl',
     ],
     priceRange: '$$',
     areaServed: ['PL'],
@@ -108,25 +108,25 @@ export function SEOHead({ title, description, image }: SEOHeadProps) {
         '@type': 'Service',
         name: 'Kompleksowe wykończenie mieszkań pod klucz',
         description: 'Pełny zakres usług wykończeniowych dla mieszkań',
-        provider: { '@type': 'LocalBusiness', name: 'Fachowo.eu' },
+        provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },
       {
         '@type': 'Service',
         name: 'Malowanie',
         description: 'Usługi malarskie dla domów i biur',
-        provider: { '@type': 'LocalBusiness', name: 'Fachowo.eu' },
+        provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },
       {
         '@type': 'Service',
         name: 'Posadzki',
         description: 'Instalacja i naprawa posadzek betonowych',
-        provider: { '@type': 'LocalBusiness', name: 'Fachowo.eu' },
+        provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },
       {
         '@type': 'Service',
         name: 'Transport mebli i przeprowadzki',
         description: 'Transport mebli i przeprowadzki',
-        provider: { '@type': 'LocalBusiness', name: 'Fachowo.eu' },
+        provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },
     ],
   };

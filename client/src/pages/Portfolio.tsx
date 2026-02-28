@@ -6,7 +6,7 @@ import { Link } from 'wouter';
 
 /**
  * Portfolio Page
- * Fachowo.eu - Realizacje
+ * Fachowo.net.pl - Realizacje
  * 
  * Wyświetla wszystkie projekty z bazy danych
  */

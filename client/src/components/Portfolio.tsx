@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * Portfolio Section Component
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Grid layout for project cards

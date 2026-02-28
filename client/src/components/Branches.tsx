@@ -2,7 +2,7 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 /**
  * Branches Component
- * Fachowo.eu - Usługi budowlane i transportowe
+ * Fachowo.net.pl - Usługi budowlane i transportowe
  * 
  * Design: Bold Structural Modernism
  * - Two branch locations
@@ -15,14 +15,14 @@ const branches = [
     city: 'Poznań',
     address: 'ul. Budowlana 123, 61-999 Poznań',
     phone: '+48 (61) 345-6789',
-    email: 'poznan@fachowo.eu',
+    email: 'poznan@fachowo.net.pl',
     hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
   },
   {
     city: 'Warszawa',
     address: 'ul. Konstruktorów 456, 02-999 Warszawa',
     phone: '+48 (22) 987-6543',
-    email: 'warszawa@fachowo.eu',
+    email: 'warszawa@fachowo.net.pl',
     hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
   },
 ];
@@ -49,7 +49,7 @@ export default function Branches() {
             >
               {/* City Name */}
               <h3 className="font-display text-3xl font-bold text-primary mb-6">
-                Fachowo.eu {branch.city}
+                Fachowo.net.pl {branch.city}
               </h3>
 
               {/* Address */}

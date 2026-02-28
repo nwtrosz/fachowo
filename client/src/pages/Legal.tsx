@@ -15,12 +15,12 @@ export function PrivacyPolicy() {
             
             <section>
               <h2 className="text-2xl font-bold text-primary mb-4">1. Informacje ogólne</h2>
-              <p>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazywanych przez Użytkowników w związku z korzystaniem z serwisu fachowo.eu.</p>
+              <p>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazywanych przez Użytkowników w związku z korzystaniem z serwisu fachowo.net.pl.</p>
             </section>
 
             <section>
               <h2 className="text-2xl font-bold text-primary mb-4">2. Administrator Danych</h2>
-              <p>Administratorem danych osobowych zawartych w serwisie jest Fachowo.eu z siedzibą w Poznaniu i Warszawie.</p>
+              <p>Administratorem danych osobowych zawartych w serwisie jest Fachowo.net.pl z siedzibą w Poznaniu i Warszawie.</p>
             </section>
 
             <section>
@@ -35,7 +35,7 @@ export function PrivacyPolicy() {
 
             <section>
               <h2 className="text-2xl font-bold text-primary mb-4">5. Twoje prawa</h2>
-              <p>Każdy użytkownik ma prawo do wglądu w swoje dane, ich poprawiania, usunięcia lub ograniczenia przetwarzania. W tym celu prosimy o kontakt pod adresem: info@fachowo.eu.</p>
+              <p>Każdy użytkownik ma prawo do wglądu w swoje dane, ich poprawiania, usunięcia lub ograniczenia przetwarzania. W tym celu prosimy o kontakt pod adresem: info@fachowo.net.pl.</p>
             </section>
           </div>
         </div>
@@ -58,7 +58,7 @@ export function TermsOfService() {
             
             <section>
               <h2 className="text-2xl font-bold text-primary mb-4">1. Postanowienia ogólne</h2>
-              <p>Korzystanie z serwisu fachowo.eu oznacza akceptację niniejszych warunków. Serwis służy do prezentacji oferty firmy i ułatwienia kontaktu z klientem.</p>
+              <p>Korzystanie z serwisu fachowo.net.pl oznacza akceptację niniejszych warunków. Serwis służy do prezentacji oferty firmy i ułatwienia kontaktu z klientem.</p>
             </section>
 
             <section>
@@ -73,7 +73,7 @@ export function TermsOfService() {
 
             <section>
               <h2 className="text-2xl font-bold text-primary mb-4">4. Odpowiedzialność</h2>
-              <p>Fachowo.eu dokłada wszelkich starań, aby dane na stronie były aktualne, jednak nie gwarantuje ich pełnej bezbłędności.</p>
+              <p>Fachowo.net.pl dokłada wszelkich starań, aby dane na stronie były aktualne, jednak nie gwarantuje ich pełnej bezbłędności.</p>
             </section>
           </div>
         </div>

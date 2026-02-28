@@ -14,7 +14,7 @@ interface ServicePageProps {
 
 /**
  * Service Page Component
- * Fachowo.eu - Reusable service page template
+ * Fachowo.net.pl - Reusable service page template
  * 
  * Design: Bold Structural Modernism
  * - Professional layout with hero image
@@ -133,7 +133,7 @@ export function ServicePage({
                 <p className="text-sm text-foreground/60 mt-4 mb-2">
                   <strong>Email:</strong>
                 </p>
-                <p className="text-foreground/80 font-medium break-all">info@fachowo.eu</p>
+                <p className="text-foreground/80 font-medium break-all">info@fachowo.net.pl</p>
               </div>
             </div>
           </div>

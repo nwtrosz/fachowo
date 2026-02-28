@@ -1,4 +1,4 @@
-# Instrukcja Wdrożenia na VPS - Fachowo.eu
+# Instrukcja Wdrożenia na VPS - Fachowo.net.pl
 
 Twoja strona jest gotowa do działania na serwerze VPS (np. Ubuntu). Poniżej znajdziesz kroki, które musisz wykonać.
 
@@ -29,7 +29,7 @@ pnpm build
 ## 4. Uruchomienie Procesu (PM2)
 PM2 zadba o to, by strona działała 24/7 i wstawała po restarcie serwera:
 ```bash
-pm2 start pnpm --name "fachowo-eu" -- start
+pm2 start pnpm --name "fachowo-net-pl" -- start
 pm2 save
 pm2 startup
 ```

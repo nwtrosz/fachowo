@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 
 /**
  * Navigation Component
- * Fachowo.eu - Usługi budowlane i transportowe
+ * Fachowo.net.pl - Usługi budowlane i transportowe
  * 
  * Design: Bold Structural Modernism
  * - Deep slate navy primary (#0F1F38)
@@ -68,7 +68,7 @@ export default function Navigation() {
           </div>
           <div className="flex flex-col">
             <span className="font-display text-xl md:text-2xl font-bold text-primary leading-none">
-              Fachowo.eu
+              Fachowo.net.pl
             </span>
             <span className="text-[10px] uppercase tracking-widest text-accent font-bold hidden sm:block">Budujemy & Transportujemy</span>
           </div>

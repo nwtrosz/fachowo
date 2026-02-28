@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 
 /**
  * Services Section Component
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Three service cards with icons

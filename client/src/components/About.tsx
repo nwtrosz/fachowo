@@ -3,7 +3,7 @@ import AnimatedCounter from './ui/AnimatedCounter';
 
 /**
  * About Section Component
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Image-text alternating layout
@@ -35,7 +35,7 @@ export default function About({ teamImage }: AboutProps) {
             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] md:aspect-auto">
               <img
                 src={teamImage}
-                alt="Zespół Fachowo.eu - fachowcy z 10-letnim doświadczeniem w usługach budowlanych i remontowych"
+                alt="Zespół Fachowo.net.pl - fachowcy z 10-letnim doświadczeniem w usługach budowlanych i remontowych"
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
@@ -58,7 +58,7 @@ export default function About({ teamImage }: AboutProps) {
             </div>
 
             <p className="text-foreground/70 text-base md:text-lg leading-relaxed max-w-xl">
-              Fachowo.eu to zespół specjalistów z pasją realizujących usługi budowlane, remontowe i transportowe. Dostarczamy solidne wyniki, dbając o każdy detal Twojego projektu.
+              Fachowo.net.pl to zespół specjalistów z pasją realizujących usługi budowlane, remontowe i transportowe. Dostarczamy solidne wyniki, dbając o każdy detal Twojego projektu.
             </p>
 
             {/* Highlights */}

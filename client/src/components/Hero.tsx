@@ -5,7 +5,7 @@ import { useRef } from 'react';
 
 /**
  * Hero Section Component
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Full-width hero with background image
@@ -64,7 +64,7 @@ export default function Hero({ backgroundImage }: HeroProps) {
           transition={{ duration: 0.8 }}
         >
           <span className="font-label text-accent text-xs md:text-sm tracking-widest uppercase font-bold">
-            Witaj w Fachowo.eu
+            Witaj w Fachowo.net.pl
           </span>
 
           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold mt-4 mb-6 leading-[1.1]" itemProp="headline">

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 /**
  * Contact Section Component
- * Fachowo.eu - Construction, Renovations & Flooring
+ * Fachowo.net.pl - Construction, Renovations & Flooring
  * 
  * Design: Bold Structural Modernism
  * - Contact form with validation
@@ -54,8 +54,8 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email',
-      value: 'info@fachowo.eu',
-      href: 'mailto:info@fachowo.eu',
+      value: 'info@fachowo.net.pl',
+      href: 'mailto:info@fachowo.net.pl',
     },
     {
       icon: MapPin,
