@@ -733,15 +733,15 @@ export default function Admin() {
                             <CardTitle className="text-sm font-bold uppercase tracking-widest opacity-50">Skuteczność</CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <div className="text-4xl font-bold text-accent italic">
+                            <div className="text-4xl font-bold text-primary-foreground italic">
                               {stats && stats.totalLeads > 0 ? ((stats.totalLeads / 500) * 100).toFixed(1) : 0}%
                             </div>
                             <p className="text-[10px] mt-2 opacity-70">Wskaźnik konwersji względem celu</p>
-                            <div className="w-full bg-primary-foreground/10 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div className="w-full bg-primary-foreground/20 h-1.5 rounded-full mt-4 overflow-hidden">
                                <motion.div 
                                  initial={{ width: 0 }}
                                  animate={{ width: `${Math.min(100, (stats?.totalLeads || 0) / 5)}%` }}
-                                 className="bg-accent h-full"
+                                 className="bg-primary-foreground h-full"
                                />
                             </div>
                           </CardContent>

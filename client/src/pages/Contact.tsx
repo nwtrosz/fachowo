@@ -125,15 +125,15 @@ export default function Contact() {
         </section>
 
         {/* Trust Signals */}
-        <section className="py-8 bg-white border-b border-slate-100">
+        <section className="py-8 bg-background border-b border-border">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
               {trustSignals.map((signal, index) => {
                 const Icon = signal.icon;
                 return (
-                  <div key={index} className="flex items-center gap-3 bg-secondary/5 p-3 rounded-xl border border-border/30">
+                  <div key={index} className="flex items-center gap-3 bg-accent/5 p-3 rounded-xl border border-border/30">
                     <Icon size={20} className="text-accent flex-shrink-0" />
-                    <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary">{signal.text}</p>
+                    <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-foreground">{signal.text}</p>
                   </div>
                 );
               })}
@@ -142,19 +142,19 @@ export default function Contact() {
         </section>
 
         {/* Main Content */}
-        <section className="py-12 md:py-20 bg-slate-50/50">
+        <section className="py-12 md:py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-3 gap-12 lg:gap-16 items-start">
               
               {/* Contact Form - Primary CTA */}
               <div className="lg:col-span-2">
-                <div className="bg-white p-6 md:p-12 rounded-[2.5rem] border border-border shadow-2xl shadow-primary/5 relative overflow-hidden">
+                <div className="bg-card p-6 md:p-12 rounded-[2.5rem] border border-border shadow-2xl shadow-primary/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl -mr-16 -mt-16" />
                   
-                  <h2 className="font-display text-3xl font-bold text-primary mb-3">
+                  <h2 className="font-display text-3xl font-bold text-foreground mb-3">
                     Wycena w 24h
                   </h2>
-                  <p className="text-foreground/70 mb-10 leading-relaxed max-w-md">
+                  <p className="text-muted-foreground mb-10 leading-relaxed max-w-md">
                     Wypełnij formularz poniżej, a my skontaktujemy się z Tobą w ciągu jednego dnia roboczego.
                   </p>
 
@@ -163,15 +163,15 @@ export default function Contact() {
                       <div className="w-24 h-24 bg-accent/10 rounded-3xl flex items-center justify-center mb-8">
                         <CheckCircle size={48} className="text-accent" />
                       </div>
-                      <h3 className="font-display text-3xl font-bold text-primary mb-4 italic">
+                      <h3 className="font-display text-3xl font-bold text-foreground mb-4 italic">
                         DZIĘKUJEMY!
                       </h3>
-                      <p className="text-foreground/70 mb-8 max-w-xs mx-auto text-lg font-light leading-relaxed">
+                      <p className="text-muted-foreground mb-8 max-w-xs mx-auto text-lg font-light leading-relaxed">
                         Twoja wiadomość została wysłana pomyślnie. Skontaktujemy się z Tobą wkrótce.
                       </p>
                       <Button 
                         onClick={() => setSubmitted(false)}
-                        className="bg-primary text-white font-bold px-10 py-4 rounded-xl hover:bg-accent transition-all shadow-xl"
+                        className="bg-primary text-primary-foreground font-bold px-10 py-4 rounded-xl hover:bg-accent transition-all shadow-xl"
                       >
                         Wyślij kolejną wiadomość
                       </Button>
@@ -191,68 +191,68 @@ export default function Contact() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-2 opacity-50">Imię i Nazwisko *</label>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Imię i Nazwisko *</label>
                         <input
                           type="text"
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          className="w-full px-6 py-4 bg-secondary/5 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                          className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all"
                           placeholder="Jan Kowalski"
                         />
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-2 opacity-50">Email *</label>
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Email *</label>
                           <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className="w-full px-6 py-4 bg-secondary/5 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                            className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all"
                             placeholder="jan@example.com"
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-2 opacity-50">Telefon *</label>
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Telefon *</label>
                           <input
                             type="tel"
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
                             required
-                            className="w-full px-6 py-4 bg-secondary/5 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                            className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all"
                             placeholder="+48 123 456 789"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-2 opacity-50">Wybierz Filię *</label>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Wybierz Filię *</label>
                         <select
                           name="branch"
                           value={formData.branch}
                           onChange={handleChange}
                           required
-                          className="w-full px-6 py-4 bg-secondary/5 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all appearance-none cursor-pointer"
+                          className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all appearance-none cursor-pointer"
                         >
-                          <option value="Poznań">Filia Poznań</option>
-                          <option value="Warszawa">Filia Warszawa</option>
+                          <option value="Poznań" className="bg-card">Filia Poznań</option>
+                          <option value="Warszawa" className="bg-card">Filia Warszawa</option>
                         </select>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-2 opacity-50">Opis projektu *</label>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Opis projektu *</label>
                         <textarea
                           name="message"
                           value={formData.message}
                           onChange={handleChange}
                           required
                           rows={5}
-                          className="w-full px-6 py-4 bg-secondary/5 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all resize-none"
+                          className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all resize-none"
                           placeholder="Opisz swój projekt, powierzchnię, lokalizację i inne ważne szczegóły..."
                         />
                       </div>
@@ -260,12 +260,12 @@ export default function Contact() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="w-full px-8 py-5 bg-primary text-white font-bold rounded-2xl hover:bg-accent transition-all shadow-2xl shadow-primary/10 active:scale-[0.98] disabled:opacity-50 text-xl flex items-center justify-center gap-3 cursor-pointer"
+                        className="w-full px-8 py-5 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-accent transition-all shadow-2xl shadow-primary/10 active:scale-[0.98] disabled:opacity-50 text-xl flex items-center justify-center gap-3 cursor-pointer"
                       >
                         {loading ? <Loader2 className="animate-spin" /> : 'Poproś o bezpłatną wycenę'}
                       </button>
 
-                      <p className="text-xs text-foreground/40 text-center font-medium italic">
+                      <p className="text-xs text-muted-foreground/40 text-center font-medium italic">
                         Bez zobowiązań. Odpowiadamy w 24h.
                       </p>
                     </form>
@@ -276,21 +276,21 @@ export default function Contact() {
               {/* Sidebar - Contact Info & Social Proof */}
               <div className="space-y-8 h-full">
                 {/* Quick Contact */}
-                <div className="bg-white p-8 rounded-3xl border border-border shadow-lg">
-                  <h3 className="font-display text-xl font-bold text-primary mb-8 flex items-center gap-2">
+                <div className="bg-card p-8 rounded-3xl border border-border shadow-lg">
+                  <h3 className="font-display text-xl font-bold text-foreground mb-8 flex items-center gap-2">
                     <span className="w-8 h-1 bg-accent rounded-full" /> Szybki kontakt
                   </h3>
 
                   <div className="space-y-4">
                     <a
                       href="tel:+48123456789"
-                      className="flex items-center gap-5 p-5 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:border-accent border border-transparent transition-all group"
+                      className="flex items-center gap-5 p-5 bg-muted/30 rounded-2xl hover:bg-card hover:shadow-xl hover:border-accent border border-transparent transition-all group"
                     >
-                      <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all">
+                      <div className="w-12 h-12 bg-background rounded-xl shadow-sm flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all">
                         <Phone size={22} />
                       </div>
                       <div>
-                        <p className="font-bold text-[10px] text-primary uppercase tracking-widest opacity-50 mb-1">Telefon</p>
+                        <p className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest opacity-50 mb-1">Telefon</p>
                         <p className="text-foreground font-bold group-hover:text-accent transition-colors">
                           +48 123 456 789
                         </p>
@@ -299,13 +299,13 @@ export default function Contact() {
 
                     <a
                       href="mailto:info@fachowo.net.pl"
-                      className="flex items-center gap-5 p-5 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:border-accent border border-transparent transition-all group"
+                      className="flex items-center gap-5 p-5 bg-muted/30 rounded-2xl hover:bg-card hover:shadow-xl hover:border-accent border border-transparent transition-all group"
                     >
-                      <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all">
+                      <div className="w-12 h-12 bg-background rounded-xl shadow-sm flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all">
                         <Mail size={22} />
                       </div>
                       <div>
-                        <p className="font-bold text-[10px] text-primary uppercase tracking-widest opacity-50 mb-1">Email</p>
+                        <p className="font-bold text-[10px] text-muted-foreground uppercase tracking-widest opacity-50 mb-1">Email</p>
                         <p className="text-foreground font-bold group-hover:text-accent transition-colors">
                           info@fachowo.net.pl
                         </p>
@@ -315,23 +315,23 @@ export default function Contact() {
                 </div>
 
                 {/* Branches */}
-                <div className="bg-white p-8 rounded-3xl border border-border shadow-lg">
-                  <h3 className="font-display text-xl font-bold text-primary mb-8 flex items-center gap-2">
+                <div className="bg-card p-8 rounded-3xl border border-border shadow-lg">
+                  <h3 className="font-display text-xl font-bold text-foreground mb-8 flex items-center gap-2">
                     <span className="w-8 h-1 bg-accent rounded-full" /> Nasze filie
                   </h3>
 
                   <div className="space-y-6">
                     {branches.map((branch) => (
                       <div key={branch.city} className="space-y-3 p-2">
-                        <p className="font-display text-2xl font-bold text-primary italic">{branch.city}</p>
-                        <div className="space-y-3 text-sm text-foreground/70">
+                        <p className="font-display text-2xl font-bold text-foreground italic">{branch.city}</p>
+                        <div className="space-y-3 text-sm text-muted-foreground">
                           <div className="flex items-start gap-3">
                             <MapPin size={18} className="text-accent flex-shrink-0 mt-0.5" />
                             <p className="font-medium">{branch.address}</p>
                           </div>
                           <a href={`tel:${branch.phone.replace(/\D/g, '')}`} className="flex items-start gap-3 pt-2 hover:text-accent transition-colors group/link">
                             <Phone size={18} className="text-accent flex-shrink-0 mt-0.5 group-hover/link:scale-110 transition-transform" />
-                            <p className="font-bold">{branch.phone}</p>
+                            <p className="font-bold text-foreground">{branch.phone}</p>
                           </a>
                           <div className="flex items-start gap-3 pt-2">
                             <Clock size={18} className="text-accent flex-shrink-0 mt-0.5" />
@@ -344,21 +344,21 @@ export default function Contact() {
                 </div>
 
                 {/* Stats */}
-                <div className="bg-primary p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full bg-accent/5 pointer-events-none" />
+                <div className="bg-primary p-10 rounded-[3rem] text-primary-foreground shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-full bg-white/5 pointer-events-none" />
                   <div className="space-y-8 relative z-10 text-center">
                     <div>
                       <p className="text-5xl font-display font-bold text-accent italic leading-none">
                         <AnimatedCounter value={100} suffix="%" />
                       </p>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mt-3">Satysfakcji</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-50 mt-3">Satysfakcji</p>
                     </div>
-                    <div className="w-12 h-px bg-white/10 mx-auto" />
+                    <div className="w-12 h-px bg-primary-foreground/10 mx-auto" />
                     <div>
                       <p className="text-5xl font-display font-bold text-accent italic leading-none">
                         <AnimatedCounter value={24} suffix="h" />
                       </p>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mt-3">Czas odpowiedzi</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-50 mt-3">Czas odpowiedzi</p>
                     </div>
                   </div>
                 </div>
@@ -368,11 +368,11 @@ export default function Contact() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-white overflow-hidden">
+        <section className="py-20 bg-background overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center mb-16">
               <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">Wiedza</span>
-              <h2 className="font-display text-4xl font-bold text-primary mt-2 italic">
+              <h2 className="font-display text-4xl font-bold text-foreground mt-2 italic">
                 Często Zadawane Pytania
               </h2>
             </div>
@@ -381,13 +381,13 @@ export default function Contact() {
               {faqs.map((faq, index) => (
                 <details
                   key={index}
-                  className="group bg-slate-50 p-6 md:p-8 rounded-3xl border border-transparent hover:border-accent/30 hover:bg-white hover:shadow-xl transition-all duration-500 cursor-pointer"
+                  className="group bg-card p-6 md:p-8 rounded-3xl border border-border hover:border-accent/30 hover:shadow-xl transition-all duration-500 cursor-pointer"
                 >
-                  <summary className="flex items-center justify-between font-bold text-primary text-lg md:text-xl list-none">
+                  <summary className="flex items-center justify-between font-bold text-foreground text-lg md:text-xl list-none">
                     {faq.question}
-                    <span className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-accent group-open:rotate-180 transition-transform duration-500">▼</span>
+                    <span className="w-8 h-8 rounded-full bg-background shadow-sm flex items-center justify-center text-accent group-open:rotate-180 transition-transform duration-500">▼</span>
                   </summary>
-                  <div className="text-foreground/70 mt-6 pt-6 border-t border-slate-200 leading-relaxed text-base animate-in fade-in slide-in-from-top-4">
+                  <div className="text-muted-foreground mt-6 pt-6 border-t border-border leading-relaxed text-base animate-in fade-in slide-in-from-top-4">
                     {faq.answer}
                   </div>
                 </details>

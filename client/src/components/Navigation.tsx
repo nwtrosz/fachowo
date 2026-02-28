@@ -172,7 +172,7 @@ export default function Navigation() {
 
           <button
             onClick={() => handleNavigation('/kontakt')}
-            className="px-6 py-2 bg-accent text-white font-medium rounded hover:bg-accent/90 transition-all hover:shadow-lg cursor-pointer"
+            className="px-6 py-2 bg-accent text-accent-foreground font-medium rounded hover:bg-accent/90 transition-all hover:shadow-lg cursor-pointer"
           >
             Darmowa Wycena
           </button>

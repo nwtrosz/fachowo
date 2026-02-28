@@ -45,14 +45,14 @@ export default function About({ teamImage }: AboutProps) {
               <p className="text-accent-foreground font-display text-4xl md:text-6xl font-bold leading-none">10+</p>
               <p className="text-accent-foreground/90 text-[10px] md:text-sm font-bold uppercase tracking-widest mt-1 md:mt-2">Lat doświadczenia</p>
             </div>
-          </div>
+            </div>
 
-          {/* Content */}
-          <div className="order-1 md:order-2 space-y-6">
+            {/* Content */}
+            <div className="order-1 md:order-2 space-y-6">
             <div className="space-y-2">
               <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">O Nas</span>
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                Nasza Fachowość Poparta <br className="hidden sm:block" /> Doświadczeniem
+                Fachowość poparta <br className="hidden sm:block" /> doświadczeniem
               </h2>
               <div className="w-12 h-1 bg-accent" />
             </div>
@@ -64,7 +64,7 @@ export default function About({ teamImage }: AboutProps) {
             {/* Highlights */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {highlights.map((highlight, index) => (
-                <div key={index} className="flex items-center gap-3 bg-accent/5 p-3 rounded-xl border border-border/50">
+                <div key={index} className="flex items-center gap-3 bg-muted/20 p-3 rounded-xl border border-border/50">
                   <CheckCircle size={18} className="text-accent flex-shrink-0" />
                   <span className="text-foreground font-bold text-sm">{highlight}</span>
                 </div>
