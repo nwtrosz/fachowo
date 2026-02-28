@@ -52,7 +52,7 @@ export default function About({ teamImage }: AboutProps) {
             <div className="space-y-2">
               <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">O Nas</span>
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                Fachowość poparta <br className="hidden sm:block" /> doświadczeniem
+                Nasza Fachowość Poparta <br className="hidden sm:block" /> Doświadczeniem
               </h2>
               <div className="w-12 h-1 bg-accent" />
             </div>

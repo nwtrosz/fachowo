@@ -68,7 +68,7 @@ export default function Hero({ backgroundImage }: HeroProps) {
           </span>
 
           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold mt-4 mb-6 leading-[1.1]" itemProp="headline">
-            Usługi Budowlane <br className="hidden sm:block" /> i Transportowe
+            Fachowo – Usługi Budowlane <br className="hidden sm:block" /> i Transportowe Poznań & Warszawa
           </h1>
 
           <p className="text-base md:text-xl mb-10 text-white/90 font-light max-w-xl mx-auto leading-relaxed">

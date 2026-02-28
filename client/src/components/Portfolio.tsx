@@ -57,7 +57,7 @@ export default function Portfolio() {
         <div className="max-w-2xl mb-10 md:mb-12">
           <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">Nasze Realizacje</span>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4 leading-tight">
-            Projekty z Naszego <br className="hidden sm:block" /> Portfolio
+            Profesjonalne Realizacje <br className="hidden sm:block" /> i Nasze Fachowe Projekty
           </h2>
           <div className="w-16 h-1 bg-accent rounded-full" aria-hidden="true" />
         </div>
@@ -97,7 +97,7 @@ export default function Portfolio() {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
                       src={project.image || (project.images && project.images[0]) || '/assets/hero.jpg'}
-                      alt={project.title}
+                      alt={`Fachowo - Realizacja: ${project.title} (${project.category})`}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                     />

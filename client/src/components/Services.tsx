@@ -43,7 +43,7 @@ export default function Services() {
         <div className="max-w-2xl mb-16">
           <span className="font-label text-accent text-sm">Nasze Usługi</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
-            Nasze Oferta Usług
+            Nasze Fachowe Podejście do Usług
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
         </div>

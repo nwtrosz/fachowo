@@ -72,7 +72,7 @@ export default function Contact() {
         <div className="max-w-2xl mb-12 md:mb-16">
           <span className="font-label text-accent text-sm font-bold uppercase tracking-widest">Skontaktuj się z nami</span>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4 leading-tight">
-            Zapytaj o Bezpłatną <br className="hidden sm:block" /> Wycenę
+            Bezpłatna Wycena <br className="hidden sm:block" /> – Postaw na Fachowo
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
         </div>
