@@ -35,9 +35,12 @@ import {
   CheckCircle,
   GripVertical,
   Maximize2,
-  RefreshCw
+  RefreshCw,
+  Sun,
+  Moon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Textarea } from "@/components/ui/textarea";
 import {
   DndContext, 
@@ -181,6 +184,7 @@ export default function Admin() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme, toggleTheme, switchable } = useTheme();
   
   const [activeTab, setActiveTab] = useState<'dashboard' | 'messages' | 'portfolio'>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -612,6 +616,17 @@ export default function Admin() {
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shrink-0">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}><Menu size={24} /></Button>
           <div className="flex-1 flex justify-end items-center gap-4">
+             {switchable && (
+               <Button
+                 variant="ghost"
+                 size="icon"
+                 onClick={toggleTheme}
+                 className="rounded-full text-primary hover:bg-slate-100 transition-colors"
+                 title="Przełącz motyw"
+               >
+                 {theme === 'dark' ? <Sun size={20} className="text-accent" /> : <Moon size={20} />}
+               </Button>
+             )}
              <div className="text-xs text-muted-foreground hidden md:block">Zalogowany jako <span className="font-bold text-primary uppercase">{loggedInUser}</span></div>
              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold uppercase text-xs">{loggedInUser.charAt(0) || 'A'}</div>
           </div>

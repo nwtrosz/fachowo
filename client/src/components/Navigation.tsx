@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X, Sun, Moon } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { useTheme } from '@/contexts/ThemeContext';
 
 /**
  * Navigation Component
@@ -18,6 +19,7 @@ export default function Navigation() {
   const [isBuildingServicesOpen, setIsBuildingServicesOpen] = useState(false);
   const [isTransportServicesOpen, setIsTransportServicesOpen] = useState(false);
   const [, navigate] = useLocation();
+  const { theme, toggleTheme, switchable } = useTheme();
 
   const buildingServices = [
     { name: 'Kompleksowe Wykończenie', href: '/usluga/kompleksowe-wykonczenie' },
@@ -167,6 +169,16 @@ export default function Navigation() {
           >
             Darmowa Wycena
           </button>
+
+          {switchable && (
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-secondary/10 text-primary transition-colors cursor-pointer"
+              aria-label="Przełącz motyw"
+            >
+              {theme === 'dark' ? <Sun size={20} className="text-accent" /> : <Moon size={20} />}
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -255,6 +267,23 @@ export default function Navigation() {
                   </div>
                 )}
               </div>
+
+              {switchable && (
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center gap-4 text-primary font-display text-2xl font-bold border-b border-slate-100 pb-2 text-left"
+                >
+                  {theme === 'dark' ? (
+                    <>
+                      <Sun size={24} className="text-accent" /> Tryb jasny
+                    </>
+                  ) : (
+                    <>
+                      <Moon size={24} /> Tryb ciemny
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
             <div className="mt-12 space-y-4 pt-8 border-t border-slate-100">
