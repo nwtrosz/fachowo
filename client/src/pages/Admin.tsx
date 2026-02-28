@@ -803,7 +803,10 @@ export default function Admin() {
                                     <code className="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono">{visitor.ip}</code>
                                   </TableCell>
                                   <TableCell className="text-right">
-                                    <div className="text-[10px] font-bold text-gray-400 uppercase">{visitor.last_visit}</div>
+                                    <div className="text-[10px] font-bold text-gray-400 uppercase">
+                                      {format(new Date(visitor.last_visit), "HH:mm", { locale: pl })}
+                                    </div>
+                                    <div className="text-[8px] text-gray-300">{format(new Date(visitor.last_visit), "dd.MM", { locale: pl })}</div>
                                   </TableCell>
                                 </TableRow>
                               ))}

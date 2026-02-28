@@ -10,6 +10,8 @@ import fs from "fs";
 import cors from "cors";
 import { nanoid } from "nanoid";
 import { z } from "zod";
+import { format } from "date-fns";
+import { pl } from "date-fns/locale";
 import { initDb, readDb, writeDb } from "./json-db";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -111,8 +113,11 @@ async function startServer() {
       const today = new Date().toISOString().split('T')[0];
       const db = readDb();
       if (!db.visitors) db.visitors = [];
-      if (!db.visitors.some(v => v.ip === clientIp && v.date === today)) {
-        db.visitors.push({ ip: clientIp, date: today });
+      
+      const alreadyTracked = db.visitors.find(v => v.ip === clientIp && v.date.startsWith(today));
+      
+      if (!alreadyTracked) {
+        db.visitors.push({ ip: clientIp, date: new Date().toISOString() });
         writeDb(db);
       }
     } catch (e) {}
