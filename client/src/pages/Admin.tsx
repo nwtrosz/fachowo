@@ -576,18 +576,18 @@ export default function Admin() {
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-primary/20 backdrop-blur-sm z-[60] md:hidden"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
           />
         )}
       </AnimatePresence>
 
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-[70] w-64 bg-sidebar text-sidebar-foreground transition-transform duration-300 transform md:relative md:translate-x-0 shadow-2xl",
+        "fixed inset-y-0 left-0 z-[70] w-64 bg-card text-card-foreground transition-transform duration-300 transform md:relative md:translate-x-0 border-r border-border shadow-2xl",
         !sidebarOpen && "-translate-x-full"
       )}>
-        <div className="p-6 flex items-center gap-3 border-b border-sidebar-border">
-          <div className="w-10 h-10 bg-sidebar-primary text-sidebar-primary-foreground rounded-lg flex items-center justify-center font-display text-xl font-bold">F</div>
-          <span className="font-display text-xl font-bold tracking-tighter">Fachowo.net.pl</span>
+        <div className="p-6 flex items-center gap-3 border-b border-border">
+          <div className="w-10 h-10 bg-primary text-primary-foreground rounded-lg flex items-center justify-center font-display text-xl font-bold">F</div>
+          <span className="font-display text-xl font-bold tracking-tighter text-foreground">Fachowo.net.pl</span>
         </div>
         <nav className="p-4 space-y-2">
           {[
@@ -596,17 +596,17 @@ export default function Admin() {
             { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
           ].map(item => (
             <button key={item.id} onClick={() => { setActiveTab(item.id as any); if (window.innerWidth < 768) setSidebarOpen(false); }} className={cn(
-              "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all text-left",
-              activeTab === item.id ? "bg-accent text-accent-foreground font-bold shadow-md" : "text-sidebar-foreground/60 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+              "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all text-left group",
+              activeTab === item.id ? "bg-primary text-primary-foreground font-bold shadow-lg" : "text-muted-foreground hover:bg-primary/10 hover:text-foreground"
             )}>
-              <item.icon size={20} />
+              <item.icon size={20} className={cn(activeTab === item.id ? "text-primary-foreground" : "text-primary group-hover:text-foreground")} />
               <span className="flex-1">{item.label}</span>
-              {item.count ? <span className="bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{item.count}</span> : null}
+              {item.count ? <span className="bg-destructive text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{item.count}</span> : null}
             </button>
           ))}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border">
-          <Button variant="ghost" className="w-full text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/10 justify-start gap-3" onClick={handleLogout}>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+          <Button variant="ghost" className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 justify-start gap-3" onClick={handleLogout}>
             <LogOut size={20} /> Wyloguj się
           </Button>
         </div>
@@ -614,17 +614,17 @@ export default function Admin() {
 
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-8 shrink-0">
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}><Menu size={24} /></Button>
+          <Button variant="ghost" size="icon" className="md:hidden text-foreground" onClick={() => setSidebarOpen(true)}><Menu size={24} /></Button>
           <div className="flex-1 flex justify-end items-center gap-4">
              {switchable && (
                <Button
                  variant="ghost"
                  size="icon"
                  onClick={toggleTheme}
-                 className="rounded-full text-foreground hover:bg-accent/10 transition-colors"
+                 className="rounded-full text-foreground hover:bg-primary/10 transition-colors"
                  title="Przełącz motyw"
                >
-                 {theme === 'dark' ? <Sun size={20} className="text-accent" /> : <Moon size={20} />}
+                 {theme === 'dark' ? <Sun size={20} className="text-primary" /> : <Moon size={20} />}
                </Button>
              )}
              <div className="text-xs text-muted-foreground hidden md:block">Zalogowany jako <span className="font-bold text-primary uppercase">{loggedInUser}</span></div>
@@ -646,7 +646,7 @@ export default function Admin() {
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-10 w-10 rounded-xl bg-card shadow-sm border-border text-foreground hover:text-accent transition-colors"
+                          className="h-10 w-10 rounded-xl bg-card shadow-sm border-border text-foreground hover:text-primary transition-colors"
                           onClick={() => {
                             fetchData();
                             toast.info("Odświeżanie danych...");
@@ -660,18 +660,18 @@ export default function Admin() {
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <Card className="border-l-4 border-l-primary bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Wszystkie Zapytania</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{stats?.totalLeads || 0}</div></CardContent></Card>
-                      <Card className="border-l-4 border-l-green-500 bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Dzisiejsze Goście</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{stats?.uniqueVisitors || 0}</div></CardContent></Card>
-                      <Card className="border-l-4 border-l-accent bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Projekty</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{projects.length}</div></CardContent></Card>
+                      <Card className="border-none shadow-md bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Wszystkie Zapytania</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{stats?.totalLeads || 0}</div></CardContent></Card>
+                      <Card className="border-none shadow-md bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Dzisiejsze Goście</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{stats?.uniqueVisitors || 0}</div></CardContent></Card>
+                      <Card className="border-none shadow-md bg-card"><CardHeader className="pb-2 text-xs font-bold text-muted-foreground uppercase">Projekty</CardHeader><CardContent><div className="text-3xl font-bold text-foreground">{projects.length}</div></CardContent></Card>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       <div className="lg:col-span-2">
                         <Card className="shadow-md rounded-2xl bg-card border-none h-full">
-                          <CardHeader className="pb-2">
+                          <CardHeader className="pb-2 border-b border-border/50">
                             <CardTitle className="text-lg font-bold text-foreground">Aktywność (Ostatnie 7 dni)</CardTitle>
                             <CardDescription className="text-xs">Porównanie odwiedzin i zapytań</CardDescription>
                           </CardHeader>
-                          <CardContent className="h-[250px] pt-4">
+                          <CardContent className="h-[250px] pt-6">
                             <ResponsiveContainer width="100%" height="100%">
                               <AreaChart data={stats?.history || []}>
                                 <defs>
@@ -737,7 +737,7 @@ export default function Admin() {
                               {stats && stats.totalLeads > 0 ? ((stats.totalLeads / 500) * 100).toFixed(1) : 0}%
                             </div>
                             <p className="text-[10px] mt-2 opacity-70">Wskaźnik konwersji względem celu</p>
-                            <div className="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div className="w-full bg-primary-foreground/10 h-1.5 rounded-full mt-4 overflow-hidden">
                                <motion.div 
                                  initial={{ width: 0 }}
                                  animate={{ width: `${Math.min(100, (stats?.totalLeads || 0) / 5)}%` }}
@@ -748,10 +748,10 @@ export default function Admin() {
                         </Card>
 
                         <Card className="shadow-md rounded-2xl bg-card border-none">
-                          <CardHeader className="pb-2">
+                          <CardHeader className="pb-2 border-b border-border/50">
                             <CardTitle className="text-sm font-bold text-foreground uppercase tracking-widest">Najczęstsza Filia</CardTitle>
                           </CardHeader>
-                          <CardContent>
+                          <CardContent className="pt-4">
                             <div className="flex items-center justify-between mb-2 text-xs">
                                <span className="font-medium text-foreground">Poznań</span>
                                <span className="font-bold text-foreground">{leads.filter(l => l.branch === 'Poznań').length}</span>
