@@ -203,7 +203,6 @@ export default function Contact() {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    required
                     rows={4}
                     className="w-full px-5 py-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all resize-none"
                     placeholder="Powiedz nam o swoim projekcie..."

@@ -23,7 +23,7 @@ const contactSchema = z.object({
   email: z.string().email("Niepoprawny format email"),
   phone: z.string().optional().or(z.literal('')),
   branch: z.enum(["Poznań", "Warszawa"], { errorMap: () => ({ message: "Wybierz filię" }) }),
-  message: z.string().min(1, "Wiadomość jest wymagana"),
+  message: z.string().optional().or(z.literal('')),
   // Honeypot field - bots will fill this, humans won't
   website: z.string().optional(),
 });
