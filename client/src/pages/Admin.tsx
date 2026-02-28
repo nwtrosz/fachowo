@@ -34,7 +34,8 @@ import {
   ArrowLeft,
   CheckCircle,
   GripVertical,
-  Maximize2
+  Maximize2,
+  RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
@@ -625,7 +626,20 @@ export default function Admin() {
                 {activeTab === 'dashboard' && (
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Pulpit Zarządzania</h1>
+                      <div className="flex items-center gap-4">
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Pulpit Zarządzania</h1>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-10 w-10 rounded-xl bg-white shadow-sm border-slate-200 text-primary hover:text-accent transition-colors"
+                          onClick={() => {
+                            fetchData();
+                            toast.info("Odświeżanie danych...");
+                          }}
+                        >
+                          <RefreshCw size={18} className={cn(loading && "animate-spin")} />
+                        </Button>
+                      </div>
                       <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm w-fit">
                         {format(new Date(), "EEEE, d MMMM yyyy", { locale: pl })}
                       </div>
@@ -826,7 +840,20 @@ export default function Admin() {
                 {activeTab === 'messages' && (
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <h1 className="text-2xl font-bold">Wiadomości</h1>
+                      <div className="flex items-center gap-4">
+                        <h1 className="text-2xl font-bold">Wiadomości</h1>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-8 w-8 rounded-lg bg-white shadow-sm border-slate-200 text-primary hover:text-accent transition-colors"
+                          onClick={() => {
+                            fetchData();
+                            toast.info("Odświeżanie wiadomości...");
+                          }}
+                        >
+                          <RefreshCw size={14} className={cn(loading && "animate-spin")} />
+                        </Button>
+                      </div>
                       <div className="flex gap-1 bg-white p-1 rounded-xl border shadow-sm">
                         <Button variant={!showArchived ? "default" : "ghost"} size="sm" onClick={() => setShowArchived(false)} className="rounded-lg h-8">Aktywne</Button>
                         <Button variant={showArchived ? "default" : "ghost"} size="sm" onClick={() => setShowArchived(true)} className="rounded-lg h-8">Archiwum</Button>
