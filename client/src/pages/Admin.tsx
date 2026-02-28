@@ -90,7 +90,7 @@ function SortableImage({ id, img, onDelete, isThumbnail }: SortableImageProps) {
       style={style} 
       className={cn(
         "relative aspect-square group rounded-lg overflow-hidden border-2",
-        isThumbnail ? "border-accent ring-2 ring-accent/20" : "border-white"
+        isThumbnail ? "border-accent ring-2 ring-accent/20" : "border-border"
       )}
     >
       <img src={img} className="w-full h-full object-cover shadow-sm" alt="" />
@@ -550,16 +550,16 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-secondary/20 p-4">
-        <Card className="w-full max-w-md shadow-xl border-t-4 border-t-primary">
+      <div className="flex items-center justify-center min-h-screen bg-background p-4">
+        <Card className="w-full max-w-md shadow-xl border-t-4 border-t-primary bg-card">
           <CardHeader className="text-center">
-            <div className="w-12 h-12 bg-primary rounded-lg mx-auto flex items-center justify-center mb-4"><Lock className="text-white w-6 h-6" /></div>
-            <CardTitle className="text-2xl font-bold text-primary">Panel Administratora</CardTitle>
+            <div className="w-12 h-12 bg-primary text-primary-foreground rounded-lg mx-auto flex items-center justify-center mb-4"><Lock className="w-6 h-6" /></div>
+            <CardTitle className="text-2xl font-bold text-foreground">Panel Administratora</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
-              <Input type="text" placeholder="Użytkownik" value={username} onChange={(e) => setUsername(e.target.value)} required />
-              <Input type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <Input type="text" placeholder="Użytkownik" value={username} onChange={(e) => setUsername(e.target.value)} required className="bg-muted/30 border-border" />
+              <Input type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} required className="bg-muted/30 border-border" />
               {authError && <p className="text-sm text-destructive text-center">{authError}</p>}
               <Button type="submit" className="w-full h-12 text-lg font-bold">Zaloguj się</Button>
             </form>
@@ -772,27 +772,27 @@ export default function Admin() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Recent Messages Preview */}
-                      <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
-                        <CardHeader className="border-b flex flex-row items-center justify-between">
-                          <CardTitle className="text-lg font-bold text-primary">Ostatnie Wiadomości</CardTitle>
+                      <Card className="shadow-md overflow-hidden rounded-2xl bg-card border-none">
+                        <CardHeader className="border-b border-border flex flex-row items-center justify-between">
+                          <CardTitle className="text-lg font-bold text-foreground">Ostatnie Wiadomości</CardTitle>
                           <Button variant="ghost" size="sm" className="text-accent font-bold text-xs" onClick={() => setActiveTab('messages')}>WSZYSTKIE</Button>
                         </CardHeader>
                         <div className="overflow-x-auto">
                           <Table>
-                            <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="text-[10px] uppercase font-bold tracking-wider">Data</TableHead><TableHead className="text-[10px] uppercase font-bold tracking-wider">Klient</TableHead><TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Akcja</TableHead></TableRow></TableHeader>
+                            <TableHeader><TableRow className="bg-muted/30 border-border"><TableHead className="text-[10px] uppercase font-bold tracking-wider">Data</TableHead><TableHead className="text-[10px] uppercase font-bold tracking-wider">Klient</TableHead><TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Akcja</TableHead></TableRow></TableHeader>
                             <TableBody>
                               {getThreadedLeads().filter(l => !l.archived).slice(0, 5).map(lead => (
-                                <TableRow key={lead.id} className="hover:bg-slate-50/50 group">
-                                  <TableCell className="text-[10px] text-gray-400 font-bold uppercase">
+                                <TableRow key={lead.id} className="hover:bg-muted/20 group border-border">
+                                  <TableCell className="text-[10px] text-muted-foreground font-bold uppercase">
                                     {format(new Date(lead.lastActivity), "HH:mm", { locale: pl })}
                                     <div className="text-[8px]">{format(new Date(lead.lastActivity), "dd.MM", { locale: pl })}</div>
                                   </TableCell>
                                   <TableCell>
-                                    <div className="font-bold text-primary text-sm">{lead.name}</div>
+                                    <div className="font-bold text-foreground text-sm">{lead.name}</div>
                                     <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{lead.email}</div>
                                   </TableCell>
                                   <TableCell className="text-right">
-                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg" onClick={() => { 
+                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0 rounded-lg border-border" onClick={() => { 
                                       handleMarkAsRead(lead);
                                       setSelectedLeadHistory(lead); 
                                       setActiveTab('messages'); 
@@ -808,34 +808,34 @@ export default function Admin() {
                       </Card>
 
                       {/* Recent Visitors Preview */}
-                      <Card className="shadow-md overflow-hidden rounded-2xl bg-white border-none">
-                        <CardHeader className="border-b">
-                          <CardTitle className="text-lg font-bold text-primary">Ostatnie Odwiedziny</CardTitle>
+                      <Card className="shadow-md overflow-hidden rounded-2xl bg-card border-none">
+                        <CardHeader className="border-b border-border">
+                          <CardTitle className="text-lg font-bold text-foreground">Ostatnie Odwiedziny</CardTitle>
                           <CardDescription className="text-xs">Podgląd unikalnych gości w czasie rzeczywistym</CardDescription>
                         </CardHeader>
                         <div className="overflow-x-auto">
                           <Table>
-                            <TableHeader><TableRow className="bg-slate-50/50"><TableHead className="text-[10px] uppercase font-bold tracking-wider">Lokalizacja</TableHead><TableHead className="text-[10px] uppercase font-bold tracking-wider">Adres IP</TableHead><TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Ostatnio</TableHead></TableRow></TableHeader>
+                            <TableHeader><TableRow className="bg-muted/30 border-border"><TableHead className="text-[10px] uppercase font-bold tracking-wider">Lokalizacja</TableHead><TableHead className="text-[10px] uppercase font-bold tracking-wider">Adres IP</TableHead><TableHead className="text-right text-[10px] uppercase font-bold tracking-wider">Ostatnio</TableHead></TableRow></TableHeader>
                             <TableBody>
                               {(stats?.recentVisitors || []).slice(0, 5).map((visitor, idx) => (
-                                <TableRow key={idx} className="hover:bg-slate-50/50 transition-colors">
+                                <TableRow key={idx} className="hover:bg-muted/20 transition-colors border-border">
                                   <TableCell>
                                     <div className="flex items-center gap-2">
                                       <span className="text-sm">📍</span>
                                       <div>
-                                        <div className="font-bold text-primary text-sm">{visitor.city}</div>
+                                        <div className="font-bold text-foreground text-sm">{visitor.city}</div>
                                         <div className="text-[10px] text-muted-foreground uppercase font-medium">{visitor.country}</div>
                                       </div>
                                     </div>
                                   </TableCell>
                                   <TableCell>
-                                    <code className="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono">{visitor.ip}</code>
+                                    <code className="text-[10px] bg-muted px-2 py-1 rounded text-muted-foreground font-mono">{visitor.ip}</code>
                                   </TableCell>
                                   <TableCell className="text-right">
-                                    <div className="text-[10px] font-bold text-gray-400 uppercase">
+                                    <div className="text-[10px] font-bold text-muted-foreground uppercase">
                                       {format(new Date(visitor.last_visit), "HH:mm", { locale: pl })}
                                     </div>
-                                    <div className="text-[8px] text-gray-300">{format(new Date(visitor.last_visit), "dd.MM", { locale: pl })}</div>
+                                    <div className="text-[8px] text-muted-foreground/60">{format(new Date(visitor.last_visit), "dd.MM", { locale: pl })}</div>
                                   </TableCell>
                                 </TableRow>
                               ))}
