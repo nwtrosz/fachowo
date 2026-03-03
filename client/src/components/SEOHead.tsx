@@ -91,8 +91,6 @@ const organizationSchema = {
     'Wywóz gruzu Poznań',
   ],
 };
-    ],
-  };
 
   const faqSchema = {
     '@context': 'https://schema.org',
