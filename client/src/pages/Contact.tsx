@@ -1,25 +1,17 @@
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
+import { toast } from 'sonner';
 
 /**
  * Contact Page - Conversion Optimized
  * Fachowo.net.pl - Professional Construction Services
- * 
- * Design: Conversion-focused layout
- * - Trust signals and social proof
- * - Clear value proposition
- * - Multiple contact methods
- * - Prominent contact form
- * - FAQ section
  */
-
-import { toast } from 'sonner';
 
 export default function Contact() {
   const [location, setLocation] = useLocation();
@@ -55,14 +47,12 @@ export default function Contact() {
   const branches = [
     {
       city: 'Poznań',
-      address: 'ul. Budowlana 123, 61-999 Poznań',
       phone: '+48 (61) 345-6789',
       email: 'poznan@fachowo.net.pl',
       hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
     {
       city: 'Warszawa',
-      address: 'ul. Konstruktorów 456, 02-999 Warszawa',
       phone: '+48 (22) 987-6543',
       email: 'warszawa@fachowo.net.pl',
       hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
@@ -94,8 +84,6 @@ export default function Contact() {
       answer: 'Głównie pracujemy w Poznaniu i Warszawie, ale możemy rozpatrzyć zlecenia w innych miastach - skontaktuj się z nami.',
     },
   ];
-
-
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -178,7 +166,6 @@ export default function Contact() {
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-                      {/* Honeypot field */}
                       <div style={{ display: 'none' }}>
                         <input
                           type="text"
@@ -245,12 +232,11 @@ export default function Contact() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Opis projektu *</label>
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-2 opacity-50">Opis projektu</label>
                         <textarea
                           name="message"
                           value={formData.message}
                           onChange={handleChange}
-                          required
                           rows={5}
                           className="w-full px-6 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all resize-none"
                           placeholder="Opisz swój projekt, powierzchnię, lokalizację i inne ważne szczegóły..."
@@ -317,7 +303,7 @@ export default function Contact() {
                 {/* Branches */}
                 <div className="bg-card p-8 rounded-3xl border border-border shadow-lg">
                   <h3 className="font-display text-xl font-bold text-foreground mb-8 flex items-center gap-2">
-                    <span className="w-8 h-1 bg-accent rounded-full" /> Nasze filie
+                    <span className="w-8 h-1 bg-accent rounded-full" /> Nasze obszary
                   </h3>
 
                   <div className="space-y-6">
@@ -325,10 +311,6 @@ export default function Contact() {
                       <div key={branch.city} className="space-y-3 p-2">
                         <p className="font-display text-2xl font-bold text-foreground italic">{branch.city}</p>
                         <div className="space-y-3 text-sm text-muted-foreground">
-                          <div className="flex items-start gap-3">
-                            <MapPin size={18} className="text-accent flex-shrink-0 mt-0.5" />
-                            <p className="font-medium">{branch.address}</p>
-                          </div>
                           <a href={`tel:${branch.phone.replace(/\D/g, '')}`} className="flex items-start gap-3 pt-2 hover:text-accent transition-colors group/link">
                             <Phone size={18} className="text-accent flex-shrink-0 mt-0.5 group-hover/link:scale-110 transition-transform" />
                             <p className="font-bold text-foreground">{branch.phone}</p>

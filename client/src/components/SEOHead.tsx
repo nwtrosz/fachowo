@@ -59,54 +59,38 @@ export function SEOHead({ title, description, image }: SEOHeadProps) {
     updateMeta('twitter:image', absoluteImageUrl);
 
   }, [title, description]);
-
-  const organizationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Fachowo.net.pl',
-    description: 'Fachowo oferuje kompleksowe usługi budowlane, remonty mieszkań oraz profesjonalny transport i przeprowadzki w Poznaniu i Warszawie.',
-    url: 'https://fachowo.net.pl',
-    telephone: '+48 61 345 6789',
-    email: 'info@fachowo.net.pl',
-    address: [
-      {
-        '@type': 'PostalAddress',
-        streetAddress: 'ul. Budowlana 123',
-        addressLocality: 'Poznań',
-        postalCode: '61-999',
-        addressCountry: 'PL',
-      },
-      {
-        '@type': 'PostalAddress',
-        streetAddress: 'ul. Konstruktorów 456',
-        addressLocality: 'Warszawa',
-        postalCode: '02-999',
-        addressCountry: 'PL',
-      },
-    ],
-    sameAs: [
-      'https://www.facebook.com/fachowo.net.pl',
-      'https://www.instagram.com/fachowo.net.pl',
-    ],
-    priceRange: '$$',
-    areaServed: [
-      {
-        "@type": "City",
-        "name": "Warszawa"
-      },
-      {
-        "@type": "City",
-        "name": "Poznań"
-      }
-    ],
-    knowsAbout: [
-      'Usługi budowlane Warszawa',
-      'Remonty Poznań',
-      'Układanie płytek',
-      'Malowanie ścian',
-      'Przeprowadzki Warszawa',
-      'Wywóz gruzu Poznań',
-      'Wykończenia pod klucz',
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Fachowo.net.pl',
+  description: 'Firma budowlana i transportowa obsługująca Poznań i Warszawę.',
+  url: 'https://fachowo.net.pl',
+  telephone: '+48 123 456 789',
+  email: 'info@fachowo.net.pl',
+  sameAs: [
+    'https://www.facebook.com/fachowo.net.pl',
+    'https://www.instagram.com/fachowo.net.pl',
+  ],
+  priceRange: '$$',
+  areaServed: [
+    {
+      "@type": "City",
+      "name": "Warszawa"
+    },
+    {
+      "@type": "City",
+      "name": "Poznań"
+    }
+  ],
+  knowsAbout: [
+    'Usługi budowlane Warszawa',
+    'Remonty Poznań',
+    'Układanie płytek',
+    'Malowanie ścian',
+    'Przeprowadzki Warszawa',
+    'Wywóz gruzu Poznań',
+  ],
+};
     ],
   };
 

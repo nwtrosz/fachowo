@@ -1,26 +1,24 @@
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { Phone, Mail, Clock } from 'lucide-react';
 
 /**
  * Branches Component
  * Fachowo.net.pl - Usługi budowlane i transportowe
  * 
  * Design: Bold Structural Modernism
- * - Two branch locations
- * - Contact information for each branch
+ * - Two service regions
+ * - Contact information for each region
  * - Operating hours
  */
 
 const branches = [
   {
     city: 'Poznań',
-    address: 'ul. Budowlana 123, 61-999 Poznań',
     phone: '+48 (61) 345-6789',
     email: 'poznan@fachowo.net.pl',
     hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
   },
   {
     city: 'Warszawa',
-    address: 'ul. Konstruktorów 456, 02-999 Warszawa',
     phone: '+48 (22) 987-6543',
     email: 'warszawa@fachowo.net.pl',
     hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
@@ -35,7 +33,7 @@ export default function Branches() {
         <div className="max-w-2xl mb-16">
           <span className="font-label text-accent text-sm">Kontakt</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
-            Nasze Fachowe Oddziały <br className="hidden sm:block" /> Poznań i Warszawa
+            Nasze Obszary Działania <br className="hidden sm:block" /> Poznań i Warszawa
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
         </div>
@@ -51,17 +49,6 @@ export default function Branches() {
               <h3 className="font-display text-3xl font-bold text-foreground mb-6">
                 Fachowo.net.pl {branch.city}
               </h3>
-
-              {/* Address */}
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 bg-accent/10 rounded flex items-center justify-center flex-shrink-0">
-                  <MapPin size={24} className="text-accent" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground text-sm mb-1">Adres</p>
-                  <p className="text-muted-foreground">{branch.address}</p>
-                </div>
-              </div>
 
               {/* Phone */}
               <div className="flex items-start gap-4 mb-6">

@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, CheckCircle, Loader2 } from 'lucide-react';
+import { Mail, Phone, CheckCircle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useContactForm } from '@/hooks/useContactForm';
 import { Button } from '@/components/ui/button';
@@ -7,11 +7,6 @@ import { toast } from 'sonner';
 /**
  * Contact Section Component
  * Fachowo.net.pl - Construction, Renovations & Flooring
- * 
- * Design: Bold Structural Modernism
- * - Contact form with validation
- * - Contact information cards
- * - Amber accent buttons
  */
 
 export default function Contact() {
@@ -56,12 +51,6 @@ export default function Contact() {
       label: 'Email',
       value: 'info@fachowo.net.pl',
       href: 'mailto:info@fachowo.net.pl',
-    },
-    {
-      icon: MapPin,
-      label: 'Siedziba Główna',
-      value: 'ul. Budowlana 123, 31-999 Kraków',
-      href: '#',
     },
   ];
 
@@ -132,7 +121,6 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-                {/* Honeypot field - hidden from humans */}
                 <div style={{ display: 'none' }}>
                   <input
                     type="text"
@@ -166,7 +154,7 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-5 py-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all"
+                      className="w-full px-5 py-4 bg-muted/30 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card text-foreground transition-all"
                       placeholder="twoj@email.com"
                     />
                   </div>
