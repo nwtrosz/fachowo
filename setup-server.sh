@@ -9,7 +9,7 @@ EMAIL="fachowo.eu@gmail.com"
 echo "🚀 ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA I DOMENY: $DOMAIN"
 
 # 1. Aktualizacja zależności systemowych
-echo "📦 Sprawdzam pakiety systemowe..."
+echo "📦 Sprawdzam pakiety systemowe (Nginx, Git, Certbot)..."
 sudo apt update
 sudo apt install -y nginx git curl certbot python3-certbot-nginx
 
@@ -52,7 +52,7 @@ rm -rf dist
 pnpm install
 pnpm build
 
-# 6. Konfiguracja Nginx pod domenę $DOMAIN
+# 6. Konfiguracja Nginx (301 Redirect z WWW + Language Header)
 echo "🌐 Konfiguracja Nginx dla domeny $DOMAIN..."
 CONF_FILE="/etc/nginx/sites-available/$DOMAIN"
 sudo truncate -s 0 $CONF_FILE
@@ -85,12 +85,12 @@ sudo ln -sf $CONF_FILE /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default 2>/dev/null
 
 # 7. Restart i certyfikat SSL
-echo "🔄 Restartowanie Nginx i aktywacja SSL..."
+echo "🔄 Restartowanie Nginx..."
 sudo nginx -t && sudo systemctl restart nginx
 
-# Próba wygenerowania SSL (jeśli DNS są gotowe)
+# Próba wygenerowania SSL (jeśli przekazano flagę --ssl)
 if [[ "$1" == "--ssl" ]]; then
-    echo "🔒 Generowanie certyfikatu SSL..."
+    echo "🔒 Generowanie certyfikatu SSL dla $DOMAIN oraz www.$DOMAIN..."
     sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
 fi
 
@@ -102,7 +102,4 @@ NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
 
 echo "✅ PEŁNA KONFIGURACJA ZAKOŃCZONA!"
-echo "Strona powinna być dostępna pod adresem: http://$DOMAIN"
-if [[ "$1" == "--ssl" ]]; then
-    echo "Zabezpieczono certyfikatem HTTPS."
-fi
+echo "Strona powinna być dostępna pod adresem: https://$DOMAIN"
