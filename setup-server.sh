@@ -88,11 +88,9 @@ sudo rm -f /etc/nginx/sites-enabled/default 2>/dev/null
 echo "🔄 Restartowanie Nginx..."
 sudo nginx -t && sudo systemctl restart nginx
 
-# Próba wygenerowania SSL (jeśli przekazano flagę --ssl)
-if [[ "$1" == "--ssl" ]]; then
-    echo "🔒 Generowanie certyfikatu SSL dla $DOMAIN oraz www.$DOMAIN..."
-    sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
-fi
+# Automatyczne generowanie/odnawianie certyfikatu SSL
+echo "🔒 Zabezpieczanie domeny certyfikatem SSL dla $DOMAIN oraz www.$DOMAIN..."
+sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
 
 # 8. Uruchomienie aplikacji przez PM2
 echo "🎬 Uruchamianie aplikacji..."
@@ -102,4 +100,4 @@ NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
 
 echo "✅ PEŁNA KONFIGURACJA ZAKOŃCZONA!"
-echo "Strona powinna być dostępna pod adresem: https://$DOMAIN"
+echo "Strona jest dostępna pod adresem: https://$DOMAIN"
