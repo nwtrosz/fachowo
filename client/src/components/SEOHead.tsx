@@ -15,8 +15,8 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description, image }: SEOHeadProps) {
   useEffect(() => {
-    const defaultTitle = 'Fachowo – Remonty i Transport | Poznań & Warszawa';
-    const defaultDesc = 'Fachowo: Profesjonalne remonty i transport w Poznaniu oraz Warszawie. 10 lat doświadczenia i gwarancja rzetelności. Zamów bezpłatną wycenę!';
+    const defaultTitle = 'Fachowo – Profesjonalne Usługi Budowlane, Remonty i Transport | Poznań & Warszawa';
+    const defaultDesc = 'Fachowo oferuje kompleksowe usługi budowlane, remonty mieszkań oraz profesjonalny transport i przeprowadzki w Poznaniu i Warszawie. 10 lat doświadczenia i gwarancja rzetelności.';
     // Fallback image using the converted hero.jpg
     const defaultImage = '/assets/hero.jpg';
     
