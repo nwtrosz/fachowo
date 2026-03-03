@@ -1,4 +1,5 @@
 import { Phone, Mail, Clock, MapPin } from 'lucide-react';
+import { Link } from 'wouter';
 
 const branches = [
   {
@@ -88,8 +89,7 @@ export default function Branches() {
 
         <div className="bg-muted/30 p-8 rounded-2xl border border-dashed border-border text-center max-w-3xl mx-auto">
           <p className="text-foreground/80">
-            Jeśli potrzebujesz nas w innym mieście – <span className="font-bold text-accent">skontaktuj się z nami!</span> 
-            Jesteśmy otwarci na większe zlecenia w całej Polsce i chętnie porozmawiamy o możliwościach współpracy.
+            Jeśli potrzebujesz nas w innym mieście – <Link href="/kontakt" className="font-bold text-accent hover:underline cursor-pointer">skontaktuj się z nami!</Link> Jesteśmy otwarci na większe zlecenia w całej Polsce i chętnie porozmawiamy o możliwościach współpracy.
           </p>
         </div>
       </div>
