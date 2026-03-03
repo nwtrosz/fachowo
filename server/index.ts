@@ -431,7 +431,7 @@ async function startServer() {
           from: `"Fachowo.net.pl" <${EMAIL_USER}>`,
           to: data.email,
           subject: "Dziękujemy za kontakt - Fachowo.net.pl",
-          text: `Witaj ${data.name}!\n\nDziękujemy za przesłanie zapytania do naszej filii w mieście ${data.branch}.\n\nOtrzymaliśmy Twoją wiadomość i nasi specjaliści już nad nią pracują. Skontaktujemy się z Tobą telefonicznie lub mailowo w ciągu najbliższych 24 godzin roboczych, aby omówić szczegóły i przygotować bezpłatną wycenę.\n\n---\nZ poważaniem,\nZespół Fachowo.net.pl\nwww.fachowo.net.pl\nTel: +48 123 456 789`
+          text: `Witaj ${data.name}!\n\nDziękujemy za przesłanie zapytania do naszej filii w mieście ${data.branch}.\n\nOtrzymaliśmy Twoją wiadomość i nasi specjaliści już nad nią pracują. Skontaktujemy się z Tobą telefonicznie lub mailowo w ciągu najbliższych 24 godzin roboczych, aby omówić szczegóły i przygotować bezpłatną wycenę.\n\n---\nZ poważaniem,\nZespół Fachowo.net.pl\nwww.fachowo.net.pl`
         });
       }
       res.json({ success: true });
