@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2, MapPin } from 'lucide-react';
 import { useLocation } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -38,15 +38,17 @@ export default function Contact() {
   const branches = [
     {
       city: 'Poznań',
+      area: 'Poznań i okolice',
       phone: '+48 61 345 67 89',
       email: 'poznan@fachowo.net.pl',
-      hours: 'Pn-Pt: 8:00 - 18:00',
+      hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
     {
       city: 'Warszawa',
+      area: 'Warszawa i okolice',
       phone: '+48 22 987 65 43',
       email: 'warszawa@fachowo.net.pl',
-      hours: 'Pn-Pt: 8:00 - 18:00',
+      hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
   ];
 
@@ -83,22 +85,32 @@ export default function Contact() {
             {/* Informacje */}
             <div className="space-y-8">
               <div className="bg-card p-8 rounded-3xl border border-border shadow-lg">
-                <h2 className="text-2xl font-bold mb-6 text-foreground">Obszary działania</h2>
+                <h2 className="text-2xl font-bold mb-6 text-foreground">Nasze Oddziały</h2>
                 <div className="grid md:grid-cols-2 gap-8">
                   {branches.map(b => (
                     <div key={b.city} className="space-y-2">
                       <h3 className="text-xl font-bold text-accent">{b.city}</h3>
+                      <div className="flex items-center gap-2 text-foreground/80 text-sm">
+                        <MapPin size={16} className="text-accent" /> <span>{b.area}</span>
+                      </div>
                       <div className="flex items-center gap-2 text-foreground/80">
-                        <Phone size={16} /> <span>{b.phone}</span>
+                        <Phone size={16} className="text-accent" /> <span>{b.phone}</span>
                       </div>
                       <div className="flex items-center gap-2 text-foreground/80 text-sm">
-                        <Mail size={16} /> <span>{b.email}</span>
+                        <Mail size={16} className="text-accent" /> <span>{b.email}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground text-xs pt-2">
                         <Clock size={16} /> <span>{b.hours}</span>
                       </div>
                     </div>
                   ))}
+                </div>
+                
+                <div className="mt-8 pt-8 border-t border-border">
+                  <p className="text-sm text-muted-foreground italic">
+                    Potrzebujesz naszych usług w innym mieście? <br />
+                    <span className="text-foreground font-medium">Skontaktuj się z nami!</span> Jesteśmy otwarci na większe zlecenia w całej Polsce.
+                  </p>
                 </div>
               </div>
 
