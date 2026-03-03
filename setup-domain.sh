@@ -18,7 +18,16 @@ sudo truncate -s 0 /etc/nginx/sites-available/default
 echo "server {
     listen 80;
     listen [::]:80;
-    server_name $DOMAIN www.$DOMAIN;
+    server_name www.$DOMAIN;
+    return 301 \$scheme://$DOMAIN\$request_uri;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name $DOMAIN;
+
+    add_header Content-Language pl-PL;
 
     location / {
         proxy_pass http://localhost:$PORT;
