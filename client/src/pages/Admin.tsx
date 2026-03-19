@@ -199,6 +199,46 @@ export default function Admin() {
   const [formKey, setFormKey] = useState(0);
   const [portfolioView, setPortfolioView] = useState<'list' | 'add' | 'edit'>('list');
 
+  // CMS state
+  const { data: globalContent, updateContent: updateGlobalContent } = useContent();
+  const [cmsData, setCmsData] = useState<any>(null);
+  const [isSavingContent, setIsSavingContent] = useState(false);
+
+  useEffect(() => {
+    // Sync local CMS state when global content loads or tab becomes active
+    if (activeTab === 'content' && globalContent) {
+      setCmsData(JSON.parse(JSON.stringify(globalContent)));
+    }
+  }, [activeTab, globalContent]);
+
+  const handleSaveContent = async () => {
+    if (!cmsData) return;
+    setIsSavingContent(true);
+    try {
+      await updateGlobalContent(cmsData);
+      toast.success("Treść została pomyślnie zapisana!");
+    } catch (e) {
+      toast.error("Błąd podczas zapisywania treści");
+    } finally {
+      setIsSavingContent(false);
+    }
+  };
+
+  const handleCmsChange = (section: string, field: string, value: string, nestedField?: string) => {
+    setCmsData((prev: any) => {
+      const next = { ...prev };
+      if (!next[section]) next[section] = {};
+      
+      if (nestedField) {
+        if (!next[section][field]) next[section][field] = {};
+        next[section][field][nestedField] = value;
+      } else {
+        next[section][field] = value;
+      }
+      return next;
+    });
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -1047,10 +1087,18 @@ export default function Admin() {
                   </div>
                 )}
 
-                {activeTab === 'content' && (
+                {activeTab === 'content' && cmsData && (
                   <div className="space-y-6">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <h1 className="text-2xl font-bold text-foreground">Zarządzanie Treścią</h1>
+                      <Button 
+                        onClick={handleSaveContent} 
+                        disabled={isSavingContent}
+                        className="bg-accent text-accent-foreground font-bold shadow-lg"
+                      >
+                        {isSavingContent ? <Loader2 className="animate-spin mr-2" size={16} /> : <CheckCircle className="mr-2" size={16} />}
+                        Zapisz Zmiany
+                      </Button>
                     </div>
                     
                     <Card className="max-w-3xl rounded-3xl shadow-2xl border-none bg-card">
@@ -1062,33 +1110,24 @@ export default function Admin() {
                           <div className="space-y-2">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Etykieta (Mały napis)</label>
                             <Input 
-                              value={useContent().data?.hero?.badge || ""} 
-                              onChange={e => {
-                                const newData = { ...useContent().data, hero: { ...useContent().data.hero, badge: e.target.value } };
-                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
-                              }}
+                              value={cmsData.hero?.badge || ""} 
+                              onChange={e => handleCmsChange('hero', 'badge', e.target.value)}
                               className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
                             />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Nagłówek (H1)</label>
                             <Textarea 
-                              value={useContent().data?.hero?.title || ""} 
-                              onChange={e => {
-                                const newData = { ...useContent().data, hero: { ...useContent().data.hero, title: e.target.value } };
-                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
-                              }}
+                              value={cmsData.hero?.title || ""} 
+                              onChange={e => handleCmsChange('hero', 'title', e.target.value)}
                               className="min-h-[80px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
                             />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Podtytuł</label>
                             <Textarea 
-                              value={useContent().data?.hero?.subtitle || ""} 
-                              onChange={e => {
-                                const newData = { ...useContent().data, hero: { ...useContent().data.hero, subtitle: e.target.value } };
-                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
-                              }}
+                              value={cmsData.hero?.subtitle || ""} 
+                              onChange={e => handleCmsChange('hero', 'subtitle', e.target.value)}
                               className="min-h-[80px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
                             />
                           </div>
@@ -1105,11 +1144,8 @@ export default function Admin() {
                           <div className="space-y-2">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Opis</label>
                             <Textarea 
-                              value={useContent().data?.about?.description || ""} 
-                              onChange={e => {
-                                const newData = { ...useContent().data, about: { ...useContent().data.about, description: e.target.value } };
-                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
-                              }}
+                              value={cmsData.about?.description || ""} 
+                              onChange={e => handleCmsChange('about', 'description', e.target.value)}
                               className="min-h-[120px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
                             />
                           </div>
@@ -1118,11 +1154,8 @@ export default function Admin() {
                               <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Lata Doświadczenia</label>
                               <Input 
                                 type="number"
-                                value={useContent().data?.about?.stats?.years || ""} 
-                                onChange={e => {
-                                  const newData = { ...useContent().data, about: { ...useContent().data.about, stats: { ...useContent().data.about.stats, years: e.target.value } } };
-                                  useContent().updateContent(newData);
-                                }}
+                                value={cmsData.about?.stats?.years || ""} 
+                                onChange={e => handleCmsChange('about', 'stats', e.target.value, 'years')}
                                 className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
                               />
                             </div>
@@ -1130,11 +1163,8 @@ export default function Admin() {
                               <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Zadowoleni Klienci</label>
                               <Input 
                                 type="number"
-                                value={useContent().data?.about?.stats?.clients || ""} 
-                                onChange={e => {
-                                  const newData = { ...useContent().data, about: { ...useContent().data.about, stats: { ...useContent().data.about.stats, clients: e.target.value } } };
-                                  useContent().updateContent(newData);
-                                }}
+                                value={cmsData.about?.stats?.clients || ""} 
+                                onChange={e => handleCmsChange('about', 'stats', e.target.value, 'clients')}
                                 className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
                               />
                             </div>
@@ -1142,13 +1172,82 @@ export default function Admin() {
                               <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Projekty</label>
                               <Input 
                                 type="number"
-                                value={useContent().data?.about?.stats?.projects || ""} 
-                                onChange={e => {
-                                  const newData = { ...useContent().data, about: { ...useContent().data.about, stats: { ...useContent().data.about.stats, projects: e.target.value } } };
-                                  useContent().updateContent(newData);
-                                }}
+                                value={cmsData.about?.stats?.projects || ""} 
+                                onChange={e => handleCmsChange('about', 'stats', e.target.value, 'projects')}
                                 className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
                               />
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="max-w-3xl rounded-3xl shadow-2xl border-none bg-card mb-20">
+                      <CardHeader className="p-8 pb-0">
+                        <CardTitle className="text-xl font-bold text-foreground">Sekcja: Kontakt</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-8">
+                        <div className="space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Telefon</label>
+                              <Input 
+                                value={cmsData.contact?.phoneMain || ""} 
+                                onChange={e => handleCmsChange('contact', 'phoneMain', e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Email</label>
+                              <Input 
+                                value={cmsData.contact?.emailMain || ""} 
+                                onChange={e => handleCmsChange('contact', 'emailMain', e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="pt-4 border-t border-border">
+                            <h4 className="text-sm font-bold text-foreground mb-4">Filia Poznań</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Telefon</label>
+                                <Input 
+                                  value={cmsData.contact?.branchPoznanPhone || ""} 
+                                  onChange={e => handleCmsChange('contact', 'branchPoznanPhone', e.target.value)}
+                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Godziny (np. Pn-Pt: 8-18)</label>
+                                <Input 
+                                  value={cmsData.contact?.branchPoznanHours || ""} 
+                                  onChange={e => handleCmsChange('contact', 'branchPoznanHours', e.target.value)}
+                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-4 border-t border-border">
+                            <h4 className="text-sm font-bold text-foreground mb-4">Filia Warszawa</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Telefon</label>
+                                <Input 
+                                  value={cmsData.contact?.branchWarszawaPhone || ""} 
+                                  onChange={e => handleCmsChange('contact', 'branchWarszawaPhone', e.target.value)}
+                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Godziny (np. Pn-Pt: 8-18)</label>
+                                <Input 
+                                  value={cmsData.contact?.branchWarszawaHours || ""} 
+                                  onChange={e => handleCmsChange('contact', 'branchWarszawaHours', e.target.value)}
+                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>

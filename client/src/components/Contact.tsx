@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { useContactForm } from '@/hooks/useContactForm';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useContent } from '@/contexts/ContentContext';
 
 export default function Contact() {
   const { submitted, setSubmitted, loading, submit } = useContactForm();
+  const { data } = useContent();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -34,14 +36,14 @@ export default function Contact() {
     {
       icon: Phone,
       label: 'Telefon',
-      value: '+48 123 456 789',
-      href: 'tel:+48123456789',
+      value: data.contact?.phoneMain || '+48 123 456 789',
+      href: `tel:${(data.contact?.phoneMain || '+48123456789').replace(/\s/g, '')}`,
     },
     {
       icon: Mail,
       label: 'Email',
-      value: 'info@fachowo.net.pl',
-      href: 'mailto:info@fachowo.net.pl',
+      value: data.contact?.emailMain || 'info@fachowo.net.pl',
+      href: `mailto:${data.contact?.emailMain || 'info@fachowo.net.pl'}`,
     },
   ];
 

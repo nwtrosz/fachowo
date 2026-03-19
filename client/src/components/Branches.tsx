@@ -1,36 +1,36 @@
-import { Phone, Mail, Clock, MapPin } from 'lucide-react';
-import { Link } from 'wouter';
-
-const branches = [
-  {
-    city: 'Poznań',
-    area: 'Poznań i okolice',
-    phone: '+48 (61) 345-6789',
-    email: 'poznan@fachowo.net.pl',
-    hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
-  },
-  {
-    city: 'Warszawa',
-    area: 'Warszawa i okolice',
-    phone: '+48 (22) 987-6543',
-    email: 'warszawa@fachowo.net.pl',
-    hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
-  },
-];
+import { Phone, Mail, Clock } from 'lucide-react';
+import { useContent } from '@/contexts/ContentContext';
 
 export default function Branches() {
+  const { data } = useContent();
+
+  const branches = [
+    {
+      city: 'Poznań',
+      phone: data.contact?.branchPoznanPhone || '+48 (61) 345-6789',
+      email: data.contact?.emailMain || 'poznan@fachowo.net.pl',
+      hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
+    },
+    {
+      city: 'Warszawa',
+      phone: data.contact?.branchWarszawaPhone || '+48 (22) 987-6543',
+      email: data.contact?.emailMain || 'warszawa@fachowo.net.pl',
+      hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
+    },
+  ];
+
   return (
     <section id="branches" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mb-16">
           <span className="font-label text-accent text-sm">Kontakt</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
-            Nasze Fachowe Oddziały<br />Poznań i Warszawa
+            Obszar Działania: <br className="hidden sm:block" /> Poznań i Warszawa
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 gap-8">
           {branches.map((branch, index) => (
             <div
               key={index}
@@ -39,16 +39,6 @@ export default function Branches() {
               <h3 className="font-display text-3xl font-bold text-foreground mb-6">
                 Fachowo.net.pl {branch.city}
               </h3>
-
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 bg-accent/10 rounded flex items-center justify-center flex-shrink-0">
-                  <MapPin size={24} className="text-accent" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground text-sm mb-1">Obszar działania</p>
-                  <p className="text-muted-foreground">{branch.area}</p>
-                </div>
-              </div>
 
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-12 h-12 bg-accent/10 rounded flex items-center justify-center flex-shrink-0">
@@ -85,12 +75,6 @@ export default function Branches() {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="bg-muted/30 p-8 rounded-2xl border border-dashed border-border text-center max-w-3xl mx-auto">
-          <p className="text-foreground/80">
-            Jeśli potrzebujesz nas w innym mieście – <Link href="/kontakt" className="font-bold text-accent hover:underline cursor-pointer">skontaktuj się z nami!</Link> Jesteśmy otwarci na większe zlecenia w całej Polsce i chętnie porozmawiamy o możliwościach współpracy.
-          </p>
         </div>
       </div>
     </section>

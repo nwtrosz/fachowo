@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2, MapPin } from 'lucide-react';
+import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -7,11 +7,13 @@ import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
 import { toast } from 'sonner';
+import { useContent } from '@/contexts/ContentContext';
 
 export default function Contact() {
   const [location, setLocation] = useLocation();
   const { submitted, setSubmitted, loading, submit } = useContactForm();
-  
+  const { data } = useContent();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -38,17 +40,17 @@ export default function Contact() {
   const branches = [
     {
       city: 'Poznań',
-      area: 'Poznań i okolice',
-      phone: '+48 61 345 67 89',
-      email: 'poznan@fachowo.net.pl',
-      hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
+      phone: data.contact?.branchPoznanPhone || '+48 61 345 67 89',
+      email: data.contact?.emailMain || 'poznan@fachowo.net.pl',
+      hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00',
     },
     {
       city: 'Warszawa',
-      area: 'Warszawa i okolice',
-      phone: '+48 22 987 65 43',
-      email: 'warszawa@fachowo.net.pl',
-      hours: 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
+      phone: data.contact?.branchWarszawaPhone || '+48 22 987 65 43',
+      email: data.contact?.emailMain || 'warszawa@fachowo.net.pl',
+      hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00',
+    },
+  ];
     },
   ];
 
