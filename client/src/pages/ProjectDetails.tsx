@@ -130,21 +130,21 @@ export default function ProjectDetails() {
               </div>
               <div className="flex flex-wrap gap-6 pt-6 lg:pt-0 border-t border-white/10 lg:border-none">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                    <Calendar size={18} className="text-accent" />
+                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                    <Calendar size={18} className="text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase text-white/40 tracking-widest leading-none mb-1">Data</p>
-                    <p className="font-medium text-sm">{format(new Date(project.created_at), 'MMMM yyyy', { locale: pl })}</p>
+                    <p className="text-[10px] font-bold uppercase text-white/60 tracking-widest leading-none mb-1">Data</p>
+                    <p className="font-medium text-sm text-white">{format(new Date(project.created_at), 'MMMM yyyy', { locale: pl })}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                    <Tag size={18} className="text-accent" />
+                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                    <Tag size={18} className="text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase text-white/40 tracking-widest leading-none mb-1">Kategoria</p>
-                    <p className="font-medium text-sm">{project.category}</p>
+                    <p className="text-[10px] font-bold uppercase text-white/60 tracking-widest leading-none mb-1">Kategoria</p>
+                    <p className="font-medium text-sm text-white">{project.category}</p>
                   </div>
                 </div>
               </div>

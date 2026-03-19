@@ -11,34 +11,34 @@ export default function NotFound() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <Card className="w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-        <CardContent className="pt-8 pb-8 text-center">
-          <div className="flex justify-center mb-6">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background">
+      <Card className="w-full max-w-lg mx-4 shadow-xl border border-border bg-card/80 backdrop-blur-sm">
+        <CardContent className="pt-12 pb-12 text-center">
+          <div className="flex justify-center mb-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse" />
-              <AlertCircle className="relative h-16 w-16 text-red-500" />
+              <div className="absolute inset-0 bg-destructive/10 rounded-full animate-pulse" />
+              <AlertCircle className="relative h-20 w-20 text-destructive" />
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold text-primary mb-2">Błąd 404</h1>
+          <h1 className="text-5xl font-display font-bold text-foreground mb-4 tracking-tighter">Błąd 404</h1>
 
-          <h2 className="text-xl font-semibold text-slate-700 mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
             Ten budynek jeszcze nie powstał!
           </h2>
 
-          <p className="text-slate-600 mb-8 leading-relaxed">
+          <p className="text-muted-foreground mb-10 leading-relaxed text-lg font-light">
             Przepraszamy, ale strona której szukasz nie istnieje.
             <br />
             Może została przeniesiona lub adres jest niepoprawny.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               onClick={handleGoHome}
-              className="bg-accent hover:bg-accent/90 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-6 rounded-xl transition-all duration-300 shadow-lg font-bold text-lg"
             >
-              <Home className="w-4 h-4 mr-2" />
+              <Home className="w-5 h-5 mr-2" />
               Wróć do Strony Głównej
             </Button>
           </div>

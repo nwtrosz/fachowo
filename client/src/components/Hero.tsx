@@ -77,7 +77,7 @@ export default function Hero({ backgroundImage }: HeroProps) {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => handleNavigation('/kontakt')}
+              onClick={() => navigate('/kontakt')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-all hover:gap-3 cursor-pointer shadow-lg shadow-accent/20"
             >
               Poproś o wycenę
@@ -85,7 +85,7 @@ export default function Hero({ backgroundImage }: HeroProps) {
             </button>
             <button 
               onClick={() => navigate('/portfolio')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-lg hover:bg-white hover:text-primary transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-lg hover:bg-white hover:text-[#0F1F38] transition-all cursor-pointer"
             >
               Realizacje
             </button>

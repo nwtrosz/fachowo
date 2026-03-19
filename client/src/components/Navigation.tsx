@@ -180,7 +180,7 @@ export default function Navigation() {
           {switchable && (
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-secondary/10 text-primary transition-colors cursor-pointer"
+              className="p-2 rounded-full hover:bg-secondary/10 text-foreground transition-colors cursor-pointer"
               aria-label="Przełącz motyw"
             >
               {theme === 'dark' ? <Sun size={20} className="text-accent" /> : <Moon size={20} />}
@@ -194,7 +194,7 @@ export default function Navigation() {
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"}
         >
-          {isOpen ? <X size={28} className="text-primary" /> : <Menu size={28} className="text-primary" />}
+          {isOpen ? <X size={28} className="text-foreground" /> : <Menu size={28} className="text-foreground" />}
         </button>
       </div>
 
