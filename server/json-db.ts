@@ -1,17 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// On VPS, __dirname is dist/, so we go up one level to root/storage/data.json
-// In development, __dirname is server/, so we go up one level to root/storage/data.json
-const DB_DIR = path.resolve(__dirname, "..", "storage");
+// Use process.cwd() to get the absolute project root reliably on VPS and local
+const PROJECT_ROOT = process.cwd();
+const DB_DIR = path.resolve(PROJECT_ROOT, "storage");
 const DB_PATH = path.join(DB_DIR, 'data.json');
-
-// Legacy path for migration check - we know it exists in server/data.json
-const LEGACY_PATH = path.resolve(__dirname, "data.json");
 
 // Interface for DB structure
 interface DB {
@@ -59,60 +52,40 @@ const defaultDB: DB = {
   content: defaultContent
 };
 
-// Ensure DB directory and file exist
 export const initDb = () => {
   if (!fs.existsSync(DB_DIR)) {
-    console.log("Creating storage directory:", DB_DIR);
+    console.log("[DB] Creating storage directory:", DB_DIR);
     fs.mkdirSync(DB_DIR, { recursive: true });
   }
   
   if (!fs.existsSync(DB_PATH)) {
-    // Migration logic
-    if (fs.existsSync(LEGACY_PATH)) {
-      console.log("Migrating database from legacy location:", LEGACY_PATH);
-      const legacyData = fs.readFileSync(LEGACY_PATH, 'utf-8');
-      try {
-        const parsed = JSON.parse(legacyData);
-        // Inject default content if missing during migration
-        if (!parsed.content) parsed.content = defaultContent;
-        if (!parsed.visitors) parsed.visitors = [];
-        fs.writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2));
-        console.log("Migration successful.");
-        return;
-      } catch (e) {
-        console.error("Migration error:", e);
-      }
-    }
-
-    console.log("Creating new database file at", DB_PATH);
+    console.log("[DB] Creating new database file at absolute path:", DB_PATH);
     fs.writeFileSync(DB_PATH, JSON.stringify(defaultDB, null, 2));
   }
 };
 
-// Read DB
 export const readDb = (): DB => {
   initDb();
   try {
     const data = fs.readFileSync(DB_PATH, 'utf-8');
     const db = JSON.parse(data);
-    // Ensure content exists
     if (!db.content) db.content = defaultContent;
     return db;
   } catch (e) {
-    console.error("DB Read Error:", e);
+    console.error("[DB] Read Error:", e);
     return defaultDB;
   }
 };
 
-// Atomic & Asynchronous Write DB
 export const writeDb = (data: DB) => {
   initDb();
   const tempPath = `${DB_PATH}.tmp`;
   try {
     fs.writeFileSync(tempPath, JSON.stringify(data, null, 2));
     fs.renameSync(tempPath, DB_PATH);
+    console.log("[DB] Successfully saved to:", DB_PATH);
   } catch (e) {
-    console.error("DB Write Error:", e);
+    console.error("[DB] Write Error:", e);
     if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
   }
 };
