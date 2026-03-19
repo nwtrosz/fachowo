@@ -5,6 +5,7 @@ export function useContactForm() {
   const [loading, setLoading] = useState(false);
 
   const submit = async (formData: any) => {
+    if (loading || submitted) return { success: true }; // Block multiple clicks
     setLoading(true);
     try {
       const response = await fetch('/api/contact', {
