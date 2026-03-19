@@ -174,6 +174,65 @@ interface Project {
   archived?: boolean;
 }
 
+// Helper to clean HTML for the editor
+const cleanHtmlForEditor = (html: string) => {
+  if (!html) return "";
+  // Convert our custom line break to a standard newline for editing
+  return html.replace(/<br\s*className="hidden sm:block"\s*\/>/gi, "\n");
+};
+
+// Helper to wrap newlines back into our specific HTML format
+const wrapHtmlForStorage = (text: string) => {
+  if (!text) return "";
+  // Convert newlines to our special hidden-sm-block break
+  return text.replace(/\n/g, '<br className="hidden sm:block" />');
+};
+
+interface VisualEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+  placeholder?: string;
+}
+
+function VisualEditor({ value, onChange, label }: VisualEditorProps) {
+  const [localText, setLocalText] = useState(cleanHtmlForEditor(value));
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setLocalText(val);
+    onChange(wrapHtmlForStorage(val));
+  };
+
+  return (
+    <div className="space-y-2 group">
+      <div className="flex justify-between items-center">
+        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-[9px] bg-accent/10 text-accent px-2 py-0.5 rounded font-bold uppercase">Auto-Format aktywowany</span>
+        </div>
+      </div>
+      <div className="relative">
+        <Textarea 
+          value={localText} 
+          onChange={handleChange}
+          className="min-h-[100px] rounded-2xl bg-muted/20 border-border border-2 focus-visible:ring-accent text-lg font-display font-bold leading-snug p-6 text-foreground resize-none transition-all focus:bg-background" 
+          placeholder="Wpisz tekst nagłówka... Użyj Enter, aby wymusić łamanie linii na komputerze."
+        />
+        <div className="absolute bottom-3 right-4 text-[9px] text-muted-foreground font-medium bg-background/50 backdrop-blur-sm px-2 py-1 rounded-md border border-border">
+          Naciśnij <kbd className="font-sans border px-1 rounded bg-muted">Enter</kbd> dla nowej linii
+        </div>
+      </div>
+      <div className="mt-2 p-4 bg-primary/5 rounded-xl border border-primary/10">
+        <p className="text-[10px] text-primary/60 font-bold uppercase tracking-tighter mb-2">Podgląd struktury:</p>
+        <div className="text-xs font-mono text-muted-foreground break-all opacity-60">
+          {wrapHtmlForStorage(localText)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
