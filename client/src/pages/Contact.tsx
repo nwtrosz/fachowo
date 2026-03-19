@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { Phone, Mail, Clock, CheckCircle, ArrowLeft, Loader2, MapPin } from 'lucide-react';
 import { useLocation } from 'wouter';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -10,10 +10,10 @@ import { toast } from 'sonner';
 import { useContent } from '@/contexts/ContentContext';
 
 export default function Contact() {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const { submitted, setSubmitted, loading, submit } = useContactForm();
   const { data } = useContent();
-
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -41,16 +41,16 @@ export default function Contact() {
     {
       city: 'Poznań',
       phone: data.contact?.branchPoznanPhone || '+48 61 345 67 89',
-      email: data.contact?.emailMain || 'poznan@fachowo.net.pl',
+      email: data.contact?.emailMain || 'info@fachowo.net.pl',
       hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00',
+      area: 'Wielkopolska'
     },
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 22 987 65 43',
-      email: data.contact?.emailMain || 'warszawa@fachowo.net.pl',
+      email: data.contact?.emailMain || 'info@fachowo.net.pl',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00',
-    },
-  ];
+      area: 'Mazowsze'
     },
   ];
 
@@ -87,7 +87,7 @@ export default function Contact() {
             {/* Informacje */}
             <div className="space-y-8">
               <div className="bg-card p-8 rounded-3xl border border-border shadow-lg">
-                <h2 className="text-2xl font-bold mb-6 text-foreground">Nasze Oddziały</h2>
+                <h2 className="text-2xl font-bold mb-6 text-foreground">Nasze Obszary Działania</h2>
                 <div className="grid md:grid-cols-2 gap-8">
                   {branches.map(b => (
                     <div key={b.city} className="space-y-2">

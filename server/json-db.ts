@@ -1,14 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// On VPS, __dirname is dist/, so we go up one level to root/storage/data.json
-// In development, we go up one level to root/server/data.json (legacy) or root/storage/data.json
-const DB_DIR = path.resolve(__dirname, "..", "storage");
+// Use process.cwd() to get the root of the project reliably
+const DB_DIR = path.resolve(process.cwd(), "storage");
 const DB_PATH = path.join(DB_DIR, 'data.json');
+
+// Legacy path for migration check
+const LEGACY_PATH = path.resolve(process.cwd(), "server", "data.json");
 
 // Interface for DB structure
 interface DB {
@@ -63,6 +61,22 @@ export const initDb = () => {
   }
   
   if (!fs.existsSync(DB_PATH)) {
+    // Migration logic
+    if (fs.existsSync(LEGACY_PATH)) {
+      console.log("Migrating database from legacy location:", LEGACY_PATH);
+      const legacyData = fs.readFileSync(LEGACY_PATH, 'utf-8');
+      try {
+        const parsed = JSON.parse(legacyData);
+        // Inject default content if missing during migration
+        if (!parsed.content) parsed.content = defaultContent;
+        if (!parsed.visitors) parsed.visitors = [];
+        fs.writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2));
+        return;
+      } catch (e) {
+        console.error("Migration error:", e);
+      }
+    }
+
     console.log("Creating new database file at", DB_PATH);
     fs.writeFileSync(DB_PATH, JSON.stringify(defaultDB, null, 2));
   }
@@ -73,7 +87,10 @@ export const readDb = (): DB => {
   initDb();
   try {
     const data = fs.readFileSync(DB_PATH, 'utf-8');
-    return JSON.parse(data);
+    const db = JSON.parse(data);
+    // Ensure content exists
+    if (!db.content) db.content = defaultContent;
+    return db;
   } catch (e) {
     console.error("DB Read Error:", e);
     return defaultDB;
@@ -82,11 +99,10 @@ export const readDb = (): DB => {
 
 // Atomic & Asynchronous Write DB
 export const writeDb = (data: DB) => {
+  initDb();
   const tempPath = `${DB_PATH}.tmp`;
   try {
-    // Write to a temporary file first
     fs.writeFileSync(tempPath, JSON.stringify(data, null, 2));
-    // Rename it to the actual DB path (atomic operation in Linux/Unix)
     fs.renameSync(tempPath, DB_PATH);
   } catch (e) {
     console.error("DB Write Error:", e);
