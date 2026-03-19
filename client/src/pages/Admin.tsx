@@ -200,8 +200,9 @@ interface VisualEditorProps {
 
 function VisualEditor({ value, onChange, label }: VisualEditorProps) {
   const [localText, setLocalText] = useState(cleanHtmlForEditor(value));
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Sync internal state when value from parent changes (e.g. after initial load)
+  // Sync internal state when value from parent changes
   useEffect(() => {
     setLocalText(cleanHtmlForEditor(value));
   }, [value]);
@@ -212,27 +213,89 @@ function VisualEditor({ value, onChange, label }: VisualEditorProps) {
     onChange(wrapHtmlForStorage(val));
   };
 
+  const handleFormat = (type: 'b' | 'i' | 'br') => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = localText;
+    const selectedText = text.substring(start, end);
+    
+    let newText = "";
+    let cursorOffset = 0;
+
+    if (type === 'br') {
+      newText = text.substring(0, start) + "\n" + text.substring(end);
+      cursorOffset = 1;
+    } else {
+      const tag = type;
+      const openTag = `<${tag}>`;
+      const closeTag = `</${tag}>`;
+      newText = text.substring(0, start) + openTag + selectedText + closeTag + text.substring(end);
+      cursorOffset = openTag.length;
+    }
+
+    setLocalText(newText);
+    onChange(wrapHtmlForStorage(newText));
+
+    // Refocus and set cursor
+    setTimeout(() => {
+      textarea.focus();
+      if (selectedText.length > 0) {
+        textarea.setSelectionRange(start + cursorOffset, end + cursorOffset);
+      } else {
+        textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
+      }
+    }, 0);
+  };
+
   return (
-    <div className="space-y-2 group">
-      <div className="flex justify-between items-center">
+    <div className="space-y-0 group">
+      <div className="flex justify-between items-end mb-2">
         <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
-        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <span className="text-[9px] bg-accent/10 text-accent px-2 py-0.5 rounded font-bold uppercase">Auto-Format aktywowany</span>
+        <div className="flex gap-1 bg-muted/30 p-1 rounded-t-lg border-t border-x border-border">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-7 w-8 p-0 hover:bg-accent/20 hover:text-accent" 
+            onClick={() => handleFormat('b')}
+            title="Pogrubienie"
+          >
+            <Bold size={14} />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-7 w-8 p-0 hover:bg-accent/20 hover:text-accent" 
+            onClick={() => handleFormat('i')}
+            title="Kursywa"
+          >
+            <Italic size={14} />
+          </Button>
+          <div className="w-px h-4 bg-border mx-1 my-auto" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-7 w-20 p-0 flex gap-1 hover:bg-accent/20 hover:text-accent text-[10px] font-bold" 
+            onClick={() => handleFormat('br')}
+            title="Wymuś nową linię"
+          >
+            <CornerDownLeft size={14} /> <span>LINE</span>
+          </Button>
         </div>
       </div>
       <div className="relative">
         <Textarea 
+          ref={textareaRef}
           value={localText} 
           onChange={handleChange}
-          className="min-h-[100px] rounded-2xl bg-muted/20 border-border border-2 focus-visible:ring-accent text-lg font-display font-bold leading-snug p-6 text-foreground resize-none transition-all focus:bg-background" 
-          placeholder="Wpisz tekst nagłówka... Użyj Enter, aby wymusić łamanie linii na komputerze."
+          className="min-h-[120px] rounded-b-2xl rounded-tl-2xl bg-muted/20 border-border border-2 focus-visible:ring-accent text-lg font-display font-bold leading-snug p-6 text-foreground resize-none transition-all focus:bg-background" 
+          placeholder="Wpisz tekst nagłówka..."
         />
-        <div className="absolute bottom-3 right-4 text-[9px] text-muted-foreground font-medium bg-background/50 backdrop-blur-sm px-2 py-1 rounded-md border border-border">
-          Naciśnij <kbd className="font-sans border px-1 rounded bg-muted">Enter</kbd> dla nowej linii
-        </div>
       </div>
-      <div className="mt-2 p-4 bg-primary/5 rounded-xl border border-primary/10">
-        <p className="text-[10px] text-primary/60 font-bold uppercase tracking-tighter mb-2">Podgląd struktury:</p>
+      <div className="mt-3 p-4 bg-primary/5 rounded-xl border border-primary/10">
+        <p className="text-[10px] text-primary/60 font-bold uppercase tracking-tighter mb-2">Struktura kodu dla Google:</p>
         <div className="text-xs font-mono text-muted-foreground break-all opacity-60">
           {wrapHtmlForStorage(localText)}
         </div>
