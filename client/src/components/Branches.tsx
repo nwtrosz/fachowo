@@ -2,7 +2,11 @@ import { Phone, Mail, Clock } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
 export default function Branches() {
-  const { data } = useContent();
+  const { data, loading } = useContent();
+
+  if (loading || !data) {
+    return <div className="py-20 bg-background h-96 animate-pulse" />;
+  }
 
   const branches = [
     {

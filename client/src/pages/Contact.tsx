@@ -11,9 +11,9 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function Contact() {
   const [, setLocation] = useLocation();
-  const { submitted, setSubmitted, loading, submit } = useContactForm();
-  const { data } = useContent();
-  
+  const { submitted, setSubmitted, loading: formLoading, submit } = useContactForm();
+  const { data, loading } = useContent();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,6 +22,18 @@ export default function Contact() {
     message: '',
     website: '',
   });
+
+  if (loading || !data) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Navigation />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 text-primary animate-spin" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
