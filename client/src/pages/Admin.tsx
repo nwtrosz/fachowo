@@ -200,16 +200,16 @@ export default function Admin() {
   const [portfolioView, setPortfolioView] = useState<'list' | 'add' | 'edit'>('list');
 
   // CMS state
-  const { data: globalContent, updateContent: updateGlobalContent } = useContent();
+  const { data: globalContent, updateContent: updateGlobalContent, loading: contentLoading } = useContent();
   const [cmsData, setCmsData] = useState<any>(null);
   const [isSavingContent, setIsSavingContent] = useState(false);
 
   useEffect(() => {
     // Sync local CMS state when global content loads or tab becomes active
-    if (activeTab === 'content' && globalContent) {
+    if (activeTab === 'content' && globalContent && !cmsData) {
       setCmsData(JSON.parse(JSON.stringify(globalContent)));
     }
-  }, [activeTab, globalContent]);
+  }, [activeTab, globalContent, cmsData]);
 
   const handleSaveContent = async () => {
     if (!cmsData) return;

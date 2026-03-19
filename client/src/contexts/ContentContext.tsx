@@ -6,58 +6,27 @@ interface ContentState {
   updateContent: (newData: any) => Promise<void>;
 }
 
-const defaultContent = {
-  hero: {
-    badge: "Witaj w Fachowo.net.pl",
-    title: "Fachowo – Usługi Budowlane <br className=\"hidden sm:block\" /> i Transportowe Poznań & Warszawa",
-    subtitle: "Szybkie i niezawodne usługi remontowe, transportowe i sprzątające dla Twojego domu i biura.",
-    ctaText: "Poproś o wycenę",
-  },
-  about: {
-    badge: "O Nas",
-    title: "Fachowość poparta <br className=\"hidden sm:block\" /> doświadczeniem",
-    description: "Fachowo.net.pl to zespół specjalistów z pasją realizujących usługi budowlane, remontowe i transportowe. Dostarczamy solidne wyniki, dbając o każdy detal Twojego projektu.",
-    highlights: [
-      "Zadowoleni klienci",
-      "Przejrzysta komunikacja"
-    ],
-    stats: {
-      years: "10",
-      clients: "150",
-      projects: "500"
-    }
-  },
-  contact: {
-    phoneMain: "+48 123 456 789",
-    emailMain: "kontakt@fachowo.net.pl",
-    branchPoznanPhone: "+48 61 345 67 89",
-    branchPoznanHours: "Pn-Pt: 8:00 - 18:00",
-    branchWarszawaPhone: "+48 22 987 65 43",
-    branchWarszawaHours: "Pn-Pt: 8:00 - 18:00"
-  }
-};
-
-const ContentContext = createContext<ContentState>({
-  data: defaultContent,
-  loading: true,
-  updateContent: async () => {},
-});
+const ContentContext = createContext<ContentState | null>(null);
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState(defaultContent);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(fetchedData => {
-        // Zabezpieczenie przed pustym obiektem
+    const fetchContent = async () => {
+      try {
+        const res = await fetch('/api/content');
+        const fetchedData = await res.json();
         if (fetchedData && Object.keys(fetchedData).length > 0) {
           setData(fetchedData);
         }
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      } catch (e) {
+        console.error("Błąd pobierania treści", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
   }, []);
 
   const updateContent = async (newData: any) => {
@@ -77,6 +46,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       if (res.ok) {
         const result = await res.json();
         setData(result.content);
+      } else {
+        throw new Error("Failed to update content");
       }
     } catch (e) {
       console.error("Błąd zapisywania treści", e);
@@ -92,5 +63,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useContent() {
-  return useContext(ContentContext);
+  const context = useContext(ContentContext);
+  if (!context) {
+    throw new Error("useContent must be used within ContentProvider");
+  }
+  return context;
 }

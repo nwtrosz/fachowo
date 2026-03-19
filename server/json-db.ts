@@ -1,12 +1,17 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Use process.cwd() to get the root of the project reliably
-const DB_DIR = path.resolve(process.cwd(), "storage");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// On VPS, __dirname is dist/, so we go up one level to root/storage/data.json
+// In development, __dirname is server/, so we go up one level to root/storage/data.json
+const DB_DIR = path.resolve(__dirname, "..", "storage");
 const DB_PATH = path.join(DB_DIR, 'data.json');
 
-// Legacy path for migration check
-const LEGACY_PATH = path.resolve(process.cwd(), "server", "data.json");
+// Legacy path for migration check - we know it exists in server/data.json
+const LEGACY_PATH = path.resolve(__dirname, "data.json");
 
 // Interface for DB structure
 interface DB {
@@ -57,6 +62,7 @@ const defaultDB: DB = {
 // Ensure DB directory and file exist
 export const initDb = () => {
   if (!fs.existsSync(DB_DIR)) {
+    console.log("Creating storage directory:", DB_DIR);
     fs.mkdirSync(DB_DIR, { recursive: true });
   }
   
@@ -71,6 +77,7 @@ export const initDb = () => {
         if (!parsed.content) parsed.content = defaultContent;
         if (!parsed.visitors) parsed.visitors = [];
         fs.writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2));
+        console.log("Migration successful.");
         return;
       } catch (e) {
         console.error("Migration error:", e);

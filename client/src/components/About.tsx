@@ -7,7 +7,12 @@ interface AboutProps {
 }
 
 export default function About({ teamImage }: AboutProps) {
-  const { data } = useContent();
+  const { data, loading } = useContent();
+
+  if (loading || !data) {
+    return <div className="py-24 bg-background h-96 animate-pulse" />;
+  }
+
   const highlights = data.about.highlights || [];
 
   return (

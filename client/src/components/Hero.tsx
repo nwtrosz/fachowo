@@ -23,13 +23,17 @@ interface HeroProps {
 export default function Hero({ backgroundImage }: HeroProps) {
   const [, navigate] = useLocation();
   const ref = useRef(null);
-  const { data } = useContent();
+  const { data, loading } = useContent();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"]
   });
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+
+  if (loading || !data) {
+    return <div className="w-full h-screen bg-primary animate-pulse" />;
+  }
 
   return (
     <section
