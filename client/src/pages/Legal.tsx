@@ -35,7 +35,7 @@ export function PrivacyPolicy() {
 
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">5. Twoje prawa</h2>
-              <p>Każdy użytkownik ma prawo do wglądu w swoje dane, ich poprawiania, usunięcia lub ograniczenia przetwarzania. W tym celu prosimy o kontakt pod adresem: info@fachowo.net.pl.</p>
+              <p>Każdy użytkownik ma prawo do wglądu w swoje dane, ich poprawiania, usunięcia lub ograniczenia przetwarzania. W tym celu prosimy o kontakt pod adresem: kontakt@fachowo.net.pl.</p>
             </section>
           </div>
         </div>

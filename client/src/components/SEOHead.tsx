@@ -66,7 +66,7 @@ const organizationSchema = {
   description: 'Firma budowlana i transportowa obsługująca Poznań i Warszawę.',
   url: 'https://fachowo.net.pl',
   telephone: '+48 123 456 789',
-  email: 'info@fachowo.net.pl',
+  email: 'kontakt@fachowo.net.pl',
   sameAs: [
     'https://www.facebook.com/fachowo.net.pl',
     'https://www.instagram.com/fachowo.net.pl',

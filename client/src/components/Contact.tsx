@@ -42,8 +42,8 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email',
-      value: data.contact?.emailMain || 'info@fachowo.net.pl',
-      href: `mailto:${data.contact?.emailMain || 'info@fachowo.net.pl'}`,
+      value: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
+      href: `mailto:${data.contact?.emailMain || 'kontakt@fachowo.net.pl'}`,
     },
   ];
 

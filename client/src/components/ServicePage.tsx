@@ -133,7 +133,7 @@ export function ServicePage({
                 <p className="text-sm text-muted-foreground mt-4 mb-2">
                   <strong>Email:</strong>
                 </p>
-                <p className="text-foreground font-medium break-all">info@fachowo.net.pl</p>
+                <p className="text-foreground font-medium break-all">kontakt@fachowo.net.pl</p>
               </div>
             </div>
           </div>

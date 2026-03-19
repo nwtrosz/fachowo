@@ -41,14 +41,14 @@ export default function Contact() {
     {
       city: 'Poznań',
       phone: data.contact?.branchPoznanPhone || '+48 61 345 67 89',
-      email: data.contact?.emailMain || 'info@fachowo.net.pl',
+      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
       hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00',
       area: 'Wielkopolska'
     },
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 22 987 65 43',
-      email: data.contact?.emailMain || 'info@fachowo.net.pl',
+      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00',
       area: 'Mazowsze'
     },

@@ -29,7 +29,7 @@ const defaultContent = {
   },
   contact: {
     phoneMain: "+48 123 456 789",
-    emailMain: "info@fachowo.net.pl",
+    emailMain: "kontakt@fachowo.net.pl",
     branchPoznanPhone: "+48 61 345 67 89",
     branchPoznanHours: "Pn-Pt: 8:00 - 18:00",
     branchWarszawaPhone: "+48 22 987 65 43",

@@ -40,6 +40,7 @@ const activeSessions = new Map<string, { username: string, role: string }>();
 // Email configuration
 const EMAIL_USER = "fachowo.eu@gmail.com"; 
 const EMAIL_PASS = "xxcw tyjh rbtr eflj"; 
+const CONTACT_EMAIL = "kontakt@fachowo.net.pl";
 
 // Multer Setup with Security Validation
 const storage = multer.diskStorage({
@@ -355,7 +356,12 @@ async function startServer() {
       if (!l) return res.status(404).end();
       if (EMAIL_USER && EMAIL_PASS) {
         const transport = nodemailer.createTransport({ service: "gmail", auth: { user: EMAIL_USER, pass: EMAIL_PASS } });
-        await transport.sendMail({ from: EMAIL_USER, to: l.email, subject: `Re: Fachowo.net.pl`, text: message });
+        await transport.sendMail({ 
+          from: `"Fachowo.net.pl" <${CONTACT_EMAIL}>`, 
+          to: l.email, 
+          subject: `Re: Fachowo.net.pl`, 
+          text: message 
+        });
       }
       if (!l.replies) l.replies = [];
       l.replies.push({ id: Date.now(), message, created_at: new Date().toISOString() });
@@ -436,15 +442,15 @@ async function startServer() {
         
         // 1. Mail to you (Notification)
         await transport.sendMail({ 
-          from: EMAIL_USER, 
-          to: "fachowo.eu@gmail.com", 
+          from: `"System Fachowo" <${EMAIL_USER}>`, 
+          to: CONTACT_EMAIL, 
           subject: `Nowa wiadomość: ${data.name}`, 
           text: `Imię: ${data.name}\nEmail: ${data.email}\nFilia: ${data.branch}\n\n${data.message}` 
         });
 
         // 2. Mail to Customer (Auto-Confirmation)
         await transport.sendMail({
-          from: `"Fachowo.net.pl" <${EMAIL_USER}>`,
+          from: `"Fachowo.net.pl" <${CONTACT_EMAIL}>`,
           to: data.email,
           subject: "Dziękujemy za kontakt - Fachowo.net.pl",
           text: `Witaj ${data.name}!\n\nDziękujemy za przesłanie zapytania do naszej filii w mieście ${data.branch}.\n\nOtrzymaliśmy Twoją wiadomość i nasi specjaliści już nad nią pracują. Skontaktujemy się z Tobą telefonicznie lub mailowo w ciągu najbliższych 24 godzin roboczych, aby omówić szczegóły i przygotować bezpłatną wycenę.\n\n---\nZ poważaniem,\nZespół Fachowo.net.pl\nwww.fachowo.net.pl`

@@ -4,7 +4,7 @@
 APP_NAME="fachowo-oryginal"
 PORT=3001
 DOMAIN="fachowo.net.pl"
-EMAIL="fachowo.eu@gmail.com"
+EMAIL="kontakt@fachowo.net.pl"
 
 echo "🚀 ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA I DOMENY: $DOMAIN"
 

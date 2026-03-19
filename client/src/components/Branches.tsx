@@ -8,13 +8,13 @@ export default function Branches() {
     {
       city: 'Poznań',
       phone: data.contact?.branchPoznanPhone || '+48 (61) 345-6789',
-      email: data.contact?.emailMain || 'poznan@fachowo.net.pl',
+      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
       hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 (22) 987-6543',
-      email: data.contact?.emailMain || 'warszawa@fachowo.net.pl',
+      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
   ];

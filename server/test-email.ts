@@ -6,26 +6,19 @@ const EMAIL_PASS = "xxcw tyjh rbtr eflj";
 async function testEmail() {
   console.log("Rozpoczynam test wysyłki...");
   
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: EMAIL_USER,
-      pass: EMAIL_PASS,
-    },
-    logger: true,
-    debug: true
-  });
-
   try {
-    console.log("Weryfikacja połączenia SMTP...");
-    await transporter.verify();
-    console.log("Połączenie SMTP OK.");
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS,
+      },
+    });
 
-    console.log("Wysyłanie wiadomości...");
-    const result = await transporter.sendMail({
+    const result = await transport.sendMail({
       from: EMAIL_USER,
-      to: EMAIL_USER,
-      subject: "Test z Gemini CLI - Konfiguracja poprawna",
+      to: "kontakt@fachowo.net.pl",
+      subject: "Test Wysyłki - Fachowo",
       text: "Jeśli to czytasz, Twój serwer może wysyłać e-maile!"
     });
     
