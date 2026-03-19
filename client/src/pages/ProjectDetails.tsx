@@ -153,7 +153,7 @@ export default function ProjectDetails() {
         </section>
 
         {/* Gallery & Description */}
-        <section className="py-12 md:py-24 bg-slate-50/50">
+        <section className="py-12 md:py-24 bg-background">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
               {/* Gallery Side */}
@@ -161,7 +161,7 @@ export default function ProjectDetails() {
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-white border border-border group cursor-zoom-in"
+                  className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-card border border-border group cursor-zoom-in"
                   onClick={() => setIsLightboxOpen(true)}
                 >
                   <img
@@ -198,33 +198,33 @@ export default function ProjectDetails() {
 
               {/* Description Side */}
               <div className="lg:col-span-5">
-                <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl shadow-primary/5 border border-border lg:sticky lg:top-32 relative overflow-hidden">
+                <div className="bg-card p-8 md:p-12 rounded-[3rem] shadow-2xl shadow-primary/5 border border-border lg:sticky lg:top-32 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl -mr-16 -mt-16" />
                   
-                  <h2 className="font-display text-3xl font-bold text-primary mb-8 flex items-center gap-3 italic">
+                  <h2 className="font-display text-3xl font-bold text-foreground mb-8 flex items-center gap-3 italic">
                     <span className="w-10 h-1 bg-accent rounded-full" />
                     O realizacji
                   </h2>
-                  <div className="prose prose-slate max-w-none text-foreground/70 leading-relaxed font-light text-lg">
+                  <div className="prose prose-slate dark:prose-invert max-w-none text-muted-foreground leading-relaxed font-light text-lg">
                     {project.description.split('\n').map((para, i) => (
                       <p key={i} className="mb-6">{para}</p>
                     ))}
                   </div>
 
-                  <div className="mt-12 pt-10 border-t border-slate-100 space-y-8">
+                  <div className="mt-12 pt-10 border-t border-border space-y-8">
                     <div className="flex items-center gap-5">
                       <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
                         <ImageIcon size={28} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase text-foreground/30 tracking-widest mb-1 text-left">Dokumentacja</p>
-                        <p className="font-bold text-primary">{gallery.length} fotografii w galerii</p>
+                        <p className="text-[10px] font-bold uppercase text-muted-foreground/50 tracking-widest mb-1 text-left">Dokumentacja</p>
+                        <p className="font-bold text-foreground">{gallery.length} fotografii w galerii</p>
                       </div>
                     </div>
                     
                     <Link 
                       href="/kontakt"
-                      className="block w-full py-5 bg-primary text-white text-center font-bold rounded-2xl hover:bg-accent transition-all shadow-xl shadow-primary/10 active:scale-[0.98] text-lg uppercase tracking-widest cursor-pointer"
+                      className="block w-full py-5 bg-primary text-primary-foreground text-center font-bold rounded-2xl hover:bg-accent transition-all shadow-xl shadow-primary/10 active:scale-[0.98] text-lg uppercase tracking-widest cursor-pointer"
                     >
                       Zapytaj o wycenę
                     </Link>
