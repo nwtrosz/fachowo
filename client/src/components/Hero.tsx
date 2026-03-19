@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { useContent } from '@/contexts/ContentContext';
 
 /**
  * Hero Section Component
@@ -22,6 +23,7 @@ interface HeroProps {
 export default function Hero({ backgroundImage }: HeroProps) {
   const [, navigate] = useLocation();
   const ref = useRef(null);
+  const { data } = useContent();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"]
@@ -64,15 +66,17 @@ export default function Hero({ backgroundImage }: HeroProps) {
           transition={{ duration: 0.8 }}
         >
           <span className="font-label text-accent text-xs md:text-sm tracking-widest uppercase font-bold">
-            Witaj w Fachowo.net.pl
+            {data.hero.badge}
           </span>
 
-          <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold mt-4 mb-6 leading-[1.1]" itemProp="headline">
-            Fachowo – Usługi Budowlane <br className="hidden sm:block" /> i Transportowe Poznań & Warszawa
-          </h1>
+          <h1 
+            className="font-display text-4xl sm:text-5xl md:text-7xl font-bold mt-4 mb-6 leading-[1.1]" 
+            itemProp="headline"
+            dangerouslySetInnerHTML={{ __html: data.hero.title }}
+          />
 
           <p className="text-base md:text-xl mb-10 text-white/90 font-light max-w-xl mx-auto leading-relaxed">
-            Szybkie i niezawodne usługi remontowe, transportowe i sprzątające dla Twojego domu i biura.
+            {data.hero.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -80,7 +84,7 @@ export default function Hero({ backgroundImage }: HeroProps) {
               onClick={() => navigate('/kontakt')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-all hover:gap-3 cursor-pointer shadow-lg shadow-accent/20"
             >
-              Poproś o wycenę
+              {data.hero.ctaText}
               <ArrowRight size={20} />
             </button>
             <button 

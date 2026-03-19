@@ -14,11 +14,38 @@ const DB_PATH = path.join(DB_DIR, 'data.json');
 interface DB {
   leads: any[];
   projects: any[];
+  visitors?: any[];
+  content?: any;
 }
+
+const defaultContent = {
+  hero: {
+    badge: "Witaj w Fachowo.net.pl",
+    title: "Fachowo – Usługi Budowlane <br className=\"hidden sm:block\" /> i Transportowe Poznań & Warszawa",
+    subtitle: "Szybkie i niezawodne usługi remontowe, transportowe i sprzątające dla Twojego domu i biura.",
+    ctaText: "Poproś o wycenę",
+  },
+  about: {
+    badge: "O Nas",
+    title: "Fachowość poparta <br className=\"hidden sm:block\" /> doświadczeniem",
+    description: "Fachowo.net.pl to zespół specjalistów z pasją realizujących usługi budowlane, remontowe i transportowe. Dostarczamy solidne wyniki, dbając o każdy detal Twojego projektu.",
+    highlights: [
+      "Zadowoleni klienci",
+      "Przejrzysta komunikacja"
+    ],
+    stats: {
+      years: "10",
+      clients: "150",
+      projects: "500"
+    }
+  }
+};
 
 const defaultDB: DB = {
   leads: [],
-  projects: []
+  projects: [],
+  visitors: [],
+  content: defaultContent
 };
 
 // Ensure DB directory and file exist

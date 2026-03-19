@@ -594,6 +594,7 @@ export default function Admin() {
             { id: 'dashboard', label: 'Pulpit', icon: LayoutDashboard },
             { id: 'messages', label: 'Wiadomości', icon: MessageSquare, count: leads.filter(l => !l.read && !l.archived).length },
             { id: 'portfolio', label: 'Portfolio', icon: Briefcase },
+            { id: 'content', label: 'Treść (CMS)', icon: Edit },
           ].map(item => (
             <button key={item.id} onClick={() => { setActiveTab(item.id as any); if (window.innerWidth < 768) setSidebarOpen(false); }} className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all text-left group",
@@ -1042,6 +1043,117 @@ export default function Admin() {
                         </CardContent>
                       </Card>
                     )}
+                  </div>
+                )}
+
+                {activeTab === 'content' && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h1 className="text-2xl font-bold text-foreground">Zarządzanie Treścią</h1>
+                    </div>
+                    
+                    <Card className="max-w-3xl rounded-3xl shadow-2xl border-none bg-card">
+                      <CardHeader className="p-8 pb-0">
+                        <CardTitle className="text-xl font-bold text-foreground">Sekcja: Hero (Strona Główna)</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-8">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Etykieta (Mały napis)</label>
+                            <Input 
+                              value={useContent().data?.hero?.badge || ""} 
+                              onChange={e => {
+                                const newData = { ...useContent().data, hero: { ...useContent().data.hero, badge: e.target.value } };
+                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
+                              }}
+                              className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Nagłówek (H1)</label>
+                            <Textarea 
+                              value={useContent().data?.hero?.title || ""} 
+                              onChange={e => {
+                                const newData = { ...useContent().data, hero: { ...useContent().data.hero, title: e.target.value } };
+                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
+                              }}
+                              className="min-h-[80px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Podtytuł</label>
+                            <Textarea 
+                              value={useContent().data?.hero?.subtitle || ""} 
+                              onChange={e => {
+                                const newData = { ...useContent().data, hero: { ...useContent().data.hero, subtitle: e.target.value } };
+                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
+                              }}
+                              className="min-h-[80px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="max-w-3xl rounded-3xl shadow-2xl border-none bg-card">
+                      <CardHeader className="p-8 pb-0">
+                        <CardTitle className="text-xl font-bold text-foreground">Sekcja: O Nas</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-8">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Opis</label>
+                            <Textarea 
+                              value={useContent().data?.about?.description || ""} 
+                              onChange={e => {
+                                const newData = { ...useContent().data, about: { ...useContent().data.about, description: e.target.value } };
+                                useContent().updateContent(newData).then(() => toast.success("Zapisano automatycznie"));
+                              }}
+                              className="min-h-[120px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
+                            />
+                          </div>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Lata Doświadczenia</label>
+                              <Input 
+                                type="number"
+                                value={useContent().data?.about?.stats?.years || ""} 
+                                onChange={e => {
+                                  const newData = { ...useContent().data, about: { ...useContent().data.about, stats: { ...useContent().data.about.stats, years: e.target.value } } };
+                                  useContent().updateContent(newData);
+                                }}
+                                className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Zadowoleni Klienci</label>
+                              <Input 
+                                type="number"
+                                value={useContent().data?.about?.stats?.clients || ""} 
+                                onChange={e => {
+                                  const newData = { ...useContent().data, about: { ...useContent().data.about, stats: { ...useContent().data.about.stats, clients: e.target.value } } };
+                                  useContent().updateContent(newData);
+                                }}
+                                className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Projekty</label>
+                              <Input 
+                                type="number"
+                                value={useContent().data?.about?.stats?.projects || ""} 
+                                onChange={e => {
+                                  const newData = { ...useContent().data, about: { ...useContent().data.about, stats: { ...useContent().data.about.stats, projects: e.target.value } } };
+                                  useContent().updateContent(newData);
+                                }}
+                                className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
                   </div>
                 )}
               </>

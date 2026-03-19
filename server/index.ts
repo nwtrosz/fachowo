@@ -156,6 +156,22 @@ async function startServer() {
     } catch (e) { res.status(500).end(); }
   });
 
+  app.get("/api/content", (_req, res) => {
+    try {
+      const db = readDb();
+      res.json(db.content || {});
+    } catch (e) { res.status(500).end(); }
+  });
+
+  app.put("/api/admin/content", authMiddleware, (req, res) => {
+    try {
+      const db = readDb();
+      db.content = { ...db.content, ...req.body };
+      writeDb(db);
+      res.json({ success: true, content: db.content });
+    } catch (e) { res.status(500).json({ error: "Błąd zapisu treści" }); }
+  });
+
   app.get("/api/admin/projects", authMiddleware, (_req, res) => {
     try { res.json(readDb().projects.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())); } catch (e) { res.status(500).end(); }
   });
