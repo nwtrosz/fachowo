@@ -198,6 +198,11 @@ interface VisualEditorProps {
 function VisualEditor({ value, onChange, label }: VisualEditorProps) {
   const [localText, setLocalText] = useState(cleanHtmlForEditor(value));
 
+  // Sync internal state when value from parent changes (e.g. after initial load)
+  useEffect(() => {
+    setLocalText(cleanHtmlForEditor(value));
+  }, [value]);
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setLocalText(val);
