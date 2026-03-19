@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useContent } from "@/contexts/ContentContext";
 import { Textarea } from "@/components/ui/textarea";
 import {
   DndContext, 
