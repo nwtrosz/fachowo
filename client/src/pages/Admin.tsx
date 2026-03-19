@@ -1246,11 +1246,10 @@ export default function Admin() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Nagłówek (H1)</label>
-                            <Textarea 
+                            <VisualEditor 
+                              label="Główny Nagłówek (H1)"
                               value={cmsData.hero?.title || ""} 
-                              onChange={e => handleCmsChange('hero', 'title', e.target.value)}
-                              className="min-h-[80px] rounded-xl bg-muted/30 border-none text-foreground resize-none" 
+                              onChange={value => handleCmsChange('hero', 'title', value)}
                             />
                           </div>
                           <div className="space-y-2">
