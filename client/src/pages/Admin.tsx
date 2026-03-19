@@ -37,7 +37,10 @@ import {
   Maximize2,
   RefreshCw,
   Sun,
-  Moon
+  Moon,
+  Bold,
+  Italic,
+  CornerDownLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
