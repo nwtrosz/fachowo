@@ -34,8 +34,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateContent = async (newData: any) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      console.error("CMS: No admin token found in localStorage");
+      return;
+    }
 
     try {
       const res = await fetch('/api/admin/content', {
