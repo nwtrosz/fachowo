@@ -95,7 +95,10 @@ sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m 
 
 # 8. Uruchomienie aplikacji przez PM2
 echo "🎬 Uruchamianie aplikacji..."
-pm2 delete $APP_NAME 2>/dev/null
+pm2 delete "$APP_NAME" 2>/dev/null
+pm2 delete "fachowo" 2>/dev/null
+pm2 delete "fachowo-oryginal" 2>/dev/null
+pm2 delete "fachowo-net-pl" 2>/dev/null
 sudo fuser -k $PORT/tcp 2>/dev/null
 NODE_ENV=production pm2 start dist/index.js --name "$APP_NAME"
 pm2 save
