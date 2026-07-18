@@ -5,6 +5,7 @@ APP_NAME="fachowo-oryginal"
 PORT=3001
 DOMAIN="fachowo.net.pl"
 EMAIL="kontakt@fachowo.net.pl"
+SERVER_IP="45.147.248.195"
 
 echo "🚀 ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA I DOMENY: $DOMAIN"
 
@@ -101,3 +102,4 @@ pm2 save
 
 echo "✅ PEŁNA KONFIGURACJA ZAKOŃCZONA!"
 echo "Strona jest dostępna pod adresem: https://$DOMAIN"
+echo "IP serwera: $SERVER_IP"
