@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- KONFIGURACJA ---
-APP_NAME="fachowo-oryginal"
+APP_NAME="fachowo"
 PORT=3001
 DOMAIN="fachowo.net.pl"
 EMAIL="kontakt@fachowo.net.pl"
