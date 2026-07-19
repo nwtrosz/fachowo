@@ -1,13 +1,19 @@
 # Instrukcja Wdrożenia na VPS - Fachowo.net.pl
+## System: Oracle Linux (RHEL-based)
 
-Twoja strona jest gotowa do działania na serwerze VPS (np. Ubuntu). Poniżej znajdziesz kroki, które musisz wykonać.
+Twoja strona jest gotowa do działania na serwerze VPS z Oracle Linux. Poniżej znajdziesz kroki, które musisz wykonać.
 
-## 1. Przygotowanie Serwera (Ubuntu)
+## 1. Przygotowanie Serwera (Oracle Linux)
 Zaloguj się na serwer przez SSH i zainstaluj niezbędne narzędzia:
 ```bash
-sudo apt update && sudo apt upgrade -y
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# Włączenie EPEL (dla certbot)
+sudo dnf install -y epel-release
+
+# Instalacja Node.js 20.x
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+sudo dnf install -y nodejs
+
+# Instalacja menedżerów pakietów
 sudo npm install -g pnpm pm2
 ```
 
@@ -37,11 +43,54 @@ pm2 startup
 ## 5. Domena i SSL (Nginx)
 Aby strona była dostępna pod Twoją domeną z certyfikatem SSL, zainstaluj Nginx:
 ```bash
-sudo apt install nginx
+sudo dnf install -y nginx
+sudo systemctl enable --now nginx
 ```
-Skonfiguruj Nginx jako "Reverse Proxy", aby przekierowywał ruch z portu 80 (HTTP) i 443 (HTTPS) na port Twojej aplikacji (domyślnie 3001).
+
+Skonfiguruj Nginx jako "Reverse Proxy" w pliku `/etc/nginx/conf.d/fachowo.net.pl.conf`:
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.fachowo.net.pl;
+    return 301 $scheme://fachowo.net.pl$request_uri;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name fachowo.net.pl;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Następnie uruchom:
+```bash
+sudo nginx -t && sudo systemctl restart nginx
+```
+
+## 6. Zapora sieciowa (Oracle Linux)
+```bash
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --reload
+```
 
 ---
+
+### Automatyczne wdrożenie
+Jeśli chcesz użyć gotowego skryptu:
+```bash
+sudo bash setup-server.sh
+```
 
 ### Czy mogę edytować pliki bezpośrednio na serwerze?
 **Tak, ale z pewnymi zastrzeżeniami:**
