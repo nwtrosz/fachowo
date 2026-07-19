@@ -18,7 +18,9 @@ fi
 cd "$PROJECT_PATH" || { echo "❌ Brak katalogu $PROJECT_PATH"; exit 1; }
 
 echo "📥 [1/4] Git pull..."
+git stash --include-untracked 2>/dev/null || true
 git pull
+git stash pop 2>/dev/null || true
 
 echo "📦 [2/4] pnpm install..."
 pnpm install
