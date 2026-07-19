@@ -38,8 +38,17 @@ dnf install -y epel-release || {
     echo "⚠️ EPEL już zainstalowane lub niedostępne, kontynuuję..."
 }
 
-# Instalacja podstawowych narzędzi
-dnf install -y git curl wget nginx certbot python3-certbot-nginx
+# Instalacja podstawowych narzędzi (nginx osobno, bo certbot może nie być w domyślnych repo)
+dnf install -y git curl wget nginx
+
+# Instalacja certbot - osobno, bo może nie być dostępne w repo
+dnf install -y certbot python3-certbot-nginx || {
+    echo "⚠️ certbot niedostępny przez dnf. Próbuję zainstalować przez pip..."
+    dnf install -y python3-pip || true
+    pip3 install certbot certbot-nginx || {
+        echo "⚠️ Nie udało się zainstalować certbot. Certyfikat SSL trzeba będzie skonfigurować ręcznie."
+    }
+}
 
 # --- 2. KONFIGURACJA ZAPORY (FIREWALL-CMD) ---
 echo "🔒 [3/9] Konfiguruję zaporę sieciową (firewalld) dla portów 80 i 443..."
@@ -103,7 +112,8 @@ fi
 
 rm -rf dist
 pnpm install
-pnpm build
+# Zwiększamy limit pamięci Node.js dla buildu (serwery Oracle free mają mało RAM)
+NODE_OPTIONS="--max-old-space-size=4096" pnpm build
 
 # --- 7. KONFIGURACJA REVERSE PROXY NGINX (ORACLE LINUX) ---
 echo "🌐 [8/9] Konfiguruję Nginx dla domeny $DOMAIN..."
@@ -185,8 +195,14 @@ echo "   IP Serwer: $SERVER_IP"
 
 if [ "$DOMAIN_IP" = "$SERVER_IP" ]; then
     echo "✅ Rekordy DNS są poprawne! Uruchamiam Certbot..."
-    certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
-    echo "✅ SSL skonfigurowany pomyślnie!"
+    if command -v certbot &> /dev/null; then
+        certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL --redirect
+        echo "✅ SSL skonfigurowany pomyślnie!"
+    else
+        echo "⚠️ Certbot nie jest zainstalowany. Zainstaluj ręcznie: dnf install certbot python3-certbot-nginx"
+        echo "   Lub użyj: pip3 install certbot certbot-nginx"
+        echo "   Następnie uruchom: certbot --nginx -d $DOMAIN -d www.$DOMAIN"
+    fi
 else
     echo "⚠️ OSTRZEŻENIE: Rekordy DNS domeny $DOMAIN wskazują na inny IP ($DOMAIN_IP) niż ten serwer ($SERVER_IP)."
     echo "   Certbot nie może teraz wygenerować certyfikatu SSL (zakończyłby się błędem 404)."
