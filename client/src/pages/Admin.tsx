@@ -921,19 +921,9 @@ export default function Admin() {
 
                         <Card className="shadow-md rounded-2xl bg-card border-none">
                           <CardHeader className="pb-2 border-b border-border/50">
-                            <CardTitle className="text-sm font-bold text-foreground uppercase tracking-widest">Najczęstsza Filia</CardTitle>
+                            <CardTitle className="text-sm font-bold text-foreground uppercase tracking-widest">Filia</CardTitle>
                           </CardHeader>
                           <CardContent className="pt-4">
-                            <div className="flex items-center justify-between mb-2 text-xs">
-                               <span className="font-medium text-foreground">Poznań</span>
-                               <span className="font-bold text-foreground">{leads.filter(l => l.branch === 'Poznań').length}</span>
-                            </div>
-                            <div className="w-full bg-muted h-2 rounded-full overflow-hidden mb-4">
-                               <div 
-                                 className="bg-primary h-full" 
-                                 style={{ width: `${(leads.filter(l => l.branch === 'Poznań').length / Math.max(1, leads.length)) * 100}%` }}
-                               />
-                            </div>
                             <div className="flex items-center justify-between mb-2 text-xs text-foreground">
                                <span className="font-medium">Warszawa</span>
                                <span className="font-bold">{leads.filter(l => l.branch === 'Warszawa').length}</span>
@@ -1336,28 +1326,6 @@ export default function Admin() {
                             </div>
                           </div>
                           
-                          <div className="pt-4 border-t border-border">
-                            <h4 className="text-sm font-bold text-foreground mb-4">Filia Poznań</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Telefon</label>
-                                <Input 
-                                  value={cmsData.contact?.branchPoznanPhone || ""} 
-                                  onChange={e => handleCmsChange('contact', 'branchPoznanPhone', e.target.value)}
-                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Godziny (np. Pn-Pt: 8-18)</label>
-                                <Input 
-                                  value={cmsData.contact?.branchPoznanHours || ""} 
-                                  onChange={e => handleCmsChange('contact', 'branchPoznanHours', e.target.value)}
-                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
-                                />
-                              </div>
-                            </div>
-                          </div>
-
                           <div className="pt-4 border-t border-border">
                             <h4 className="text-sm font-bold text-foreground mb-4">Filia Warszawa</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

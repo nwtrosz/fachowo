@@ -10,12 +10,6 @@ export default function Branches() {
 
   const branches = [
     {
-      city: 'Poznań',
-      phone: data.contact?.branchPoznanPhone || '+48 (61) 345-6789',
-      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
-      hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
-    },
-    {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 (22) 987-6543',
       email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
@@ -29,7 +23,7 @@ export default function Branches() {
         <div className="max-w-2xl mb-16">
           <span className="font-label text-accent text-sm">Kontakt</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
-            Obszar Działania: <br className="hidden sm:block" /> Poznań i Warszawa
+            Obszar Działania: <br className="hidden sm:block" /> Warszawa
           </h2>
           <div className="w-12 h-1 bg-accent" aria-hidden="true" />
         </div>

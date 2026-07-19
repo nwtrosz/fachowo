@@ -18,7 +18,7 @@ export default function Contact() {
     name: '',
     email: '',
     phone: '',
-    branch: 'Poznań',
+    branch: 'Warszawa',
     message: '',
     website: '',
   });
@@ -45,18 +45,11 @@ export default function Contact() {
     const result = await submit(formData);
     if (result.success) {
       toast.success("Wiadomość została wysłana!");
-      setFormData({ name: '', email: '', phone: '', branch: 'Poznań', message: '', website: '' });
+      setFormData({ name: '', email: '', phone: '', branch: 'Warszawa', message: '', website: '' });
     }
   };
 
   const branches = [
-    {
-      city: 'Poznań',
-      phone: data.contact?.branchPoznanPhone || '+48 61 345 67 89',
-      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
-      hours: data.contact?.branchPoznanHours || 'Pn-Pt: 8:00 - 18:00',
-      area: 'Wielkopolska'
-    },
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 22 987 65 43',
@@ -86,7 +79,6 @@ export default function Contact() {
                   <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Telefon" className="w-full p-4 bg-muted/30 border border-border rounded-xl text-foreground" />
                 </div>
                 <select name="branch" value={formData.branch} onChange={handleChange} className="w-full p-4 bg-muted/30 border border-border rounded-xl text-foreground">
-                  <option value="Poznań">Filia Poznań</option>
                   <option value="Warszawa">Filia Warszawa</option>
                 </select>
                 <textarea name="message" value={formData.message} onChange={handleChange} rows={5} placeholder="W czym możemy pomóc?" className="w-full p-4 bg-muted/30 border border-border rounded-xl text-foreground resize-none" />

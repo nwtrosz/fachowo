@@ -27,7 +27,7 @@
   "content": {
     "hero": {
       "badge": "Witaj w Fachowo.net.pl",
-      "title": "Fachowo – Usługi Budowlane <br className=\"hidden sm:block\" /> i Transportowe Poznań & Warszawa",
+      "title": "Fachowo – Usługi Budowlane <br className=\"hidden sm:block\" /> i Transportowe Warszawa",
       "subtitle": "Szybkie i niezawodne usługi remontowe, transportowe i sprzątające dla Twojego domu i biura.",
       "ctaText": "Poproś o wycenę"
     },
@@ -48,8 +48,6 @@
     "contact": {
       "phoneMain": "+48 123 456 789",
       "emailMain": "kontakt@fachowo.net.pl",
-      "branchPoznanPhone": "+48 61 345 67 89",
-      "branchPoznanHours": "Pn-Pt: 8:00 - 18:00",
       "branchWarszawaPhone": "+48 22 987 65 43",
       "branchWarszawaHours": "Pn-Pt: 8:00 - 18:00"
     }

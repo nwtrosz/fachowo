@@ -308,8 +308,6 @@ export default function Navigation() {
                 Darmowa Wycena
               </button>
               <div className="flex justify-center gap-8 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
-                <span>Poznań</span>
-                <span className="text-accent">•</span>
                 <span>Warszawa</span>
               </div>
             </div>

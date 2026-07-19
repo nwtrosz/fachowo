@@ -15,8 +15,8 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description, image }: SEOHeadProps) {
   useEffect(() => {
-    const defaultTitle = 'Fachowo – Remonty i Transport | Poznań & Warszawa';
-    const defaultDesc = 'Fachowo: Profesjonalne remonty i transport w Poznaniu oraz Warszawie. 10 lat doświadczenia i gwarancja rzetelności. Zamów bezpłatną wycenę!';
+    const defaultTitle = 'Fachowo – Remonty i Transport | Warszawa';
+    const defaultDesc = 'Fachowo: Profesjonalne remonty i transport w Warszawie. 10 lat doświadczenia i gwarancja rzetelności. Zamów bezpłatną wycenę!';
     // Fallback image using the converted hero.jpg
     const defaultImage = '/assets/hero.jpg';
     
@@ -63,7 +63,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Fachowo.net.pl',
-  description: 'Firma budowlana i transportowa obsługująca Poznań i Warszawę.',
+  description: 'Firma budowlana i transportowa obsługująca Warszawę.',
   url: 'https://fachowo.net.pl',
   telephone: '+48 123 456 789',
   email: 'kontakt@fachowo.net.pl',
@@ -76,19 +76,15 @@ const organizationSchema = {
     {
       "@type": "City",
       "name": "Warszawa"
-    },
-    {
-      "@type": "City",
-      "name": "Poznań"
     }
   ],
   knowsAbout: [
     'Usługi budowlane Warszawa',
-    'Remonty Poznań',
+    'Remonty Warszawa',
     'Układanie płytek',
     'Malowanie ścian',
     'Przeprowadzki Warszawa',
-    'Wywóz gruzu Poznań',
+    'Wywóz gruzu Warszawa',
   ],
 };
 
@@ -101,7 +97,7 @@ const organizationSchema = {
         name: 'W jakich miastach świadczycie usługi?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Świadczymy nasze fachowe usługi budowlane i transportowe głównie na terenie miast Poznań i Warszawa oraz w ich okolicach.',
+          text: 'Świadczymy nasze fachowe usługi budowlane i transportowe głównie na terenie miasta Warszawa i w okolicach.',
         },
       },
       {
@@ -125,7 +121,7 @@ const organizationSchema = {
         name: 'Czy zajmujecie się przeprowadzkami?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Tak, oferujemy profesjonalne usługi transportowe i przeprowadzki dla klientów indywidualnych oraz firm w Warszawie i Poznaniu.',
+          text: 'Tak, oferujemy profesjonalne usługi transportowe i przeprowadzki dla klientów indywidualnych oraz firm w Warszawie.',
         },
       },
     ],
@@ -137,13 +133,13 @@ const organizationSchema = {
     itemListElement: [
       {
         '@type': 'Service',
-        name: 'Kompleksowe wykończenie mieszkań Warszawa i Poznań',
+        name: 'Kompleksowe wykończenie mieszkań Warszawa',
         description: 'Pełny zakres usług wykończeniowych dla mieszkań i domów.',
         provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },
       {
         '@type': 'Service',
-        name: 'Fachowe Malowanie Warszawa i Poznań',
+        name: 'Fachowe Malowanie Warszawa',
         description: 'Precyzyjne usługi malarskie dla domów i biur.',
         provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },
@@ -155,7 +151,7 @@ const organizationSchema = {
       },
       {
         '@type': 'Service',
-        name: 'Przeprowadzki i transport Poznań, Warszawa',
+        name: 'Przeprowadzki i transport Warszawa',
         description: 'Bezpieczny transport mebli i przeprowadzki lokalne.',
         provider: { '@type': 'LocalBusiness', name: 'Fachowo.net.pl' },
       },

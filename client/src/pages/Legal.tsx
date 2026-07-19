@@ -20,7 +20,7 @@ export function PrivacyPolicy() {
 
             <section>
               <h2 className="text-2xl font-bold text-foreground mb-4">2. Administrator Danych</h2>
-              <p>Administratorem danych osobowych zawartych w serwisie jest Fachowo.net.pl z siedzibą w Poznaniu i Warszawie.</p>
+              <p>Administratorem danych osobowych zawartych w serwisie jest Fachowo.net.pl z siedzibą w Warszawie.</p>
             </section>
 
             <section>

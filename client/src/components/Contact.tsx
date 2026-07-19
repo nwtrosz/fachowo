@@ -13,7 +13,7 @@ export default function Contact() {
     name: '',
     email: '',
     phone: '',
-    branch: 'Poznań',
+    branch: 'Warszawa',
     message: '',
     website: '',
   });
@@ -32,7 +32,7 @@ export default function Contact() {
     const result = await submit(formData);
     if (result.success) {
       toast.success("Wiadomość została wysłana!");
-      setFormData({ name: '', email: '', phone: '', branch: 'Poznań', message: '', website: '' });
+      setFormData({ name: '', email: '', phone: '', branch: 'Warszawa', message: '', website: '' });
     }
   };
 
@@ -65,7 +65,7 @@ export default function Contact() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
           <div className="space-y-8">
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed italic border-l-4 border-accent pl-6">
-              Masz projekt? Skontaktuj się z nami! Oferujemy bezpłatne wyceny usług budowlanych i transportowych w Poznaniu oraz Warszawie.
+              Masz projekt? Skontaktuj się z nami! Oferujemy bezpłatne wyceny usług budowlanych i transportowych w Warszawie.
             </p>
 
             <div className="grid grid-cols-1 gap-4">
@@ -110,7 +110,7 @@ export default function Contact() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Filia</label>
-                    <select name="branch" value={formData.branch} onChange={handleChange} className="w-full px-5 py-4 bg-muted/30 border border-border rounded-xl text-foreground"><option value="Poznań">Poznań</option><option value="Warszawa">Warszawa</option></select>
+                    <select name="branch" value={formData.branch} onChange={handleChange} className="w-full px-5 py-4 bg-muted/30 border border-border rounded-xl text-foreground"><option value="Warszawa">Warszawa</option></select>
                   </div>
                 </div>
                 <div className="space-y-2">
