@@ -50,6 +50,9 @@ dnf install -y certbot python3-certbot-nginx || {
     }
 }
 
+# Upewnij się, że /usr/local/bin jest na PATH (certbot z pip trafia tam)
+export PATH="/usr/local/bin:$PATH"
+
 # --- 2. KONFIGURACJA ZAPORY (FIREWALL-CMD) ---
 echo "🔒 [3/9] Konfiguruję zaporę sieciową (firewalld) dla portów 80 i 443..."
 
@@ -123,16 +126,9 @@ CONF_FILE="/etc/nginx/conf.d/${DOMAIN}.conf"
 
 cat <<EOF > $CONF_FILE
 server {
-    listen 80;
-    listen [::]:80;
-    server_name www.$DOMAIN;
-    return 301 \$scheme://$DOMAIN\$request_uri;
-}
-
-server {
-    listen 80;
-    listen [::]:80;
-    server_name $DOMAIN;
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
 
     add_header Content-Language pl-PL;
 
@@ -144,6 +140,13 @@ server {
         proxy_set_header Host \$host;
         proxy_cache_bypass \$http_upgrade;
     }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.$DOMAIN;
+    return 301 \$scheme://$DOMAIN\$request_uri;
 }
 EOF
 
