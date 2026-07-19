@@ -1,26 +1,13 @@
 {
-  "leads": [
-    {
-      "id": 1771792511195,
-      "name": "Test CLI",
-      "email": "fachowo.eu@gmail.com",
-      "phone": "123",
-      "message": "Test z curl",
-      "ip": "::1",
-      "country": "",
-      "city": "",
-      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; pl-PL) WindowsPowerShell/5.1.19041.6456",
-      "created_at": "2026-02-22T20:35:11.195Z"
-    }
-  ],
+  "leads": [],
   "projects": [
     {
       "id": 1,
-      "title": "Remont Biura w Centrum",
+      "title": "Remont Biura",
       "category": "Komercyjne",
       "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800",
-      "description": "Nowoczesne wykończenie biura open space",
-      "created_at": "2026-02-22T20:32:15.004Z"
+      "description": "Wykończenie biura",
+      "created_at": "2026-07-19T14:50:07.393Z"
     }
   ],
   "visitors": [],
@@ -47,7 +34,6 @@
     },
     "contact": {
       "phoneMain": "+48 505 528 083",
-      "phoneMain2": "+48 788 805 453",
       "emailMain": "fachowo.eu@gmail.com",
       "branchWarszawaPhone": "+48 22 987 65 43",
       "branchWarszawaHours": "Pn-Pt: 8:00 - 18:00"

@@ -44,6 +44,12 @@ export default function Contact() {
       href: `tel:${(data.contact?.phoneMain || '+48505528083').replace(/\s/g, '')}`,
     },
     {
+      icon: Phone,
+      label: 'Telefon 2',
+      value: data.contact?.phoneMain2 || '+48 788 805 453',
+      href: `tel:${(data.contact?.phoneMain2 || '+48788805453').replace(/\s/g, '')}`,
+    },
+    {
       icon: Mail,
       label: 'Email',
       value: data.contact?.emailMain || 'fachowo.eu@gmail.com',

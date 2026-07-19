@@ -53,6 +53,7 @@ export default function Contact() {
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 22 987 65 43',
+      phone2: data.contact?.phoneMain2 || '+48 788 805 453',
       email: data.contact?.emailMain || 'fachowo.eu@gmail.com',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00',
       area: 'Mazowsze'
@@ -101,6 +102,9 @@ export default function Contact() {
                       </div>
                       <div className="flex items-center gap-2 text-foreground/80">
                         <Phone size={16} className="text-accent" /> <span>{b.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-foreground/80">
+                        <Phone size={16} className="text-accent" /> <span>{b.phone2}</span>
                       </div>
                       <div className="flex items-center gap-2 text-foreground/80 text-sm">
                         <Mail size={16} className="text-accent" /> <span>{b.email}</span>

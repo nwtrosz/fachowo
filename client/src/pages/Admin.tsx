@@ -1307,12 +1307,20 @@ export default function Admin() {
                       </CardHeader>
                       <CardContent className="p-8">
                         <div className="space-y-6">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
                               <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Główny Telefon</label>
                               <Input 
                                 value={cmsData.contact?.phoneMain || ""} 
                                 onChange={e => handleCmsChange('contact', 'phoneMain', e.target.value)}
+                                className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Drugi Telefon</label>
+                              <Input 
+                                value={cmsData.contact?.phoneMain2 || ""} 
+                                onChange={e => handleCmsChange('contact', 'phoneMain2', e.target.value)}
                                 className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
                               />
                             </div>

@@ -12,6 +12,7 @@ export default function Branches() {
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 (22) 987-6543',
+      phone2: data.contact?.phoneMain2 || '+48 788 805 453',
       email: data.contact?.emailMain || 'fachowo.eu@gmail.com',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
@@ -46,6 +47,10 @@ export default function Branches() {
                   <p className="font-bold text-foreground text-sm mb-1">Telefon</p>
                   <a href={`tel:${branch.phone.replace(/\s/g, '')}`} className="text-muted-foreground hover:text-accent transition-colors">
                     {branch.phone}
+                  </a>
+                  <br />
+                  <a href={`tel:${branch.phone2.replace(/\s/g, '')}`} className="text-muted-foreground hover:text-accent transition-colors">
+                    {branch.phone2}
                   </a>
                 </div>
               </div>
