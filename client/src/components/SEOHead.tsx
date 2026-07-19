@@ -65,8 +65,8 @@ const organizationSchema = {
   name: 'Fachowo.net.pl',
   description: 'Firma budowlana i transportowa obsługująca Warszawę.',
   url: 'https://fachowo.net.pl',
-  telephone: '+48 123 456 789',
-  email: 'kontakt@fachowo.net.pl',
+  telephone: '+48 505 528 083',
+  email: 'fachowo.eu@gmail.com',
   sameAs: [
     'https://www.facebook.com/fachowo.net.pl',
     'https://www.instagram.com/fachowo.net.pl',

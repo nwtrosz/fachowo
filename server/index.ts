@@ -40,7 +40,7 @@ const activeSessions = new Map<string, { username: string, role: string }>();
 // Email configuration
 const EMAIL_USER = "fachowo.eu@gmail.com"; 
 const EMAIL_PASS = "xxcw tyjh rbtr eflj"; 
-const CONTACT_EMAIL = "kontakt@fachowo.net.pl";
+const CONTACT_EMAIL = "fachowo.eu@gmail.com";
 
 // Multer Setup with Security Validation
 const storage = multer.diskStorage({

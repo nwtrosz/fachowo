@@ -36,8 +36,8 @@ const defaultContent = {
     }
   },
   contact: {
-    phoneMain: "+48 123 456 789",
-    emailMain: "kontakt@fachowo.net.pl",
+    phoneMain: "+48 505 528 083",
+    emailMain: "fachowo.eu@gmail.com",
     branchWarszawaPhone: "+48 22 987 65 43",
     branchWarszawaHours: "Pn-Pt: 8:00 - 18:00"
   }

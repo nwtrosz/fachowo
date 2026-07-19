@@ -40,14 +40,14 @@ export default function Contact() {
     {
       icon: Phone,
       label: 'Telefon',
-      value: data.contact?.phoneMain || '+48 123 456 789',
-      href: `tel:${(data.contact?.phoneMain || '+48123456789').replace(/\s/g, '')}`,
+      value: data.contact?.phoneMain || '+48 505 528 083',
+      href: `tel:${(data.contact?.phoneMain || '+48505528083').replace(/\s/g, '')}`,
     },
     {
       icon: Mail,
       label: 'Email',
-      value: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
-      href: `mailto:${data.contact?.emailMain || 'kontakt@fachowo.net.pl'}`,
+      value: data.contact?.emailMain || 'fachowo.eu@gmail.com',
+      href: `mailto:${data.contact?.emailMain || 'fachowo.eu@gmail.com'}`,
     },
   ];
 

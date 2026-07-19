@@ -3,7 +3,7 @@
     {
       "id": 1771792511195,
       "name": "Test CLI",
-      "email": "kontakt@fachowo.net.pl",
+      "email": "fachowo.eu@gmail.com",
       "phone": "123",
       "message": "Test z curl",
       "ip": "::1",
@@ -46,8 +46,8 @@
       }
     },
     "contact": {
-      "phoneMain": "+48 123 456 789",
-      "emailMain": "kontakt@fachowo.net.pl",
+      "phoneMain": "+48 505 528 083",
+      "emailMain": "fachowo.eu@gmail.com",
       "branchWarszawaPhone": "+48 22 987 65 43",
       "branchWarszawaHours": "Pn-Pt: 8:00 - 18:00"
     }

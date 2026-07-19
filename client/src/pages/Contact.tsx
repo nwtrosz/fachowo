@@ -53,7 +53,7 @@ export default function Contact() {
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 22 987 65 43',
-      email: data.contact?.emailMain || 'kontakt@fachowo.net.pl',
+      email: data.contact?.emailMain || 'fachowo.eu@gmail.com',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00',
       area: 'Mazowsze'
     },

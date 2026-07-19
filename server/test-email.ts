@@ -17,7 +17,7 @@ async function testEmail() {
 
     const result = await transport.sendMail({
       from: EMAIL_USER,
-      to: "kontakt@fachowo.net.pl",
+      to: "fachowo.eu@gmail.com",
       subject: "Test Wysyłki - Fachowo",
       text: "Jeśli to czytasz, Twój serwer może wysyłać e-maile!"
     });
