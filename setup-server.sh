@@ -11,7 +11,7 @@ PORT=3001
 DOMAIN="fachowo.net.pl"
 EMAIL="fachowo.eu@gmail.com"
 SERVER_IP="92.5.162.181"
-PROJECT_PATH="/home/opc/fachowo/Strona"
+PROJECT_PATH="/home/opc/fachowo"
 
 echo "🚀 [1/9] ROZPOCZYNAM PEŁNĄ KONFIGURACJĘ SERWERA DLA: $DOMAIN"
 
