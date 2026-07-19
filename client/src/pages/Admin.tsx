@@ -1336,12 +1336,20 @@ export default function Admin() {
                           
                           <div className="pt-4 border-t border-border">
                             <h4 className="text-sm font-bold text-foreground mb-4">Filia Warszawa</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Telefon</label>
                                 <Input 
                                   value={cmsData.contact?.branchWarszawaPhone || ""} 
                                   onChange={e => handleCmsChange('contact', 'branchWarszawaPhone', e.target.value)}
+                                  className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Drugi Telefon</label>
+                                <Input 
+                                  value={cmsData.contact?.branchWarszawaPhone2 || ""} 
+                                  onChange={e => handleCmsChange('contact', 'branchWarszawaPhone2', e.target.value)}
                                   className="h-12 rounded-xl bg-muted/30 border-none text-foreground" 
                                 />
                               </div>

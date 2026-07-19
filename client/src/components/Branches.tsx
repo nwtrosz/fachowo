@@ -12,7 +12,7 @@ export default function Branches() {
     {
       city: 'Warszawa',
       phone: data.contact?.branchWarszawaPhone || '+48 (22) 987-6543',
-      phone2: data.contact?.phoneMain2 || '+48 788 805 453',
+      phone2: data.contact?.branchWarszawaPhone2 || '+48 788 805 453',
       email: data.contact?.emailMain || 'fachowo.eu@gmail.com',
       hours: data.contact?.branchWarszawaHours || 'Pn-Pt: 8:00 - 18:00, Sb: 9:00 - 14:00',
     },
