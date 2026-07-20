@@ -3,6 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { useLocation } from 'wouter';
 import Navigation from './Navigation';
 import { SEOHead } from './SEOHead';
+import { useContent } from '@/contexts/ContentContext';
 
 interface ServicePageProps {
   title: string;
@@ -32,6 +33,7 @@ export function ServicePage({
 }: ServicePageProps) {
   const [, navigate] = useLocation();
   const [selectedImage, setSelectedImage] = useState(0);
+  const { data } = useContent();
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,11 +131,12 @@ export function ServicePage({
                 <p className="text-sm text-muted-foreground mb-2">
                   <strong>Telefon:</strong>
                 </p>
-                <p className="text-foreground font-medium">+48 12 345 67 89</p>
+                <p className="text-foreground font-medium">{data?.contact?.phoneMain || '+48 505 528 083'}</p>
+                <p className="text-foreground font-medium">{data?.contact?.phoneMain2 || '+48 788 805 453'}</p>
                 <p className="text-sm text-muted-foreground mt-4 mb-2">
                   <strong>Email:</strong>
                 </p>
-                <p className="text-foreground font-medium break-all">fachowo.eu@gmail.com</p>
+                <p className="text-foreground font-medium break-all">{data?.contact?.emailMain || 'fachowo.eu@gmail.com'}</p>
               </div>
             </div>
           </div>
